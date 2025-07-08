@@ -2,8 +2,8 @@ import React from 'react';
 import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const BottomPlayer = ({ styles, currentStation, isPlaying, isLoading, pausePlayback, resumePlayback }) => (
-  <View style={styles.bottomPlayer}>
+const BottomPlayer = ({ styles, currentStation, isPlaying, isLoading, pausePlayback, resumePlayback, onPress }) => (
+  <TouchableOpacity style={styles.bottomPlayer} onPress={onPress} activeOpacity={0.8}>
     <Image 
       source={currentStation.image} 
       style={styles.playerIcon}
@@ -15,7 +15,8 @@ const BottomPlayer = ({ styles, currentStation, isPlaying, isLoading, pausePlayb
     </View>
     <TouchableOpacity
       style={styles.playButton}
-      onPress={() => {
+      onPress={(e) => {
+        e.stopPropagation(); // Prevent triggering the parent onPress
         if (isPlaying) {
           pausePlayback();
         } else if (currentStation) {
@@ -34,7 +35,7 @@ const BottomPlayer = ({ styles, currentStation, isPlaying, isLoading, pausePlayb
         />
       )}
     </TouchableOpacity>
-  </View>
+  </TouchableOpacity>
 );
 
 export default BottomPlayer;
