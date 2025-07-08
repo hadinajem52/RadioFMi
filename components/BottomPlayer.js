@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const BottomPlayer = ({ styles, currentStation, isPlaying, isLoading, pausePlayback, resumePlayback, onPress }) => (
+const BottomPlayer = ({ styles, currentStation, isPlaying, isLoading, pausePlayback, resumePlayback, onPress, favorites, toggleFavorite }) => (
   <TouchableOpacity style={styles.bottomPlayer} onPress={onPress} activeOpacity={0.8}>
     <Image 
       source={currentStation.image} 
@@ -13,6 +13,19 @@ const BottomPlayer = ({ styles, currentStation, isPlaying, isLoading, pausePlayb
       <Text style={styles.playerStationName}>{currentStation.name}</Text>
       <Text style={styles.playerDescription}>Live Radio</Text>
     </View>
+    <TouchableOpacity
+      style={styles.favoriteButton}
+      onPress={(e) => {
+        e.stopPropagation();
+        toggleFavorite(currentStation);
+      }}
+    >
+      <Ionicons 
+        name={favorites.some(fav => fav.id === currentStation.id) ? "heart" : "heart-outline"} 
+        size={20} 
+        color={favorites.some(fav => fav.id === currentStation.id) ? "#ff4444" : "#fff"} 
+      />
+    </TouchableOpacity>
     <TouchableOpacity
       style={styles.playButton}
       onPress={(e) => {

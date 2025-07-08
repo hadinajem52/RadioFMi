@@ -16,7 +16,9 @@ const FullscreenPlayer = ({
   playNextStation,
   playPreviousStation,
   volume,
-  setVolume
+  setVolume,
+  favorites,
+  toggleFavorite
 }) => {
   if (!currentStation) return null;
 
@@ -52,8 +54,14 @@ const FullscreenPlayer = ({
           }}>
             Now Playing
           </Text>
-          <TouchableOpacity>
-            <Ionicons name="ellipsis-horizontal" size={24} color="#fff" />
+          <TouchableOpacity
+            onPress={() => toggleFavorite(currentStation)}
+          >
+            <Ionicons 
+              name={favorites?.some(fav => fav.id === currentStation.id) ? "heart" : "heart-outline"} 
+              size={24} 
+              color={favorites?.some(fav => fav.id === currentStation.id) ? "#ff4444" : "#fff"} 
+            />
           </TouchableOpacity>
         </View>
 

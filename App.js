@@ -5,9 +5,11 @@ import {
   FlatList, 
   Alert
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AudioPlayer, useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
 import Header from './components/Header';
-import YourShows from './components/YourShows';
+import FeaturedRadios from './components/FeaturedRadios';
+import Favorites from './components/Favorites';
 import LebaneseRadioStations from './components/LebaneseRadioStations';
 import BottomPlayer from './components/BottomPlayer';
 import FullscreenPlayer from './components/FullscreenPlayer';
@@ -22,6 +24,38 @@ export default function App() {
   
   const player = useAudioPlayer();
   const status = useAudioPlayerStatus(player);
+
+  // Load favorites from AsyncStorage on app start
+  useEffect(() => {
+    const loadFavorites = async () => {
+      try {
+        const savedFavorites = await AsyncStorage.getItem('favorites');
+        if (savedFavorites) {
+          setFavorites(JSON.parse(savedFavorites));
+        }
+      } catch (error) {
+        console.error('Error loading favorites:', error);
+      }
+    };
+    
+    loadFavorites();
+  }, []);
+
+  // Save favorites to AsyncStorage whenever favorites change
+  useEffect(() => {
+    const saveFavorites = async () => {
+      try {
+        await AsyncStorage.setItem('favorites', JSON.stringify(favorites));
+      } catch (error) {
+        console.error('Error saving favorites:', error);
+      }
+    };
+    
+    // Only save after the initial load (to avoid overwriting on app start)
+    if (favorites.length >= 0) {
+      saveFavorites();
+    }
+  }, [favorites]);
 
 
 
@@ -117,8 +151,27 @@ export default function App() {
         data={[1]} // Single item to wrap all content
         renderItem={() => (
           <View>
-            {/* Your Shows Section */}
-            <YourShows styles={styles} />
+            {/* Featured Radios Section */}
+            <FeaturedRadios 
+              styles={styles}
+              radioStations={radioStations}
+              currentStation={currentStation}
+              isPlaying={isPlaying}
+              playStation={playStation}
+              pausePlayback={pausePlayback}
+              resumePlayback={resumePlayback}
+            />
+
+            {/* Favorites Section */}
+            <Favorites 
+              styles={styles}
+              favorites={favorites}
+              currentStation={currentStation}
+              isPlaying={isPlaying}
+              playStation={playStation}
+              pausePlayback={pausePlayback}
+              resumePlayback={resumePlayback}
+            />
 
             {/* Lebanese Radio Stations Section */}
             <LebaneseRadioStations
@@ -147,6 +200,8 @@ export default function App() {
           pausePlayback={pausePlayback}
           resumePlayback={resumePlayback}
           onPress={() => setShowFullscreenPlayer(true)}
+          favorites={favorites}
+          toggleFavorite={toggleFavorite}
         />
       )}
 
@@ -161,6 +216,8 @@ export default function App() {
         resumePlayback={resumePlayback}
         playNextStation={playNextStation}
         playPreviousStation={playPreviousStation}
+        favorites={favorites}
+        toggleFavorite={toggleFavorite}
       />
     </View>
   );

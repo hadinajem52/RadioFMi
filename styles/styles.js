@@ -113,6 +113,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#ccc',
   },
+  favoriteButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
   playButton: {
     width: 50,
     height: 50,
@@ -120,6 +129,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#666',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  noFavoritesContainer: {
+    paddingVertical: 40,
+    alignItems: 'center',
+  },
+  noFavoritesText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#999',
+    marginBottom: 5,
+  },
+  noFavoritesSubtext: {
+    fontSize: 14,
+    color: '#ccc',
+    textAlign: 'center',
   },
 });
 
