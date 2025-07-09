@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
 
-const FeaturedRadios = ({ styles, radioStations, playStation, currentStation, isPlaying, pausePlayback, resumePlayback }) => {
+const FeaturedRadios = ({ styles, radioStations, playStation, currentStation, isPlaying, togglePlayPause }) => {
   // Get the featured radio stations: Al Nour, Virgin Radio, Sawt El Ghad, Virgin Radio Stars
   const featuredStations = radioStations.filter(station => 
     station.id === 30 || // Al Nour
@@ -13,11 +13,7 @@ const FeaturedRadios = ({ styles, radioStations, playStation, currentStation, is
   const handleStationPress = (station) => {
     if (currentStation?.id === station.id) {
       // If this station is currently selected
-      if (isPlaying) {
-        pausePlayback();
-      } else {
-        resumePlayback();
-      }
+      togglePlayPause();
     } else {
       // Play new station
       playStation(station);

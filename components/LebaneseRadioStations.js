@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const LebaneseRadioStations = ({ styles, radioStations, currentStation, isPlaying, playStation, pausePlayback, resumePlayback }) => (
+const LebaneseRadioStations = ({ styles, radioStations, currentStation, isPlaying, playStation, togglePlayPause }) => (
   <View style={styles.section}>
     <Text style={styles.sectionTitle}>Lebanese Radio Stations</Text>
     {radioStations.map((station) => (
@@ -10,10 +10,8 @@ const LebaneseRadioStations = ({ styles, radioStations, currentStation, isPlayin
         key={station.id}
         style={styles.stationRow}
         onPress={() => {
-          if (currentStation?.id === station.id && isPlaying) {
-            pausePlayback();
-          } else if (currentStation?.id === station.id && !isPlaying) {
-            resumePlayback();
+          if (currentStation?.id === station.id) {
+            togglePlayPause();
           } else {
             playStation(station);
           }

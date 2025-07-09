@@ -71,6 +71,10 @@ export async function skipToPrevious() {
   await TrackPlayer.skipToPrevious();
 }
 
+export async function setVolume(volume) {
+  await TrackPlayer.setVolume(volume);
+}
+
 export const playbackService = async function() {
   TrackPlayer.addEventListener(Event.RemotePlay, () => TrackPlayer.play());
   TrackPlayer.addEventListener(Event.RemotePause, () => TrackPlayer.pause());

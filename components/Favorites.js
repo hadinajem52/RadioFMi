@@ -1,15 +1,11 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
 
-const Favorites = ({ styles, favorites, currentStation, isPlaying, playStation, pausePlayback, resumePlayback }) => {
+const Favorites = ({ styles, favorites, currentStation, isPlaying, playStation, togglePlayPause }) => {
   const handleStationPress = (station) => {
     if (currentStation?.id === station.id) {
       // If this station is currently selected
-      if (isPlaying) {
-        pausePlayback();
-      } else {
-        resumePlayback();
-      }
+      togglePlayPause();
     } else {
       // Play new station
       playStation(station);

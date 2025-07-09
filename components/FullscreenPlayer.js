@@ -11,8 +11,7 @@ const FullscreenPlayer = ({
   currentStation, 
   isPlaying, 
   isLoading, 
-  pausePlayback, 
-  resumePlayback,
+  togglePlayPause,
   playNextStation,
   playPreviousStation,
   volume,
@@ -185,13 +184,7 @@ const FullscreenPlayer = ({
                 shadowRadius: 8,
                 elevation: 8,
               }}
-              onPress={() => {
-                if (isPlaying) {
-                  pausePlayback();
-                } else {
-                  resumePlayback();
-                }
-              }}
+              onPress={togglePlayPause}
               disabled={isLoading}
             >
               {isLoading ? (
@@ -223,45 +216,47 @@ const FullscreenPlayer = ({
           </View>
 
           {/* Volume Control */}
-          <View style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginTop: 20,
-          }}>
-            <TouchableOpacity onPress={() => setVolume(Math.max(0, volume - 0.1))}>
-              <Ionicons name="volume-low" size={20} color="rgba(255,255,255,0.8)" />
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={{
-                flex: 1,
-                height: 40,
-                justifyContent: 'center',
-                marginHorizontal: 15,
-              }}
-              onPress={(e) => {
-                const { locationX, width } = e.nativeEvent;
-                const newVolume = locationX / width;
-                setVolume(Math.max(0, Math.min(1, newVolume)));
-              }}
-            >
-              <View style={{
-                height: 4,
-                backgroundColor: 'rgba(255,255,255,0.3)',
-                borderRadius: 2,
-              }}>
+          {volume !== undefined && setVolume && (
+            <View style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginTop: 20,
+            }}>
+              <TouchableOpacity onPress={() => setVolume(Math.max(0, volume - 0.1))}>
+                <Ionicons name="volume-low" size={20} color="rgba(255,255,255,0.8)" />
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={{
+                  flex: 1,
+                  height: 40,
+                  justifyContent: 'center',
+                  marginHorizontal: 15,
+                }}
+                onPress={(e) => {
+                  const { locationX, width } = e.nativeEvent;
+                  const newVolume = locationX / width;
+                  setVolume(Math.max(0, Math.min(1, newVolume)));
+                }}
+              >
                 <View style={{
-                  width: `${volume * 100}%`,
-                  height: '100%',
-                  backgroundColor: '#fff',
+                  height: 4,
+                  backgroundColor: 'rgba(255,255,255,0.3)',
                   borderRadius: 2,
-                }} />
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setVolume(Math.min(1, volume + 0.1))}>
-              <Ionicons name="volume-high" size={20} color="rgba(255,255,255,0.8)" />
-            </TouchableOpacity>
-          </View>
+                }}>
+                  <View style={{
+                    width: `${volume * 100}%`,
+                    height: '100%',
+                    backgroundColor: '#fff',
+                    borderRadius: 2,
+                  }} />
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setVolume(Math.min(1, volume + 0.1))}>
+                <Ionicons name="volume-high" size={20} color="rgba(255,255,255,0.8)" />
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </LinearGradient>
     </Modal>

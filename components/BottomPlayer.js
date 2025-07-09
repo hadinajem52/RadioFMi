@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const BottomPlayer = ({ styles, currentStation, isPlaying, isLoading, pausePlayback, resumePlayback, onPress, favorites, toggleFavorite }) => (
+const BottomPlayer = ({ styles, currentStation, isPlaying, isLoading, togglePlayPause, onPress, favorites, toggleFavorite }) => (
   <TouchableOpacity style={styles.bottomPlayer} onPress={onPress} activeOpacity={0.8}>
     <Image 
       source={currentStation.image} 
@@ -30,11 +30,7 @@ const BottomPlayer = ({ styles, currentStation, isPlaying, isLoading, pausePlayb
       style={styles.playButton}
       onPress={(e) => {
         e.stopPropagation(); // Prevent triggering the parent onPress
-        if (isPlaying) {
-          pausePlayback();
-        } else if (currentStation) {
-          resumePlayback();
-        }
+        togglePlayPause();
       }}
       disabled={isLoading}
     >

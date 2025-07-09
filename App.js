@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import TrackPlayer, { usePlaybackState, useProgress, State } from 'react-native-track-player';
-import { setupPlayer, addTrack, playTrack, pauseTrack, stopTrack, skipToNext, skipToPrevious } from './services/TrackPlayerService';
+import { setupPlayer, addTrack, playTrack, pauseTrack, stopTrack, skipToNext, skipToPrevious, setVolume as setPlayerVolume } from './services/TrackPlayerService';
 import Header from './components/Header';
 import FeaturedRadios from './components/FeaturedRadios';
 import Favorites from './components/Favorites';
@@ -23,9 +23,13 @@ export default function App() {
   const [favorites, setFavorites] = useState([]);
   const [showFullscreenPlayer, setShowFullscreenPlayer] = useState(false);
   const [isPlayerReady, setIsPlayerReady] = useState(false);
+  const [volume, setVolume] = useState(1.0);
   
   const playbackState = usePlaybackState();
   const progress = useProgress();
+
+  // Derive isPlaying from playbackState
+  const isPlaying = playbackState?.state === State.Playing;
 
   // Initialize TrackPlayer on app start
   useEffect(() => {
@@ -78,6 +82,21 @@ export default function App() {
     }
   }, [favorites]);
 
+  // Update player volume when volume state changes
+  useEffect(() => {
+    const updateVolume = async () => {
+      try {
+        await setPlayerVolume(volume);
+      } catch (error) {
+        console.error('Error setting volume:', error);
+      }
+    };
+    
+    if (isPlayerReady) {
+      updateVolume();
+    }
+  }, [volume, isPlayerReady]);
+
   const playStation = async (station) => {
     if (!isPlayerReady) {
       Alert.alert('Error', 'Player is not ready yet');
@@ -103,39 +122,29 @@ export default function App() {
     }
   };
 
-  const pausePlayback = async () => {
+  const togglePlayPause = async () => {
+    if (!currentStation) return;
+    
+    console.log('Current playback state:', playbackState);
+    console.log('isPlaying:', isPlaying);
+    
     try {
-      await pauseTrack();
-    } catch (error) {
-      console.error('Error pausing playback:', error);
-    }
-  };
-
-  const resumePlayback = async () => {
-    try {
-      if (currentStation) {
+      if (isPlaying) {
+        console.log('Attempting to pause...');
+        await pauseTrack();
+      } else {
+        console.log('Attempting to play...');
         await playTrack();
       }
+      console.log('Action completed, new state:', await TrackPlayer.getState());
     } catch (error) {
-      console.error('Error resuming playback:', error);
-      // If resume fails, try to play the station again
-      if (currentStation) {
+      console.error('Error toggling play/pause:', error);
+      // If toggle fails, try to play the station again
+      if (currentStation && !isPlaying) {
         playStation(currentStation);
       }
     }
   };
-
-  const stopPlayback = async () => {
-    try {
-      await stopTrack();
-      setCurrentStation(null);
-    } catch (error) {
-      console.error('Error stopping playback:', error);
-    }
-  };
-
-  // Check if currently playing
-  const isPlaying = playbackState === State.Playing;
 
   const toggleFavorite = (station) => {
     setFavorites(prev => {
@@ -180,8 +189,7 @@ export default function App() {
               currentStation={currentStation}
               isPlaying={isPlaying}
               playStation={playStation}
-              pausePlayback={pausePlayback}
-              resumePlayback={resumePlayback}
+              togglePlayPause={togglePlayPause}
             />
 
             {/* Favorites Section */}
@@ -191,8 +199,7 @@ export default function App() {
               currentStation={currentStation}
               isPlaying={isPlaying}
               playStation={playStation}
-              pausePlayback={pausePlayback}
-              resumePlayback={resumePlayback}
+              togglePlayPause={togglePlayPause}
             />
 
             {/* Lebanese Radio Stations Section */}
@@ -202,8 +209,7 @@ export default function App() {
               currentStation={currentStation}
               isPlaying={isPlaying}
               playStation={playStation}
-              pausePlayback={pausePlayback}
-              resumePlayback={resumePlayback}
+              togglePlayPause={togglePlayPause}
             />
           </View>
         )}
@@ -219,8 +225,7 @@ export default function App() {
           currentStation={currentStation}
           isPlaying={isPlaying}
           isLoading={isLoading}
-          pausePlayback={pausePlayback}
-          resumePlayback={resumePlayback}
+          togglePlayPause={togglePlayPause}
           onPress={() => setShowFullscreenPlayer(true)}
           favorites={favorites}
           toggleFavorite={toggleFavorite}
@@ -234,10 +239,11 @@ export default function App() {
         currentStation={currentStation}
         isPlaying={isPlaying}
         isLoading={isLoading}
-        pausePlayback={pausePlayback}
-        resumePlayback={resumePlayback}
+        togglePlayPause={togglePlayPause}
         playNextStation={playNextStation}
         playPreviousStation={playPreviousStation}
+        volume={volume}
+        setVolume={setVolume}
         favorites={favorites}
         toggleFavorite={toggleFavorite}
       />
