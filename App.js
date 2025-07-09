@@ -6,7 +6,8 @@ import {
   Alert
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AudioPlayer, useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
+import TrackPlayer, { usePlaybackState, useProgress, State } from 'react-native-track-player';
+import { setupPlayer, addTrack, playTrack, pauseTrack, stopTrack, skipToNext, skipToPrevious } from './services/TrackPlayerService';
 import Header from './components/Header';
 import FeaturedRadios from './components/FeaturedRadios';
 import Favorites from './components/Favorites';
@@ -21,9 +22,29 @@ export default function App() {
   const [currentStation, setCurrentStation] = useState(null);
   const [favorites, setFavorites] = useState([]);
   const [showFullscreenPlayer, setShowFullscreenPlayer] = useState(false);
+  const [isPlayerReady, setIsPlayerReady] = useState(false);
   
-  const player = useAudioPlayer();
-  const status = useAudioPlayerStatus(player);
+  const playbackState = usePlaybackState();
+  const progress = useProgress();
+
+  // Initialize TrackPlayer on app start
+  useEffect(() => {
+    const initializePlayer = async () => {
+      try {
+        const isSetup = await setupPlayer();
+        setIsPlayerReady(isSetup);
+      } catch (error) {
+        console.error('Error setting up player:', error);
+      }
+    };
+
+    initializePlayer();
+
+    return () => {
+      // Cleanup on unmount
+      TrackPlayer.destroy();
+    };
+  }, []);
 
   // Load favorites from AsyncStorage on app start
   useEffect(() => {
@@ -57,22 +78,22 @@ export default function App() {
     }
   }, [favorites]);
 
-
-
-  useEffect(() => {
-    return () => {
-      // Cleanup is handled automatically by expo-audio
-    };
-  }, [player]);
-
   const playStation = async (station) => {
+    if (!isPlayerReady) {
+      Alert.alert('Error', 'Player is not ready yet');
+      return;
+    }
+
     try {
       setIsLoading(true);
       setCurrentStation(station);
       
-      // Replace the current source and play
-      await player.replace(station.url);
-      await player.play();
+      // Stop current playback and clear queue
+      await stopTrack();
+      
+      // Add the new station and play
+      await addTrack(station);
+      await playTrack();
       
       setIsLoading(false);
     } catch (error) {
@@ -82,9 +103,9 @@ export default function App() {
     }
   };
 
-  const pausePlayback = () => {
+  const pausePlayback = async () => {
     try {
-      player.pause();
+      await pauseTrack();
     } catch (error) {
       console.error('Error pausing playback:', error);
     }
@@ -93,7 +114,7 @@ export default function App() {
   const resumePlayback = async () => {
     try {
       if (currentStation) {
-        await player.play();
+        await playTrack();
       }
     } catch (error) {
       console.error('Error resuming playback:', error);
@@ -104,16 +125,17 @@ export default function App() {
     }
   };
 
-  const stopPlayback = () => {
+  const stopPlayback = async () => {
     try {
-      player.pause();
+      await stopTrack();
       setCurrentStation(null);
     } catch (error) {
       console.error('Error stopping playback:', error);
     }
   };
 
-  const isPlaying = status.isPlaying || false;
+  // Check if currently playing
+  const isPlaying = playbackState === State.Playing;
 
   const toggleFavorite = (station) => {
     setFavorites(prev => {
@@ -126,18 +148,18 @@ export default function App() {
     });
   };
 
-  const playNextStation = () => {
+  const playNextStation = async () => {
     if (!currentStation) return;
     const currentIndex = radioStations.findIndex(s => s.id === currentStation.id);
     const nextIndex = (currentIndex + 1) % radioStations.length;
-    playStation(radioStations[nextIndex]);
+    await playStation(radioStations[nextIndex]);
   };
 
-  const playPreviousStation = () => {
+  const playPreviousStation = async () => {
     if (!currentStation) return;
     const currentIndex = radioStations.findIndex(s => s.id === currentStation.id);
     const prevIndex = currentIndex === 0 ? radioStations.length - 1 : currentIndex - 1;
-    playStation(radioStations[prevIndex]);
+    await playStation(radioStations[prevIndex]);
   };
 
   return (
