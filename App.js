@@ -7,7 +7,19 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import TrackPlayer, { usePlaybackState, useProgress, State } from 'react-native-track-player';
-import { setupPlayer, addTrack, playTrack, pauseTrack, stopTrack, skipToNext, skipToPrevious, setVolume as setPlayerVolume } from './services/TrackPlayerService';
+import { 
+  setupPlayer, 
+  addTrack, 
+  playTrack, 
+  pauseTrack, 
+  stopTrack, 
+  skipToNext, 
+  skipToPrevious, 
+  setVolume as setPlayerVolume,
+  setStreamStatusCallback,
+  setErrorCallback,
+  getStreamStatus 
+} from './services/TrackPlayerService';
 import Header from './components/Header';
 import FeaturedRadios from './components/FeaturedRadios';
 import Favorites from './components/Favorites';
@@ -24,6 +36,8 @@ export default function App() {
   const [showFullscreenPlayer, setShowFullscreenPlayer] = useState(false);
   const [isPlayerReady, setIsPlayerReady] = useState(false);
   const [volume, setVolume] = useState(1.0);
+  const [streamError, setStreamError] = useState(null);
+  const [connectionStatus, setConnectionStatus] = useState('idle');
   
   const playbackState = usePlaybackState();
   const progress = useProgress();
@@ -37,8 +51,47 @@ export default function App() {
       try {
         const isSetup = await setupPlayer();
         setIsPlayerReady(isSetup);
+        
+        // Set up stream monitoring callbacks
+        setStreamStatusCallback((event) => {
+          console.log('Stream status update:', event);
+          setConnectionStatus(event.state || 'unknown');
+        });
+        
+        setErrorCallback((error) => {
+          console.error('Stream error callback:', error);
+          setStreamError(error);
+          setIsLoading(false);
+          
+          // Show user-friendly error message
+          if (error.message.includes('timeout')) {
+            Alert.alert(
+              'Connection Timeout', 
+              'Unable to connect to the radio station. Please check your internet connection and try again.',
+              [
+                { text: 'OK', onPress: () => setStreamError(null) },
+                { 
+                  text: 'Retry', 
+                  onPress: () => {
+                    if (currentStation) {
+                      playStation(currentStation);
+                    }
+                  }
+                }
+              ]
+            );
+          } else {
+            Alert.alert(
+              'Stream Error', 
+              error.message || 'Unable to play this radio station.',
+              [{ text: 'OK', onPress: () => setStreamError(null) }]
+            );
+          }
+        });
+        
       } catch (error) {
         console.error('Error setting up player:', error);
+        Alert.alert('Setup Error', 'Failed to initialize audio player');
       }
     };
 
@@ -106,6 +159,8 @@ export default function App() {
     try {
       setIsLoading(true);
       setCurrentStation(station);
+      setStreamError(null);
+      setConnectionStatus('connecting');
       
       // Stop current playback and clear queue
       await stopTrack();
@@ -115,10 +170,29 @@ export default function App() {
       await playTrack();
       
       setIsLoading(false);
+      setConnectionStatus('connected');
     } catch (error) {
       console.error('Error playing station:', error);
-      Alert.alert('Error', 'Failed to play radio station');
       setIsLoading(false);
+      setConnectionStatus('error');
+      
+      // Enhanced error handling with specific messages
+      let errorMessage = 'Failed to play radio station';
+      if (error.message.includes('network') || error.message.includes('timeout')) {
+        errorMessage = 'Network connection failed. Please check your internet connection.';
+      } else if (error.message.includes('Invalid stream URL')) {
+        errorMessage = 'This radio station is currently unavailable.';
+      } else if (error.message.includes('format')) {
+        errorMessage = 'Unsupported audio format for this station.';
+      }
+      
+      Alert.alert('Playback Error', errorMessage, [
+        { text: 'OK' },
+        { 
+          text: 'Retry', 
+          onPress: () => playStation(station)
+        }
+      ]);
     }
   };
 

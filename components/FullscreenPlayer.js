@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, ActivityIndicator, Modal, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import StreamStatus from './StreamStatus';
+import StreamMonitor from './StreamMonitor';
 
 const { width, height } = Dimensions.get('window');
 
@@ -19,6 +21,8 @@ const FullscreenPlayer = ({
   favorites,
   toggleFavorite
 }) => {
+  const [showStreamMonitor, setShowStreamMonitor] = useState(false);
+  
   if (!currentStation) return null;
 
   return (
@@ -53,15 +57,23 @@ const FullscreenPlayer = ({
           }}>
             Now Playing
           </Text>
-          <TouchableOpacity
-            onPress={() => toggleFavorite(currentStation)}
-          >
-            <Ionicons 
-              name={favorites?.some(fav => fav.id === currentStation.id) ? "heart" : "heart-outline"} 
-              size={24} 
-              color={favorites?.some(fav => fav.id === currentStation.id) ? "#ff4444" : "#fff"} 
-            />
-          </TouchableOpacity>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TouchableOpacity
+              onPress={() => setShowStreamMonitor(true)}
+              style={{ marginRight: 15 }}
+            >
+              <Ionicons name="analytics" size={22} color="rgba(255,255,255,0.8)" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => toggleFavorite(currentStation)}
+            >
+              <Ionicons 
+                name={favorites?.some(fav => fav.id === currentStation.id) ? "heart" : "heart-outline"} 
+                size={24} 
+                color={favorites?.some(fav => fav.id === currentStation.id) ? "#ff4444" : "#fff"} 
+              />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Station Image */}
@@ -110,35 +122,60 @@ const FullscreenPlayer = ({
             color: 'rgba(255,255,255,0.8)',
             fontSize: 16,
             textAlign: 'center',
-            marginBottom: 30,
+            marginBottom: 20,
           }}>
             {currentStation.description}
           </Text>
 
-          {/* Live indicator */}
+          {/* Enhanced Stream Status */}
+          <View style={{
+            alignItems: 'center',
+            marginBottom: 30,
+          }}>
+            <StreamStatus 
+              currentStation={currentStation}
+              isPlaying={isPlaying}
+              isLoading={isLoading}
+              size="large"
+              showText={true}
+              textColor="#fff"
+              iconColor="#fff"
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.15)',
+                paddingHorizontal: 16,
+                paddingVertical: 10,
+                borderRadius: 20,
+                minWidth: 120,
+                justifyContent: 'center',
+              }}
+            />
+          </View>
+
+          {/* Connection Quality Indicator */}
           <View style={{
             flexDirection: 'row',
             alignItems: 'center',
-            backgroundColor: 'rgba(255,255,255,0.2)',
-            paddingHorizontal: 12,
-            paddingVertical: 6,
-            borderRadius: 15,
-            marginBottom: 40,
+            justifyContent: 'center',
+            marginBottom: 20,
           }}>
             <View style={{
-              width: 8,
-              height: 8,
-              backgroundColor: '#ff4444',
-              borderRadius: 4,
-              marginRight: 8,
-            }} />
-            <Text style={{
-              color: '#fff',
-              fontSize: 14,
-              fontWeight: '500',
+              flexDirection: 'row',
+              alignItems: 'center',
+              backgroundColor: 'rgba(255,255,255,0.1)',
+              paddingHorizontal: 10,
+              paddingVertical: 5,
+              borderRadius: 12,
             }}>
-              LIVE
-            </Text>
+              <Ionicons name="wifi" size={14} color="rgba(255,255,255,0.8)" />
+              <Text style={{
+                color: 'rgba(255,255,255,0.8)',
+                fontSize: 12,
+                marginLeft: 4,
+                fontWeight: '500',
+              }}>
+                Streaming Quality: Auto
+              </Text>
+            </View>
           </View>
         </View>
 
@@ -259,6 +296,13 @@ const FullscreenPlayer = ({
           )}
         </View>
       </LinearGradient>
+      
+      {/* Stream Monitor Modal */}
+      <StreamMonitor
+        visible={showStreamMonitor}
+        onClose={() => setShowStreamMonitor(false)}
+        currentStation={currentStation}
+      />
     </Modal>
   );
 };

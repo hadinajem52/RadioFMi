@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import StreamStatus from './StreamStatus';
 
 const BottomPlayer = ({ styles, currentStation, isPlaying, isLoading, togglePlayPause, onPress, favorites, toggleFavorite }) => (
   <TouchableOpacity style={styles.bottomPlayer} onPress={onPress} activeOpacity={0.8}>
@@ -11,7 +12,19 @@ const BottomPlayer = ({ styles, currentStation, isPlaying, isLoading, togglePlay
     />
     <View style={styles.playerInfo}>
       <Text style={styles.playerStationName}>{currentStation.name}</Text>
-      <Text style={styles.playerDescription}>Live Radio</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
+        <StreamStatus 
+          currentStation={currentStation}
+          isPlaying={isPlaying}
+          isLoading={isLoading}
+          size="small"
+          showText={true}
+          textColor="#rgba(255,255,255,0.8)"
+          iconColor="#fff"
+          style={{ marginRight: 8 }}
+        />
+        <Text style={styles.playerDescription}>Live Radio</Text>
+      </View>
     </View>
     <TouchableOpacity
       style={styles.favoriteButton}
