@@ -145,6 +145,102 @@ const styles = StyleSheet.create({
     color: '#ccc',
     textAlign: 'center',
   },
+
+  // Search Modal Styles
+  searchButton: {
+    padding: 4,
+  },
+  searchContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  searchHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: 50,
+    paddingBottom: 15,
+    paddingHorizontal: 20,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  searchBackButton: {
+    marginRight: 15,
+    padding: 4,
+  },
+  searchInputContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f8f8f8',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    height: 40,
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: '#333',
+    paddingVertical: 0,
+  },
+  clearButton: {
+    marginLeft: 8,
+    padding: 2,
+  },
+  searchResults: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  searchResultsCount: {
+    fontSize: 14,
+    color: '#666',
+    marginVertical: 15,
+    fontWeight: '500',
+  },
+  searchResultsList: {
+    paddingBottom: 20,
+  },
+  searchResultItem: {
+    paddingVertical: 15,
+  },
+  currentStationText: {
+    color: '#007AFF',
+  },
+  stationGenre: {
+    fontSize: 12,
+    color: '#999',
+    marginTop: 2,
+  },
+  searchPlayButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#f8f8f8',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10,
+  },
+  noResultsContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 60,
+  },
+  noResultsText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#666',
+    marginTop: 15,
+    marginBottom: 5,
+  },
+  noResultsSubtext: {
+    fontSize: 14,
+    color: '#999',
+    textAlign: 'center',
+  },
 });
 
 export default styles;

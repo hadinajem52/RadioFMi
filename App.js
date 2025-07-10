@@ -26,6 +26,7 @@ import Favorites from './components/Favorites';
 import LebaneseRadioStations from './components/LebaneseRadioStations';
 import BottomPlayer from './components/BottomPlayer';
 import FullscreenPlayer from './components/FullscreenPlayer';
+import SearchModal from './components/SearchModal';
 import radioStations from './data/radioStations';
 import styles from './styles/styles';
 
@@ -34,6 +35,7 @@ export default function App() {
   const [currentStation, setCurrentStation] = useState(null);
   const [favorites, setFavorites] = useState([]);
   const [showFullscreenPlayer, setShowFullscreenPlayer] = useState(false);
+  const [showSearchModal, setShowSearchModal] = useState(false);
   const [isPlayerReady, setIsPlayerReady] = useState(false);
   const [volume, setVolume] = useState(1.0);
   const [streamError, setStreamError] = useState(null);
@@ -41,6 +43,15 @@ export default function App() {
   
   const playbackState = usePlaybackState();
   const progress = useProgress();
+
+  // Safe volume setter with validation
+  const setSafeVolume = (newVolume) => {
+    if (typeof newVolume === 'number' && !isNaN(newVolume) && newVolume >= 0 && newVolume <= 1) {
+      setVolume(newVolume);
+    } else {
+      console.warn('Invalid volume value:', newVolume, 'keeping current volume:', volume);
+    }
+  };
 
   // Derive isPlaying from playbackState
   const isPlaying = playbackState?.state === State.Playing;
@@ -139,13 +150,18 @@ export default function App() {
   useEffect(() => {
     const updateVolume = async () => {
       try {
-        await setPlayerVolume(volume);
+        // Validate volume before setting
+        if (typeof volume === 'number' && !isNaN(volume) && volume >= 0 && volume <= 1) {
+          await setPlayerVolume(volume);
+        } else {
+          console.warn('Invalid volume value:', volume, 'skipping update');
+        }
       } catch (error) {
         console.error('Error setting volume:', error);
       }
     };
     
-    if (isPlayerReady) {
+    if (isPlayerReady && volume !== undefined) {
       updateVolume();
     }
   }, [volume, isPlayerReady]);
@@ -250,7 +266,10 @@ export default function App() {
       <StatusBar style="light" />
 
       {/* Header */}
-      <Header styles={styles} />
+      <Header 
+        styles={styles} 
+        onSearchPress={() => setShowSearchModal(true)}
+      />
 
       <FlatList
         data={[1]} // Single item to wrap all content
@@ -317,9 +336,21 @@ export default function App() {
         playNextStation={playNextStation}
         playPreviousStation={playPreviousStation}
         volume={volume}
-        setVolume={setVolume}
+        setVolume={setSafeVolume}
         favorites={favorites}
         toggleFavorite={toggleFavorite}
+      />
+
+      {/* Search Modal */}
+      <SearchModal
+        visible={showSearchModal}
+        onClose={() => setShowSearchModal(false)}
+        radioStations={radioStations}
+        currentStation={currentStation}
+        isPlaying={isPlaying}
+        playStation={playStation}
+        togglePlayPause={togglePlayPause}
+        styles={styles}
       />
     </View>
   );

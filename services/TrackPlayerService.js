@@ -145,7 +145,55 @@ export async function skipToPrevious() {
 }
 
 export async function setVolume(volume) {
-  await TrackPlayer.setVolume(volume);
+  try {
+    // Validate volume value
+    if (typeof volume !== 'number' || isNaN(volume)) {
+      console.warn('Invalid volume value:', volume, 'defaulting to 1.0');
+      volume = 1.0;
+    }
+    
+    // Clamp volume between 0 and 1
+    volume = Math.max(0, Math.min(1, volume));
+    
+    // Check if TrackPlayer is initialized by trying to get state
+    try {
+      await TrackPlayer.getState();
+    } catch (initError) {
+      console.warn('TrackPlayer not initialized, skipping volume set');
+      return;
+    }
+    
+    // Set volume with proper parameter formatting
+    await TrackPlayer.setVolume(Number(volume));
+    console.log('Volume set successfully to:', volume);
+    
+  } catch (error) {
+    console.warn('Failed to set volume:', error.message);
+    
+    // If we get the specific "Malformed calls" error, try again with a delay
+    if (error.message.includes('Malformed calls') || error.message.includes('field sizes')) {
+      setTimeout(async () => {
+        try {
+          await TrackPlayer.setVolume(Number(Math.max(0, Math.min(1, volume || 1.0))));
+          console.log('Volume set successfully on retry');
+        } catch (retryError) {
+          console.warn('Volume retry also failed:', retryError.message);
+        }
+      }, 100);
+    }
+    
+    // Don't throw the error to prevent app crashes
+  }
+}
+
+// Safe volume setter that can be used as a utility
+export function setSafeVolume(volume, callback) {
+  if (typeof volume === 'number' && !isNaN(volume) && volume >= 0 && volume <= 1) {
+    setVolume(volume);
+    if (callback) callback(volume);
+  } else {
+    console.warn('Invalid volume value:', volume, 'volume not changed');
+  }
 }
 
 // Stream monitoring functions

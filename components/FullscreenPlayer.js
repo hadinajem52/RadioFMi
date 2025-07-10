@@ -260,7 +260,12 @@ const FullscreenPlayer = ({
               justifyContent: 'center',
               marginTop: 20,
             }}>
-              <TouchableOpacity onPress={() => setVolume(Math.max(0, volume - 0.1))}>
+              <TouchableOpacity onPress={() => {
+                const newVolume = Math.max(0, volume - 0.1);
+                if (typeof newVolume === 'number' && !isNaN(newVolume)) {
+                  setVolume(newVolume);
+                }
+              }}>
                 <Ionicons name="volume-low" size={20} color="rgba(255,255,255,0.8)" />
               </TouchableOpacity>
               <TouchableOpacity 
@@ -271,9 +276,16 @@ const FullscreenPlayer = ({
                   marginHorizontal: 15,
                 }}
                 onPress={(e) => {
-                  const { locationX, width } = e.nativeEvent;
-                  const newVolume = locationX / width;
-                  setVolume(Math.max(0, Math.min(1, newVolume)));
+                  try {
+                    const { locationX } = e.nativeEvent;
+                    const { width } = e.currentTarget.measure ? e.currentTarget : { width: 200 };
+                    const newVolume = Math.max(0, Math.min(1, locationX / (width || 200)));
+                    if (typeof newVolume === 'number' && !isNaN(newVolume)) {
+                      setVolume(newVolume);
+                    }
+                  } catch (error) {
+                    console.warn('Error setting volume from touch:', error);
+                  }
                 }}
               >
                 <View style={{
@@ -282,14 +294,19 @@ const FullscreenPlayer = ({
                   borderRadius: 2,
                 }}>
                   <View style={{
-                    width: `${volume * 100}%`,
+                    width: `${Math.max(0, Math.min(100, (volume || 0) * 100))}%`,
                     height: '100%',
                     backgroundColor: '#fff',
                     borderRadius: 2,
                   }} />
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => setVolume(Math.min(1, volume + 0.1))}>
+              <TouchableOpacity onPress={() => {
+                const newVolume = Math.min(1, volume + 0.1);
+                if (typeof newVolume === 'number' && !isNaN(newVolume)) {
+                  setVolume(newVolume);
+                }
+              }}>
                 <Ionicons name="volume-high" size={20} color="rgba(255,255,255,0.8)" />
               </TouchableOpacity>
             </View>

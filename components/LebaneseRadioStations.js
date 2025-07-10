@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import StreamHealthIndicator from './StreamHealthIndicator';
 
 const LebaneseRadioStations = ({ styles, radioStations, currentStation, isPlaying, playStation, togglePlayPause }) => (
   <View style={styles.section}>
@@ -25,14 +24,7 @@ const LebaneseRadioStations = ({ styles, radioStations, currentStation, isPlayin
         />
         <View style={styles.stationInfo}>
           <Text style={styles.stationName}>{station.name}</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Text style={styles.stationDescription}>Live Radio</Text>
-            <StreamHealthIndicator 
-              station={station} 
-              size={12}
-              style={{ marginLeft: 8 }}
-            />
-          </View>
+          <Text style={styles.stationDescription}>Live Radio</Text>
         </View>
         <Ionicons name="chevron-forward" size={20} color="#ccc" />
       </TouchableOpacity>
