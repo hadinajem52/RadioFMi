@@ -150,6 +150,9 @@ const styles = StyleSheet.create({
   searchButton: {
     padding: 4,
   },
+  menuButton: {
+    padding: 4,
+  },
   searchContainer: {
     flex: 1,
     backgroundColor: '#fff',
@@ -240,6 +243,253 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#999',
     textAlign: 'center',
+  },
+
+  // Side Menu Styles
+  sideMenuOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    flexDirection: 'row',
+  },
+  sideMenuBackdrop: {
+    flex: 1,
+  },
+  sideMenuContainer: {
+    width: 280,
+    backgroundColor: '#fff',
+    paddingTop: 50,
+  },
+  sideMenuHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  sideMenuTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#333',
+  },
+  sideMenuCloseButton: {
+    padding: 4,
+  },
+  sideMenuContent: {
+    flex: 1,
+    paddingTop: 20,
+  },
+  sideMenuSectionTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#999',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    paddingHorizontal: 20,
+    marginBottom: 15,
+  },
+  sideMenuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f8f8f8',
+  },
+  sideMenuItemIcon: {
+    marginRight: 15,
+    width: 24,
+  },
+  sideMenuItemText: {
+    flex: 1,
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '500',
+  },
+  sideMenuDivider: {
+    height: 1,
+    backgroundColor: '#f0f0f0',
+    marginVertical: 20,
+    marginHorizontal: 20,
+  },
+
+  // Genre Radio Stations Styles
+  genreContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  genreHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 50,
+    paddingBottom: 15,
+    paddingHorizontal: 20,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  genreBackButton: {
+    padding: 4,
+  },
+  genreHeaderContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+  },
+  genreHeaderIcon: {
+    marginRight: 8,
+  },
+  genreHeaderTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+  },
+  genreDescriptionContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    backgroundColor: '#f8f9fa',
+  },
+  genreDescription: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    fontStyle: 'italic',
+  },
+  genreStationsCount: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  genreStationsCountText: {
+    fontSize: 14,
+    color: '#666',
+    fontWeight: '500',
+  },
+  genreStationsList: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  genreStationItem: {
+    paddingVertical: 15,
+  },
+  genrePlayButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#f8f8f8',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10,
+  },
+  noStationsContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 60,
+  },
+  noStationsText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#666',
+    marginTop: 15,
+    marginBottom: 5,
+  },
+  noStationsSubtext: {
+    fontSize: 14,
+    color: '#999',
+    textAlign: 'center',
+  },
+
+  // Settings Styles
+  settingsContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  settingsHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 50,
+    paddingBottom: 15,
+    paddingHorizontal: 20,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  settingsBackButton: {
+    padding: 4,
+  },
+  settingsHeaderTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+  },
+  settingsContent: {
+    flex: 1,
+  },
+  settingsSection: {
+    marginBottom: 30,
+  },
+  settingsSectionTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#999',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    paddingHorizontal: 20,
+    marginBottom: 15,
+    marginTop: 20,
+  },
+  settingsItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f8f8f8',
+  },
+  settingsItemLeft: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  settingsItemIcon: {
+    marginRight: 15,
+    width: 24,
+  },
+  settingsItemText: {
+    flex: 1,
+  },
+  settingsItemTitle: {
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '500',
+    marginBottom: 2,
+  },
+  settingsItemSubtitle: {
+    fontSize: 13,
+    color: '#666',
+  },
+  volumeSliderContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 15,
+  },
+  volumeButton: {
+    padding: 8,
+  },
+  volumeSlider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 10,
+  },
+  volumeBar: {
+    width: 3,
+    height: 20,
+    marginHorizontal: 1,
+    borderRadius: 1.5,
   },
 });
 

@@ -27,6 +27,9 @@ import LebaneseRadioStations from './components/LebaneseRadioStations';
 import BottomPlayer from './components/BottomPlayer';
 import FullscreenPlayer from './components/FullscreenPlayer';
 import SearchModal from './components/SearchModal';
+import SideMenu from './components/SideMenu';
+import GenreRadioStations from './components/GenreRadioStations';
+import Settings from './components/Settings';
 import radioStations from './data/radioStations';
 import styles from './styles/styles';
 
@@ -36,6 +39,10 @@ export default function App() {
   const [favorites, setFavorites] = useState([]);
   const [showFullscreenPlayer, setShowFullscreenPlayer] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
+  const [showSideMenu, setShowSideMenu] = useState(false);
+  const [showGenreModal, setShowGenreModal] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [selectedGenre, setSelectedGenre] = useState(null);
   const [isPlayerReady, setIsPlayerReady] = useState(false);
   const [volume, setVolume] = useState(1.0);
   const [streamError, setStreamError] = useState(null);
@@ -261,6 +268,15 @@ export default function App() {
     await playStation(radioStations[prevIndex]);
   };
 
+  const handleGenreSelect = (genreId) => {
+    setSelectedGenre(genreId);
+    setShowGenreModal(true);
+  };
+
+  const handleSettingsPress = () => {
+    setShowSettings(true);
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
@@ -269,6 +285,7 @@ export default function App() {
       <Header 
         styles={styles} 
         onSearchPress={() => setShowSearchModal(true)}
+        onMenuPress={() => setShowSideMenu(true)}
       />
 
       <FlatList
@@ -350,6 +367,37 @@ export default function App() {
         isPlaying={isPlaying}
         playStation={playStation}
         togglePlayPause={togglePlayPause}
+        styles={styles}
+      />
+
+      {/* Side Menu */}
+      <SideMenu
+        visible={showSideMenu}
+        onClose={() => setShowSideMenu(false)}
+        onGenreSelect={handleGenreSelect}
+        onSettingsPress={handleSettingsPress}
+        styles={styles}
+      />
+
+      {/* Genre Radio Stations Modal */}
+      <GenreRadioStations
+        visible={showGenreModal}
+        onClose={() => setShowGenreModal(false)}
+        genreId={selectedGenre}
+        radioStations={radioStations}
+        currentStation={currentStation}
+        isPlaying={isPlaying}
+        playStation={playStation}
+        togglePlayPause={togglePlayPause}
+        styles={styles}
+      />
+
+      {/* Settings Modal */}
+      <Settings
+        visible={showSettings}
+        onClose={() => setShowSettings(false)}
+        volume={volume}
+        setVolume={setSafeVolume}
         styles={styles}
       />
     </View>
