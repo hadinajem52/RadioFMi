@@ -27,6 +27,7 @@ const SearchModal = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredStations, setFilteredStations] = useState([]);
   const { language } = useLanguage();
+  const isRTL = language === 'ar';
 
   useEffect(() => {
     if (searchQuery.trim() === '') {
@@ -39,17 +40,8 @@ const SearchModal = ({
         const descMatch = station.description?.toLowerCase().includes(searchLower);
         const descArMatch = station.descriptionAr?.toLowerCase().includes(searchLower);
         
-        // Handle genre as both string and array
-        let genreMatch = false;
-        if (station.genre) {
-          if (Array.isArray(station.genre)) {
-            genreMatch = station.genre.some(g => g.toLowerCase().includes(searchLower));
-          } else {
-            genreMatch = station.genre.toLowerCase().includes(searchLower);
-          }
-        }
         
-        return nameMatch || nameArMatch || descMatch || descArMatch || genreMatch;
+        return nameMatch || nameArMatch || descMatch || descArMatch;
       });
       setFilteredStations(filtered);
     }
@@ -69,32 +61,44 @@ const SearchModal = ({
 
     return (
       <TouchableOpacity
-        style={[styles.stationRow, styles.searchResultItem]}
+        style={[
+          styles.stationRow, 
+          styles.searchResultItem,
+          isRTL && {
+            flexDirection: 'row-reverse'
+          }
+        ]}
         onPress={() => handleStationPress(station)}
       >
         <Image
           source={station.image}
-          style={styles.stationIcon}
+          style={[
+            styles.stationIcon,
+            isRTL && {
+              marginRight: 0,
+              marginLeft: 15
+            }
+          ]}
           resizeMode="cover"
         />
-        <View style={styles.stationInfo}>
+        <View style={[styles.stationInfo, isRTL && styles.rtlStationInfo]}>
           <Text style={[
             styles.stationName,
-            isCurrentStation && styles.currentStationText
+            isCurrentStation && styles.currentStationText,
+            isRTL && { textAlign: 'right' }
           ]}>
             {language === 'ar' ? station.nameAr || station.name : station.name}
           </Text>
-          <Text style={styles.stationDescription}>
+          <Text style={[
+            styles.stationDescription,
+            isRTL && { textAlign: 'right' }
+          ]}>
             {language === 'ar' ? station.descriptionAr || station.description : station.description}
           </Text>
-          {station.genre && (
-            <Text style={styles.stationGenre}>
-              {Array.isArray(station.genre) ? station.genre.join(', ') : station.genre}
-            </Text>
-          )}
+
         </View>
         <TouchableOpacity
-          style={styles.searchPlayButton}
+          style={[styles.searchPlayButton, isRTL && styles.rtlSearchPlayButton]}
           onPress={() => handleStationPress(station)}
         >
           <Ionicons
@@ -118,31 +122,37 @@ const SearchModal = ({
       transparent={false}
       onRequestClose={onClose}
     >
-      <View style={styles.searchContainer}>
+      <View style={[styles.searchContainer, isRTL && styles.rtlSearchContainer]}>
         <StatusBar barStyle="dark-content" />
         
         {/* Search Header */}
-        <View style={styles.searchHeader}>
+        <View style={[styles.searchHeader, isRTL && styles.rtlSearchHeader]}>
           <TouchableOpacity
-            style={styles.searchBackButton}
+            style={[styles.searchBackButton, isRTL && styles.rtlSearchBackButton]}
             onPress={onClose}
           >
-            <Ionicons name="arrow-back" size={24} color="#333" />
+            <Ionicons name={isRTL ? "arrow-forward" : "arrow-back"} size={24} color="#333" />
           </TouchableOpacity>
           
-          <View style={styles.searchInputContainer}>
-            <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
+          <View style={[styles.searchInputContainer, isRTL && styles.rtlSearchInputContainer]}>
+            <Ionicons 
+              name="search" 
+              size={20} 
+              color="#666" 
+              style={[styles.searchIcon, isRTL && styles.rtlSearchIcon]} 
+            />
             <TextInput
-              style={styles.searchInput}
+              style={[styles.searchInput, isRTL && styles.rtlSearchInput]}
               placeholder={getLocalizedString('searchPlaceholder', language)}
               value={searchQuery}
               onChangeText={setSearchQuery}
               autoFocus={true}
               placeholderTextColor="#999"
+              textAlign={isRTL ? 'right' : 'left'}
             />
             {searchQuery.length > 0 && (
               <TouchableOpacity
-                style={styles.clearButton}
+                style={[styles.clearButton, isRTL && styles.rtlClearButton]}
                 onPress={clearSearch}
               >
                 <Ionicons name="close-circle" size={20} color="#666" />
@@ -152,9 +162,9 @@ const SearchModal = ({
         </View>
 
         {/* Search Results */}
-        <View style={styles.searchResults}>
+        <View style={[styles.searchResults, isRTL && styles.rtlSearchResults]}>
           {searchQuery.trim() !== '' && (
-            <Text style={styles.searchResultsCount}>
+            <Text style={[styles.searchResultsCount, isRTL && styles.rtlSearchResultsCount]}>
               {filteredStations.length} {getLocalizedString('searchResultsCount', language)}
             </Text>
           )}
@@ -164,13 +174,15 @@ const SearchModal = ({
             renderItem={renderStationItem}
             keyExtractor={(item) => item.id.toString()}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.searchResultsList}
+            contentContainerStyle={[styles.searchResultsList, isRTL && styles.rtlSearchResultsList]}
             ListEmptyComponent={
               searchQuery.trim() !== '' && (
-                <View style={styles.noResultsContainer}>
+                <View style={[styles.noResultsContainer, isRTL && styles.rtlNoResultsContainer]}>
                   <Ionicons name="radio-outline" size={48} color="#ccc" />
-                  <Text style={styles.noResultsText}>{getLocalizedString('noResults', language)}</Text>
-                  <Text style={styles.noResultsSubtext}>
+                  <Text style={[styles.noResultsText, isRTL && styles.rtlNoResultsText]}>
+                    {getLocalizedString('noResults', language)}
+                  </Text>
+                  <Text style={[styles.noResultsSubtext, isRTL && styles.rtlNoResultsSubtext]}>
                     {getLocalizedString('noResultsSubtext', language)}
                   </Text>
                 </View>

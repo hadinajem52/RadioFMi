@@ -24,6 +24,7 @@ const GenreRadioStations = ({
   styles 
 }) => {
   const { language } = useLanguage();
+  const isRTL = language === 'ar';
   
   const getGenreInfo = (id) => {
     switch (id) {
@@ -107,30 +108,44 @@ const GenreRadioStations = ({
 
     return (
       <TouchableOpacity
-        style={[styles.stationRow, styles.genreStationItem]}
+        style={[
+          styles.stationRow, 
+          styles.genreStationItem,
+          isRTL && {
+            flexDirection: 'row-reverse'
+          }
+        ]}
         onPress={() => handleStationPress(station)}
       >
         <Image
           source={station.image}
-          style={styles.stationIcon}
+          style={[
+            styles.stationIcon,
+            isRTL && {
+              marginRight: 0,
+              marginLeft: 15
+            }
+          ]}
           resizeMode="cover"
         />
-        <View style={styles.stationInfo}>
+        <View style={[styles.stationInfo, isRTL && styles.rtlStationInfo]}>
           <Text style={[
             styles.stationName,
-            isCurrentStation && styles.currentStationText
+            isCurrentStation && styles.currentStationText,
+            isRTL && { textAlign: 'right' }
           ]}>
-            {station.name}
+            {isRTL ? (station.nameAr || station.name) : station.name}
           </Text>
-          <Text style={styles.stationDescription}>{station.description}</Text>
-          {station.genre && (
-            <Text style={styles.stationGenre}>
-              {Array.isArray(station.genre) ? station.genre.join(', ') : station.genre}
-            </Text>
-          )}
+          <Text style={[
+            styles.stationDescription,
+            isRTL && { textAlign: 'right' }
+          ]}>
+            {isRTL ? (station.descriptionAr || station.description) : station.description}
+          </Text>
+
         </View>
         <TouchableOpacity
-          style={styles.genrePlayButton}
+          style={[styles.genrePlayButton, isRTL && styles.rtlGenrePlayButton]}
           onPress={() => handleStationPress(station)}
         >
           <Ionicons
@@ -150,11 +165,11 @@ const GenreRadioStations = ({
       transparent={false}
       onRequestClose={onClose}
     >
-      <View style={styles.genreContainer}>
+      <View style={[styles.genreContainer, isRTL && styles.rtlGenreContainer]}>
         <StatusBar barStyle="dark-content" />
         
         {/* Header */}
-        <View style={styles.genreHeader}>
+        <View style={[styles.genreHeader, isRTL && styles.rtlGenreHeader]}>
           <TouchableOpacity
             style={styles.genreBackButton}
             onPress={onClose}
@@ -162,14 +177,16 @@ const GenreRadioStations = ({
             <Ionicons name="arrow-back" size={24} color="#333" />
           </TouchableOpacity>
           
-          <View style={styles.genreHeaderContent}>
+          <View style={[styles.genreHeaderContent, isRTL && styles.rtlGenreHeaderContent]}>
             <Ionicons 
               name={genreInfo.icon} 
               size={20} 
               color="#666" 
-              style={styles.genreHeaderIcon}
+              style={[styles.genreHeaderIcon, isRTL && styles.rtlGenreHeaderIcon]}
             />
-            <Text style={styles.genreHeaderTitle}>{genreInfo.name}</Text>
+            <Text style={[styles.genreHeaderTitle, isRTL && styles.rtlGenreHeaderTitle]}>
+              {genreInfo.name}
+            </Text>
           </View>
           
           <View style={{ width: 24 }} />
@@ -177,14 +194,16 @@ const GenreRadioStations = ({
 
         {/* Genre Description */}
         {genreInfo.description && (
-          <View style={styles.genreDescriptionContainer}>
-            <Text style={styles.genreDescription}>{genreInfo.description}</Text>
+          <View style={[styles.genreDescriptionContainer, isRTL && styles.rtlGenreDescriptionContainer]}>
+            <Text style={[styles.genreDescription, isRTL && styles.rtlGenreDescription]}>
+              {genreInfo.description}
+            </Text>
           </View>
         )}
 
         {/* Stations Count */}
-        <View style={styles.genreStationsCount}>
-          <Text style={styles.genreStationsCountText}>
+        <View style={[styles.genreStationsCount, isRTL && styles.rtlGenreStationsCount]}>
+          <Text style={[styles.genreStationsCountText, isRTL && styles.rtlGenreStationsCountText]}>
             {filteredStations.length} {filteredStations.length !== 1 ? getLocalizedString('stations', language) : getLocalizedString('station', language)} {getLocalizedString('stationsAvailable', language)}
           </Text>
         </View>
@@ -195,12 +214,14 @@ const GenreRadioStations = ({
           renderItem={renderStationItem}
           keyExtractor={(item) => item.id.toString()}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.genreStationsList}
+          contentContainerStyle={[styles.genreStationsList, isRTL && styles.rtlGenreStationsList]}
           ListEmptyComponent={
-            <View style={styles.noStationsContainer}>
+            <View style={[styles.noStationsContainer, isRTL && styles.rtlNoStationsContainer]}>
               <Ionicons name="radio-outline" size={48} color="#ccc" />
-              <Text style={styles.noStationsText}>{getLocalizedString('noStations', language)}</Text>
-              <Text style={styles.noStationsSubtext}>
+              <Text style={[styles.noStationsText, isRTL && styles.rtlNoStationsText]}>
+                {getLocalizedString('noStations', language)}
+              </Text>
+              <Text style={[styles.noStationsSubtext, isRTL && styles.rtlNoStationsSubtext]}>
                 {getLocalizedString('noStationsSubtext', language)}
               </Text>
             </View>
