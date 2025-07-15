@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   View, 
   Text, 
@@ -10,6 +10,9 @@ import {
   Alert
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useLanguage } from '../contexts/LanguageContext';
+import { getLocalizedString } from '../localization/strings';
 
 const Settings = ({ 
   visible, 
@@ -18,9 +21,67 @@ const Settings = ({
   setVolume,
   styles 
 }) => {
+  const { language, changeLanguage } = useLanguage();
   const [autoPlay, setAutoPlay] = useState(true);
   const [notifications, setNotifications] = useState(true);
   const [highQuality, setHighQuality] = useState(false);
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      const savedAutoPlay = await AsyncStorage.getItem('autoPlay');
+      const savedNotifications = await AsyncStorage.getItem('notifications');
+      const savedHighQuality = await AsyncStorage.getItem('highQuality');
+
+      if (savedAutoPlay !== null) setAutoPlay(JSON.parse(savedAutoPlay));
+      if (savedNotifications !== null) setNotifications(JSON.parse(savedNotifications));
+      if (savedHighQuality !== null) setHighQuality(JSON.parse(savedHighQuality));
+    };
+
+    loadSettings();
+  }, []);
+
+  const saveSetting = async (key, value) => {
+    await AsyncStorage.setItem(key, JSON.stringify(value));
+  };
+
+  const handleAutoPlayChange = (value) => {
+    setAutoPlay(value);
+    saveSetting('autoPlay', value);
+  };
+
+  const handleNotificationsChange = (value) => {
+    setNotifications(value);
+    saveSetting('notifications', value);
+  };
+
+  const handleHighQualityChange = (value) => {
+    setHighQuality(value);
+    saveSetting('highQuality', value);
+  };
+
+  const handleLanguageChange = (newLanguage) => {
+    changeLanguage(newLanguage);
+  };
+
+  const showLanguageSelector = () => {
+    const text = {
+      title: getLocalizedString('selectLanguage', language),
+      subtitle: getLocalizedString('selectLanguageSubtitle', language),
+      english: getLocalizedString('english', language),
+      arabic: getLocalizedString('arabic', language),
+      cancel: getLocalizedString('cancel', language)
+    };
+
+    Alert.alert(
+      text.title,
+      text.subtitle,
+      [
+        { text: text.english, onPress: () => handleLanguageChange('en') },
+        { text: text.arabic, onPress: () => handleLanguageChange('ar') },
+        { text: text.cancel, style: 'cancel' }
+      ]
+    );
+  };
 
   const handleVolumeChange = (value) => {
     if (setVolume) {
@@ -29,55 +90,97 @@ const Settings = ({
   };
 
   const showAbout = () => {
-    Alert.alert(
-      'About Radio FM',
-      'Radio FM - Lebanese Radio Stations\nVersion 1.0.0\n\nEnjoy listening to your favorite Lebanese radio stations.',
-      [{ text: 'OK' }]
-    );
+    const text = {
+      title: getLocalizedString('aboutTitle', language),
+      content: getLocalizedString('aboutContent', language),
+      button: getLocalizedString('ok', language)
+    };
+
+    Alert.alert(text.title, text.content, [{ text: text.button }]);
   };
+
+  const getLanguageDisplayName = (lang) => {
+    switch (lang) {
+      case 'en':
+        return 'English';
+      case 'ar':
+        return 'العربية';
+      default:
+        return 'English';
+    }
+  };
+
+  const strings = {
+    settings: getLocalizedString('settings', language),
+    audio: getLocalizedString('audio', language),
+    general: getLocalizedString('general', language),
+    autoPlay: getLocalizedString('autoPlay', language),
+    autoPlaySub: getLocalizedString('autoPlaySub', language),
+    notifications: getLocalizedString('notifications', language),
+    notificationsSub: getLocalizedString('notificationsSub', language),
+    quality: getLocalizedString('quality', language),
+    qualitySub: getLocalizedString('qualitySub', language),
+    language: getLocalizedString('language', language),
+    languageSub: getLocalizedString('languageSub', language),
+    about: getLocalizedString('about', language),
+    aboutSub: getLocalizedString('aboutSub', language),
+    volume: getLocalizedString('volume', language)
+  };
+
+  const t = strings;
 
   const settingsItems = [
     {
       id: 'volume',
-      title: 'Volume',
-      subtitle: `${Math.round((volume || 1) * 100)}%`,
+      title: t.volume,
+      subtitle: '',
       type: 'slider',
-      icon: 'volume-medium-outline'
+      icon: 'volume-medium-outline',
+      value: volume,
+      onValueChange: handleVolumeChange
     },
     {
       id: 'autoplay',
-      title: 'Auto-play next station',
-      subtitle: 'Automatically play next station when current ends',
+      title: t.autoPlay,
+      subtitle: t.autoPlaySub,
       type: 'switch',
       icon: 'play-circle-outline',
       value: autoPlay,
-      onValueChange: setAutoPlay
+      onValueChange: handleAutoPlayChange
     },
     {
       id: 'notifications',
-      title: 'Notifications',
-      subtitle: 'Show notifications for now playing',
+      title: t.notifications,
+      subtitle: t.notificationsSub,
       type: 'switch',
       icon: 'notifications-outline',
       value: notifications,
-      onValueChange: setNotifications
+      onValueChange: handleNotificationsChange
     },
     {
       id: 'quality',
-      title: 'High Quality Audio',
-      subtitle: 'Use higher bitrate streams when available',
+      title: t.quality,
+      subtitle: t.qualitySub,
       type: 'switch',
       icon: 'musical-note-outline',
       value: highQuality,
-      onValueChange: setHighQuality
+      onValueChange: handleHighQualityChange
     }
   ];
 
   const actionItems = [
     {
+      id: 'language',
+      title: t.language,
+      subtitle: t.languageSub,
+      icon: 'language-outline',
+      onPress: showLanguageSelector,
+      value: getLanguageDisplayName(language)
+    },
+    {
       id: 'about',
-      title: 'About',
-      subtitle: 'App information and version',
+      title: t.about,
+      subtitle: t.aboutSub,
       icon: 'information-circle-outline',
       onPress: showAbout
     }
@@ -179,7 +282,12 @@ const Settings = ({
           <Text style={styles.settingsItemSubtitle}>{item.subtitle}</Text>
         </View>
       </View>
-      <Ionicons name="chevron-forward" size={20} color="#ccc" />
+      <View style={styles.settingsItemRight}>
+        {item.value && (
+          <Text style={styles.settingsItemValue}>{item.value}</Text>
+        )}
+        <Ionicons name="chevron-forward" size={20} color="#ccc" />
+      </View>
     </TouchableOpacity>
   );
 
@@ -202,7 +310,7 @@ const Settings = ({
             <Ionicons name="arrow-back" size={24} color="#333" />
           </TouchableOpacity>
           
-          <Text style={styles.settingsHeaderTitle}>Settings</Text>
+          <Text style={styles.settingsHeaderTitle}>{t.settings}</Text>
           
           <View style={{ width: 24 }} />
         </View>
@@ -210,13 +318,13 @@ const Settings = ({
         <ScrollView style={styles.settingsContent}>
           {/* Audio Settings */}
           <View style={styles.settingsSection}>
-            <Text style={styles.settingsSectionTitle}>Audio</Text>
+            <Text style={styles.settingsSectionTitle}>{t.audio}</Text>
             {settingsItems.map(renderSettingItem)}
           </View>
 
           {/* General Settings */}
           <View style={styles.settingsSection}>
-            <Text style={styles.settingsSectionTitle}>General</Text>
+            <Text style={styles.settingsSectionTitle}>{t.general}</Text>
             {actionItems.map(renderActionItem)}
           </View>
         </ScrollView>

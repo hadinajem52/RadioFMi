@@ -1,8 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, Modal, StatusBar, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useLanguage } from '../contexts/LanguageContext';
+import { getLocalizedString } from '../localization/strings';
 
 const SideMenu = ({ visible, onClose, onGenreSelect, onSettingsPress, styles }) => {
+  const { language } = useLanguage();
   const slideAnim = useRef(new Animated.Value(-280)).current; // Start off-screen to the left
   const opacityAnim = useRef(new Animated.Value(0)).current;
   const [modalVisible, setModalVisible] = React.useState(visible);
@@ -48,9 +51,9 @@ const SideMenu = ({ visible, onClose, onGenreSelect, onSettingsPress, styles }) 
   };
 
   const genres = [
-    { id: 'news', name: 'News & Talk', icon: 'newspaper-outline' },
-    { id: 'music', name: 'Music & Entertainment', icon: 'musical-notes-outline' },
-    { id: 'religious', name: 'Religious', icon: 'heart-outline' }
+    { id: 'news', name: getLocalizedString('newsAndTalk', language), icon: 'newspaper-outline' },
+    { id: 'music', name: getLocalizedString('musicAndEntertainment', language), icon: 'musical-notes-outline' },
+    { id: 'religious', name: getLocalizedString('religious', language), icon: 'heart-outline' }
   ];
 
   const handleGenrePress = (genreId) => {
@@ -81,7 +84,7 @@ const SideMenu = ({ visible, onClose, onGenreSelect, onSettingsPress, styles }) 
           
           {/* Menu Header */}
           <View style={styles.sideMenuHeader}>
-            <Text style={styles.sideMenuTitle}>Radio FM</Text>
+            <Text style={styles.sideMenuTitle}>{getLocalizedString('appTitle', language)}</Text>
             <TouchableOpacity onPress={handleClose} style={styles.sideMenuCloseButton}>
               <Ionicons name="close" size={24} color="#333" />
             </TouchableOpacity>
@@ -89,7 +92,7 @@ const SideMenu = ({ visible, onClose, onGenreSelect, onSettingsPress, styles }) 
 
           {/* Genre Sections */}
           <View style={styles.sideMenuContent}>
-            <Text style={styles.sideMenuSectionTitle}>Browse by Genre</Text>
+            <Text style={styles.sideMenuSectionTitle}>{getLocalizedString('browseByGenre', language)}</Text>
             
             {genres.map((genre) => (
               <TouchableOpacity
@@ -122,7 +125,7 @@ const SideMenu = ({ visible, onClose, onGenreSelect, onSettingsPress, styles }) 
                 color="#666" 
                 style={styles.sideMenuItemIcon}
               />
-              <Text style={styles.sideMenuItemText}>Settings</Text>
+              <Text style={styles.sideMenuItemText}>{getLocalizedString('settings', language)}</Text>
               <Ionicons name="chevron-forward" size={20} color="#ccc" />
             </TouchableOpacity>
           </View>

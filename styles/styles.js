@@ -455,6 +455,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  settingsItemRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   settingsItemIcon: {
     marginRight: 15,
     width: 24,
@@ -471,6 +475,11 @@ const styles = StyleSheet.create({
   settingsItemSubtitle: {
     fontSize: 13,
     color: '#666',
+  },
+  settingsItemValue: {
+    fontSize: 14,
+    color: '#666',
+    marginRight: 8,
   },
   volumeSliderContainer: {
     flexDirection: 'row',
@@ -490,6 +499,59 @@ const styles = StyleSheet.create({
     height: 20,
     marginHorizontal: 1,
     borderRadius: 1.5,
+  },
+
+  // RTL Support Styles
+  rtlContainer: {
+    flexDirection: 'row-reverse',
+  },
+  rtlText: {
+    textAlign: 'right',
+    writingDirection: 'rtl',
+  },
+  rtlSection: {
+    paddingHorizontal: 20,
+    marginBottom: 30,
+  },
+  rtlSectionTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 15,
+    textAlign: 'right',
+    writingDirection: 'rtl',
+  },
+  rtlShowsContainer: {
+    flexDirection: 'row-reverse',
+    gap: 15,
+  },
+  rtlShowCard: {
+    alignItems: 'center',
+  },
+  rtlShowName: {
+    fontSize: 14,
+    color: '#666',
+    fontWeight: '500',
+    textAlign: 'center',
+    writingDirection: 'rtl',
+  },
+  rtlNoFavoritesContainer: {
+    paddingVertical: 40,
+    alignItems: 'center',
+  },
+  rtlNoFavoritesText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#999',
+    marginBottom: 5,
+    textAlign: 'center',
+    writingDirection: 'rtl',
+  },
+  rtlNoFavoritesSubtext: {
+    fontSize: 14,
+    color: '#ccc',
+    textAlign: 'center',
+    writingDirection: 'rtl',
   },
 });
 

@@ -11,6 +11,8 @@ import {
   StatusBar
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useLanguage } from '../contexts/LanguageContext';
+import { getLocalizedString } from '../localization/strings';
 
 const SearchModal = ({
   visible,
@@ -24,6 +26,7 @@ const SearchModal = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredStations, setFilteredStations] = useState([]);
+  const { language } = useLanguage();
 
   useEffect(() => {
     if (searchQuery.trim() === '') {
@@ -32,7 +35,9 @@ const SearchModal = ({
       const filtered = radioStations.filter(station => {
         const searchLower = searchQuery.toLowerCase();
         const nameMatch = station.name?.toLowerCase().includes(searchLower);
+        const nameArMatch = station.nameAr?.toLowerCase().includes(searchLower);
         const descMatch = station.description?.toLowerCase().includes(searchLower);
+        const descArMatch = station.descriptionAr?.toLowerCase().includes(searchLower);
         
         // Handle genre as both string and array
         let genreMatch = false;
@@ -44,7 +49,7 @@ const SearchModal = ({
           }
         }
         
-        return nameMatch || descMatch || genreMatch;
+        return nameMatch || nameArMatch || descMatch || descArMatch || genreMatch;
       });
       setFilteredStations(filtered);
     }
@@ -77,9 +82,11 @@ const SearchModal = ({
             styles.stationName,
             isCurrentStation && styles.currentStationText
           ]}>
-            {station.name}
+            {language === 'ar' ? station.nameAr || station.name : station.name}
           </Text>
-          <Text style={styles.stationDescription}>{station.description}</Text>
+          <Text style={styles.stationDescription}>
+            {language === 'ar' ? station.descriptionAr || station.description : station.description}
+          </Text>
           {station.genre && (
             <Text style={styles.stationGenre}>
               {Array.isArray(station.genre) ? station.genre.join(', ') : station.genre}
@@ -127,7 +134,7 @@ const SearchModal = ({
             <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
             <TextInput
               style={styles.searchInput}
-              placeholder="Search radio stations..."
+              placeholder={getLocalizedString('searchPlaceholder', language)}
               value={searchQuery}
               onChangeText={setSearchQuery}
               autoFocus={true}
@@ -148,7 +155,7 @@ const SearchModal = ({
         <View style={styles.searchResults}>
           {searchQuery.trim() !== '' && (
             <Text style={styles.searchResultsCount}>
-              {filteredStations.length} station{filteredStations.length !== 1 ? 's' : ''} found
+              {filteredStations.length} {getLocalizedString('searchResultsCount', language)}
             </Text>
           )}
           
@@ -162,9 +169,9 @@ const SearchModal = ({
               searchQuery.trim() !== '' && (
                 <View style={styles.noResultsContainer}>
                   <Ionicons name="radio-outline" size={48} color="#ccc" />
-                  <Text style={styles.noResultsText}>No stations found</Text>
+                  <Text style={styles.noResultsText}>{getLocalizedString('noResults', language)}</Text>
                   <Text style={styles.noResultsSubtext}>
-                    Try searching with different keywords
+                    {getLocalizedString('noResultsSubtext', language)}
                   </Text>
                 </View>
               )

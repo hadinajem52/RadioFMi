@@ -9,6 +9,8 @@ import {
   StatusBar 
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useLanguage } from '../contexts/LanguageContext';
+import { getLocalizedString } from '../localization/strings';
 
 const GenreRadioStations = ({ 
   visible, 
@@ -21,28 +23,34 @@ const GenreRadioStations = ({
   togglePlayPause,
   styles 
 }) => {
+  const { language } = useLanguage();
+  
   const getGenreInfo = (id) => {
     switch (id) {
       case 'news':
         return { 
-          name: 'News & Talk', 
+          name: getLocalizedString('newsAndTalk', language), 
           icon: 'newspaper-outline',
-          description: 'Stay informed with news and talk shows'
+          description: getLocalizedString('newsDescription', language)
         };
       case 'music':
         return { 
-          name: 'Music & Entertainment', 
+          name: getLocalizedString('musicAndEntertainment', language), 
           icon: 'musical-notes-outline',
-          description: 'Enjoy music and entertainment'
+          description: getLocalizedString('musicDescription', language)
         };
       case 'religious':
         return { 
-          name: 'Religious', 
+          name: getLocalizedString('religious', language), 
           icon: 'heart-outline',
-          description: 'Spiritual and religious content'
+          description: getLocalizedString('religiousDescription', language)
         };
       default:
-        return { name: 'Radio Stations', icon: 'radio-outline', description: '' };
+        return { 
+          name: getLocalizedString('lebaneseRadioStations', language), 
+          icon: 'radio-outline', 
+          description: '' 
+        };
     }
   };
 
@@ -177,7 +185,7 @@ const GenreRadioStations = ({
         {/* Stations Count */}
         <View style={styles.genreStationsCount}>
           <Text style={styles.genreStationsCountText}>
-            {filteredStations.length} station{filteredStations.length !== 1 ? 's' : ''} available
+            {filteredStations.length} {filteredStations.length !== 1 ? getLocalizedString('stations', language) : getLocalizedString('station', language)} {getLocalizedString('stationsAvailable', language)}
           </Text>
         </View>
 
@@ -191,9 +199,9 @@ const GenreRadioStations = ({
           ListEmptyComponent={
             <View style={styles.noStationsContainer}>
               <Ionicons name="radio-outline" size={48} color="#ccc" />
-              <Text style={styles.noStationsText}>No stations found</Text>
+              <Text style={styles.noStationsText}>{getLocalizedString('noStations', language)}</Text>
               <Text style={styles.noStationsSubtext}>
-                No stations available for this genre
+                {getLocalizedString('noStationsSubtext', language)}
               </Text>
             </View>
           }

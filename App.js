@@ -6,6 +6,7 @@ import {
   Alert
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 import TrackPlayer, { usePlaybackState, useProgress, State } from 'react-native-track-player';
 import { 
   setupPlayer, 
@@ -33,7 +34,8 @@ import Settings from './components/Settings';
 import radioStations from './data/radioStations';
 import styles from './styles/styles';
 
-export default function App() {
+function App() {
+  const { language } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [currentStation, setCurrentStation] = useState(null);
   const [favorites, setFavorites] = useState([]);
@@ -300,6 +302,7 @@ export default function App() {
               isPlaying={isPlaying}
               playStation={playStation}
               togglePlayPause={togglePlayPause}
+              language={language}
             />
 
             {/* Favorites Section */}
@@ -310,6 +313,7 @@ export default function App() {
               isPlaying={isPlaying}
               playStation={playStation}
               togglePlayPause={togglePlayPause}
+              language={language}
             />
 
             {/* Lebanese Radio Stations Section */}
@@ -320,6 +324,7 @@ export default function App() {
               isPlaying={isPlaying}
               playStation={playStation}
               togglePlayPause={togglePlayPause}
+              language={language}
             />
           </View>
         )}
@@ -339,6 +344,7 @@ export default function App() {
           onPress={() => setShowFullscreenPlayer(true)}
           favorites={favorites}
           toggleFavorite={toggleFavorite}
+          language={language}
         />
       )}
 
@@ -356,6 +362,7 @@ export default function App() {
         setVolume={setSafeVolume}
         favorites={favorites}
         toggleFavorite={toggleFavorite}
+        language={language}
       />
 
       {/* Search Modal */}
@@ -368,6 +375,7 @@ export default function App() {
         playStation={playStation}
         togglePlayPause={togglePlayPause}
         styles={styles}
+        language={language}
       />
 
       {/* Side Menu */}
@@ -377,6 +385,7 @@ export default function App() {
         onGenreSelect={handleGenreSelect}
         onSettingsPress={handleSettingsPress}
         styles={styles}
+        language={language}
       />
 
       {/* Genre Radio Stations Modal */}
@@ -390,6 +399,7 @@ export default function App() {
         playStation={playStation}
         togglePlayPause={togglePlayPause}
         styles={styles}
+        language={language}
       />
 
       {/* Settings Modal */}
@@ -403,3 +413,13 @@ export default function App() {
     </View>
   );
 }
+
+function AppWithProvider() {
+  return (
+    <LanguageProvider>
+      <App />
+    </LanguageProvider>
+  );
+}
+
+export default AppWithProvider;
