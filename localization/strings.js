@@ -11,6 +11,7 @@ export const strings = {
     // Player
     nowPlaying: 'Now Playing',
     liveRadio: 'Live Radio',
+    streamingQuality: 'Streaming Quality: Auto',
     
     // Search
     searchPlaceholder: 'Search radio stations...',
@@ -88,8 +89,9 @@ export const strings = {
     lebaneseRadioStations: 'محطات الراديو اللبنانية',
     
     // Player
-    nowPlaying: 'يتم تشغيله الآن',
+    nowPlaying: 'الآن على الهواء',
     liveRadio: 'راديو مباشر',
+    streamingQuality: 'جودة البث: تلقائي',
     
     // Search
     searchPlaceholder: 'البحث عن محطات الراديو...',

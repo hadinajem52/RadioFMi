@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 4,
-    marginRight: 15,
+    marginRight: 20,
   },
   playerInfo: {
     flex: 1,
@@ -300,6 +300,7 @@ const styles = StyleSheet.create({
   sideMenuItemIcon: {
     marginRight: 15,
     width: 24,
+    textAlign: 'center',
   },
   sideMenuItemText: {
     flex: 1,
@@ -312,6 +313,104 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     marginVertical: 20,
     marginHorizontal: 20,
+  },
+  sideMenuLanguageItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f8f8f8',
+  },
+  sideMenuLanguageContent: {
+    flex: 1,
+    marginLeft: 15,
+  },
+  sideMenuLanguageSubtext: {
+    fontSize: 13,
+    color: '#666',
+    marginTop: 2,
+    fontWeight: '400',
+  },
+
+  // RTL Side Menu Styles
+  rtlSideMenuContainer: {
+    width: 280,
+    backgroundColor: '#fff',
+    paddingTop: 50,
+  },
+  rtlSideMenuHeader: {
+    flexDirection: 'row-reverse',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  rtlSideMenuTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#333',
+    textAlign: 'right',
+    writingDirection: 'rtl',
+  },
+  rtlSideMenuSectionTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#999',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    paddingHorizontal: 20,
+    marginBottom: 15,
+    textAlign: 'right',
+    writingDirection: 'rtl',
+  },
+  rtlSideMenuItem: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f8f8f8',
+  },
+  rtlSideMenuItemIcon: {
+    marginLeft: 15,
+    marginRight: 0,
+    width: 24,
+    textAlign: 'center',
+  },
+  rtlSideMenuItemText: {
+    flex: 1,
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '500',
+    textAlign: 'right',
+    writingDirection: 'rtl',
+  },
+
+  // RTL Side Menu Language Styles
+  rtlSideMenuLanguageItem: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f8f8f8',
+  },
+  rtlSideMenuLanguageContent: {
+    flex: 1,
+    marginRight: 15,
+    marginLeft: 0,
+    alignItems: 'flex-end',
+  },
+  rtlSideMenuLanguageSubtext: {
+    fontSize: 13,
+    color: '#666',
+    marginTop: 2,
+    fontWeight: '400',
+    textAlign: 'right',
+    writingDirection: 'rtl',
   },
 
   // Genre Radio Stations Styles
@@ -552,6 +651,243 @@ const styles = StyleSheet.create({
     color: '#ccc',
     textAlign: 'center',
     writingDirection: 'rtl',
+  },
+
+  // RTL Settings Styles
+  rtlSettingsHeader: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 50,
+    paddingBottom: 15,
+    paddingHorizontal: 20,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  rtlSettingsHeaderTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+    textAlign: 'right',
+    writingDirection: 'rtl',
+  },
+  rtlSettingsSectionTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#999',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    paddingHorizontal: 20,
+    marginBottom: 15,
+    marginTop: 20,
+    textAlign: 'right',
+    writingDirection: 'rtl',
+  },
+  rtlSettingsItem: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f8f8f8',
+  },
+  rtlSettingsItemLeft: {
+    flex: 1,
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+  },
+  rtlSettingsItemRight: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+  },
+  rtlSettingsItemIcon: {
+    marginLeft: 15,
+    marginRight: 0,
+    width: 24,
+  },
+  rtlSettingsItemText: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  rtlSettingsItemTitle: {
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '500',
+    marginBottom: 2,
+    textAlign: 'right',
+    writingDirection: 'rtl',
+  },
+  rtlSettingsItemSubtitle: {
+    fontSize: 13,
+    color: '#666',
+    textAlign: 'right',
+    writingDirection: 'rtl',
+  },
+  rtlSettingsItemValue: {
+    fontSize: 14,
+    color: '#666',
+    marginLeft: 8,
+    marginRight: 0,
+    textAlign: 'right',
+    writingDirection: 'rtl',
+  },
+  rtlVolumeSliderContainer: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    marginRight: 15,
+    marginLeft: 0,
+  },
+
+  // Language Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  languageModal: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    width: '80%',
+    maxWidth: 320,
+    overflow: 'hidden',
+  },
+  rtlLanguageModal: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    width: '80%',
+    maxWidth: 320,
+    overflow: 'hidden',
+  },
+  languageModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  rtlLanguageModalHeader: {
+    flexDirection: 'row-reverse',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  languageModalTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+  },
+  rtlLanguageModalTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+    textAlign: 'right',
+    writingDirection: 'rtl',
+  },
+  modalCloseButton: {
+    padding: 4,
+  },
+  languageOptions: {
+    paddingVertical: 8,
+  },
+  languageOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f8f8f8',
+  },
+  rtlLanguageOption: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f8f8f8',
+  },
+  selectedLanguageOption: {
+    backgroundColor: '#f0f8ff',
+  },
+  languageOptionContent: {
+    flex: 1,
+  },
+  rtlLanguageOptionContent: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  languageOptionName: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#333',
+    marginBottom: 2,
+  },
+  rtlLanguageOptionName: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#333',
+    marginBottom: 2,
+    textAlign: 'right',
+    writingDirection: 'rtl',
+  },
+  languageOptionNative: {
+    fontSize: 14,
+    color: '#666',
+  },
+  rtlLanguageOptionNative: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'right',
+    writingDirection: 'rtl',
+  },
+  selectedLanguageOptionText: {
+    color: '#007AFF',
+  },
+  selectedLanguageOptionSubtext: {
+    color: '#007AFF',
+  },
+  
+  // Loading Screen Styles
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingContent: {
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  loadingLogo: {
+    width: 100,
+    height: 100,
+    marginBottom: 20,
+  },
+  loadingTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 8,
+  },
+  loadingSubtitle: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 40,
+    textAlign: 'center',
+  },
+  loadingSpinner: {
+    marginBottom: 20,
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
   },
 });
 

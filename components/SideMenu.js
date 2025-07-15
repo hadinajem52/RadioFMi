@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, Modal, StatusBar, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, StatusBar, Animated, Switch } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getLocalizedString } from '../localization/strings';
 
 const SideMenu = ({ visible, onClose, onGenreSelect, onSettingsPress, styles }) => {
-  const { language } = useLanguage();
+  const { language, changeLanguage } = useLanguage();
   const slideAnim = useRef(new Animated.Value(-280)).current; // Start off-screen to the left
   const opacityAnim = useRef(new Animated.Value(0)).current;
   const [modalVisible, setModalVisible] = React.useState(visible);
@@ -66,6 +66,18 @@ const SideMenu = ({ visible, onClose, onGenreSelect, onSettingsPress, styles }) 
     handleClose();
   };
 
+  const toggleLanguage = () => {
+    const newLanguage = language === 'en' ? 'ar' : 'en';
+    changeLanguage(newLanguage);
+  };
+
+  const getLanguageDisplayText = () => {
+    return language === 'en' ? 'العربية' : 'English';
+  };
+
+  // Check if current language is RTL
+  const isRTL = language === 'ar';
+
   return (
     <Modal
       visible={modalVisible}
@@ -75,7 +87,7 @@ const SideMenu = ({ visible, onClose, onGenreSelect, onSettingsPress, styles }) 
     >
       <Animated.View style={[styles.sideMenuOverlay, { opacity: opacityAnim }]}>
         <Animated.View style={[
-          styles.sideMenuContainer,
+          isRTL ? styles.rtlSideMenuContainer : styles.sideMenuContainer,
           {
             transform: [{ translateX: slideAnim }]
           }
@@ -83,8 +95,8 @@ const SideMenu = ({ visible, onClose, onGenreSelect, onSettingsPress, styles }) 
           <StatusBar barStyle="dark-content" />
           
           {/* Menu Header */}
-          <View style={styles.sideMenuHeader}>
-            <Text style={styles.sideMenuTitle}>{getLocalizedString('appTitle', language)}</Text>
+          <View style={isRTL ? styles.rtlSideMenuHeader : styles.sideMenuHeader}>
+            <Text style={isRTL ? styles.rtlSideMenuTitle : styles.sideMenuTitle}>{getLocalizedString('appTitle', language)}</Text>
             <TouchableOpacity onPress={handleClose} style={styles.sideMenuCloseButton}>
               <Ionicons name="close" size={24} color="#333" />
             </TouchableOpacity>
@@ -92,22 +104,22 @@ const SideMenu = ({ visible, onClose, onGenreSelect, onSettingsPress, styles }) 
 
           {/* Genre Sections */}
           <View style={styles.sideMenuContent}>
-            <Text style={styles.sideMenuSectionTitle}>{getLocalizedString('browseByGenre', language)}</Text>
+            <Text style={isRTL ? styles.rtlSideMenuSectionTitle : styles.sideMenuSectionTitle}>{getLocalizedString('browseByGenre', language)}</Text>
             
             {genres.map((genre) => (
               <TouchableOpacity
                 key={genre.id}
-                style={styles.sideMenuItem}
+                style={isRTL ? styles.rtlSideMenuItem : styles.sideMenuItem}
                 onPress={() => handleGenrePress(genre.id)}
               >
                 <Ionicons 
                   name={genre.icon} 
                   size={22} 
                   color="#666" 
-                  style={styles.sideMenuItemIcon}
+                  style={isRTL ? styles.rtlSideMenuItemIcon : styles.sideMenuItemIcon}
                 />
-                <Text style={styles.sideMenuItemText}>{genre.name}</Text>
-                <Ionicons name="chevron-forward" size={20} color="#ccc" />
+                <Text style={isRTL ? styles.rtlSideMenuItemText : styles.sideMenuItemText}>{genre.name}</Text>
+                <Ionicons name={isRTL ? "chevron-back" : "chevron-forward"} size={20} color="#ccc" />
               </TouchableOpacity>
             ))}
 
@@ -116,18 +128,42 @@ const SideMenu = ({ visible, onClose, onGenreSelect, onSettingsPress, styles }) 
 
             {/* Settings */}
             <TouchableOpacity
-              style={styles.sideMenuItem}
+              style={isRTL ? styles.rtlSideMenuItem : styles.sideMenuItem}
               onPress={handleSettingsPress}
             >
               <Ionicons 
                 name="settings-outline" 
                 size={22} 
                 color="#666" 
-                style={styles.sideMenuItemIcon}
+                style={isRTL ? styles.rtlSideMenuItemIcon : styles.sideMenuItemIcon}
               />
-              <Text style={styles.sideMenuItemText}>{getLocalizedString('settings', language)}</Text>
-              <Ionicons name="chevron-forward" size={20} color="#ccc" />
+              <Text style={isRTL ? styles.rtlSideMenuItemText : styles.sideMenuItemText}>{getLocalizedString('settings', language)}</Text>
+              <Ionicons name={isRTL ? "chevron-back" : "chevron-forward"} size={20} color="#ccc" />
             </TouchableOpacity>
+
+            {/* Language Switch */}
+            <View style={isRTL ? styles.rtlSideMenuLanguageItem : styles.sideMenuLanguageItem}>
+              <Ionicons 
+                name="language-outline" 
+                size={22} 
+                color="#666" 
+                style={isRTL ? styles.rtlSideMenuItemIcon : styles.sideMenuItemIcon}
+              />
+              <View style={isRTL ? styles.rtlSideMenuLanguageContent : styles.sideMenuLanguageContent}>
+                <Text style={isRTL ? styles.rtlSideMenuItemText : styles.sideMenuItemText}>
+                  {getLocalizedString('language', language)}
+                </Text>
+                <Text style={isRTL ? styles.rtlSideMenuLanguageSubtext : styles.sideMenuLanguageSubtext}>
+                  {getLanguageDisplayText()}
+                </Text>
+              </View>
+              <Switch
+                value={language === 'ar'}
+                onValueChange={toggleLanguage}
+                trackColor={{ false: '#e0e0e0', true: '#007AFF' }}
+                thumbColor="#fff"
+              />
+            </View>
           </View>
         </Animated.View>
         <TouchableOpacity 

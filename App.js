@@ -3,7 +3,10 @@ import { StatusBar } from 'expo-status-bar';
 import { 
   View, 
   FlatList, 
-  Alert
+  Alert,
+  Text,
+  ActivityIndicator,
+  Image
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
@@ -36,6 +39,7 @@ import styles from './styles/styles';
 
 function App() {
   const { language } = useLanguage();
+  const [isAppLoading, setIsAppLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [currentStation, setCurrentStation] = useState(null);
   const [favorites, setFavorites] = useState([]);
@@ -65,10 +69,11 @@ function App() {
   // Derive isPlaying from playbackState
   const isPlaying = playbackState?.state === State.Playing;
 
-  // Initialize TrackPlayer on app start
+  // Initialize app - TrackPlayer and load favorites
   useEffect(() => {
-    const initializePlayer = async () => {
+    const initializeApp = async () => {
       try {
+        // Initialize TrackPlayer
         const isSetup = await setupPlayer();
         setIsPlayerReady(isSetup);
         
@@ -108,14 +113,31 @@ function App() {
             );
           }
         });
+
+        // Load favorites from AsyncStorage
+        try {
+          const savedFavorites = await AsyncStorage.getItem('favorites');
+          if (savedFavorites) {
+            setFavorites(JSON.parse(savedFavorites));
+          }
+        } catch (error) {
+          console.error('Error loading favorites:', error);
+        }
+
+        // Simulate minimum loading time for better UX
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        // App is ready
+        setIsAppLoading(false);
         
       } catch (error) {
-        console.error('Error setting up player:', error);
+        console.error('Error setting up app:', error);
         Alert.alert('Setup Error', 'Failed to initialize audio player');
+        setIsAppLoading(false);
       }
     };
 
-    initializePlayer();
+    initializeApp();
 
     return () => {
       // Cleanup on unmount
@@ -283,14 +305,35 @@ function App() {
     <View style={styles.container}>
       <StatusBar style="light" />
 
-      {/* Header */}
-      <Header 
-        styles={styles} 
-        onSearchPress={() => setShowSearchModal(true)}
-        onMenuPress={() => setShowSideMenu(true)}
-      />
+      {/* Loading Screen */}
+      {isAppLoading ? (
+        <View style={styles.loadingContainer}>
+          <View style={styles.loadingContent}>
+            <Image 
+              source={require('./assets/icon.png')} 
+              style={styles.loadingLogo}
+              resizeMode="contain"
+            />
+            <Text style={styles.loadingTitle}>RadioFMi</Text>
+            <Text style={styles.loadingSubtitle}>Your favorite radio stations</Text>
+            <ActivityIndicator 
+              size="large" 
+              color="#007AFF" 
+              style={styles.loadingSpinner}
+            />
+            <Text style={styles.loadingText}>Loading...</Text>
+          </View>
+        </View>
+      ) : (
+        <>
+          {/* Header */}
+          <Header 
+            styles={styles} 
+            onSearchPress={() => setShowSearchModal(true)}
+            onMenuPress={() => setShowSideMenu(true)}
+          />
 
-      <FlatList
+          <FlatList
         data={[1]} // Single item to wrap all content
         renderItem={() => (
           <View>
@@ -410,6 +453,8 @@ function App() {
         setVolume={setSafeVolume}
         styles={styles}
       />
+        </>
+      )}
     </View>
   );
 }

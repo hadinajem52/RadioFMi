@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, ActivityIndicator, Modal, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useLanguage } from '../contexts/LanguageContext';
+import { getLocalizedString } from '../localization/strings';
 import StreamStatus from './StreamStatus';
 import StreamMonitor from './StreamMonitor';
 
@@ -22,8 +24,18 @@ const FullscreenPlayer = ({
   toggleFavorite
 }) => {
   const [showStreamMonitor, setShowStreamMonitor] = useState(false);
+  const { language } = useLanguage();
+  const isRTL = language === 'ar';
   
   if (!currentStation) return null;
+
+  const getStationName = (station) => {
+    return isRTL ? (station.nameAr || station.name) : station.name;
+  };
+
+  const getStationDescription = (station) => {
+    return isRTL ? (station.descriptionAr || station.description) : station.description;
+  };
 
   return (
     <Modal
@@ -41,7 +53,7 @@ const FullscreenPlayer = ({
       >
         {/* Header with close button */}
         <View style={{
-          flexDirection: 'row',
+          flexDirection: isRTL ? 'row-reverse' : 'row',
           justifyContent: 'space-between',
           alignItems: 'center',
           paddingHorizontal: 20,
@@ -54,13 +66,21 @@ const FullscreenPlayer = ({
             color: '#fff',
             fontSize: 16,
             fontWeight: '500',
+            textAlign: 'center',
+            writingDirection: isRTL ? 'rtl' : 'ltr',
           }}>
-            Now Playing
+            {getLocalizedString('nowPlaying', language)}
           </Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ 
+            flexDirection: isRTL ? 'row-reverse' : 'row', 
+            alignItems: 'center' 
+          }}>
             <TouchableOpacity
               onPress={() => setShowStreamMonitor(true)}
-              style={{ marginRight: 15 }}
+              style={{ 
+                marginRight: isRTL ? 0 : 15,
+                marginLeft: isRTL ? 15 : 0 
+              }}
             >
               <Ionicons name="analytics" size={22} color="rgba(255,255,255,0.8)" />
             </TouchableOpacity>
@@ -115,16 +135,18 @@ const FullscreenPlayer = ({
             fontWeight: 'bold',
             textAlign: 'center',
             marginBottom: 8,
+            writingDirection: isRTL ? 'rtl' : 'ltr',
           }}>
-            {currentStation.name}
+            {getStationName(currentStation)}
           </Text>
           <Text style={{
             color: 'rgba(255,255,255,0.8)',
             fontSize: 16,
             textAlign: 'center',
             marginBottom: 20,
+            writingDirection: isRTL ? 'rtl' : 'ltr',
           }}>
-            {currentStation.description}
+            {getStationDescription(currentStation)}
           </Text>
 
           {/* Enhanced Stream Status */}
@@ -153,13 +175,13 @@ const FullscreenPlayer = ({
 
           {/* Connection Quality Indicator */}
           <View style={{
-            flexDirection: 'row',
+            flexDirection: isRTL ? 'row-reverse' : 'row',
             alignItems: 'center',
             justifyContent: 'center',
             marginBottom: 20,
           }}>
             <View style={{
-              flexDirection: 'row',
+              flexDirection: isRTL ? 'row-reverse' : 'row',
               alignItems: 'center',
               backgroundColor: 'rgba(255,255,255,0.1)',
               paddingHorizontal: 10,
@@ -170,10 +192,12 @@ const FullscreenPlayer = ({
               <Text style={{
                 color: 'rgba(255,255,255,0.8)',
                 fontSize: 12,
-                marginLeft: 4,
+                marginLeft: isRTL ? 0 : 4,
+                marginRight: isRTL ? 4 : 0,
                 fontWeight: '500',
+                writingDirection: isRTL ? 'rtl' : 'ltr',
               }}>
-                Streaming Quality: Auto
+                {getLocalizedString('streamingQuality', language)}
               </Text>
             </View>
           </View>
@@ -186,7 +210,7 @@ const FullscreenPlayer = ({
         }}>
           {/* Main Controls */}
           <View style={{
-            flexDirection: 'row',
+            flexDirection: isRTL ? 'row-reverse' : 'row',
             justifyContent: 'center',
             alignItems: 'center',
             marginBottom: 30,
@@ -200,10 +224,11 @@ const FullscreenPlayer = ({
                 backgroundColor: 'rgba(255,255,255,0.2)',
                 justifyContent: 'center',
                 alignItems: 'center',
-                marginRight: 30,
+                marginRight: isRTL ? 0 : 30,
+                marginLeft: isRTL ? 30 : 0,
               }}
             >
-              <Ionicons name="play-skip-back" size={24} color="#fff" />
+              <Ionicons name={isRTL ? "play-skip-forward" : "play-skip-back"} size={24} color="#fff" />
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -245,17 +270,18 @@ const FullscreenPlayer = ({
                 backgroundColor: 'rgba(255,255,255,0.2)',
                 justifyContent: 'center',
                 alignItems: 'center',
-                marginLeft: 30,
+                marginLeft: isRTL ? 0 : 30,
+                marginRight: isRTL ? 30 : 0,
               }}
             >
-              <Ionicons name="play-skip-forward" size={24} color="#fff" />
+              <Ionicons name={isRTL ? "play-skip-back" : "play-skip-forward"} size={24} color="#fff" />
             </TouchableOpacity>
           </View>
 
           {/* Volume Control */}
           {volume !== undefined && setVolume && (
             <View style={{
-              flexDirection: 'row',
+              flexDirection: isRTL ? 'row-reverse' : 'row',
               alignItems: 'center',
               justifyContent: 'center',
               marginTop: 20,

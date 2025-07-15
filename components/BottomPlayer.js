@@ -3,22 +3,45 @@ import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-na
 import { Ionicons } from '@expo/vector-icons';
 import StreamStatus from './StreamStatus';
 import { useLanguage } from '../contexts/LanguageContext';
+import { getLocalizedString } from '../localization/strings';
 
 const BottomPlayer = ({ styles, currentStation, isPlaying, isLoading, togglePlayPause, onPress, favorites, toggleFavorite }) => {
   const { language } = useLanguage();
+  const isRTL = language === 'ar';
+
+  const getStationName = (station) => {
+    return isRTL ? (station.nameAr || station.name) : station.name;
+  };
 
   return (
-    <TouchableOpacity style={styles.bottomPlayer} onPress={onPress} activeOpacity={0.8}>
+    <TouchableOpacity 
+      style={[styles.bottomPlayer, {
+        flexDirection: isRTL ? 'row-reverse' : 'row',
+      }]} 
+      onPress={onPress} 
+      activeOpacity={0.8}
+    >
       <Image 
         source={currentStation.image} 
         style={styles.playerIcon}
         resizeMode="contain"
       />
-      <View style={styles.playerInfo}>
-        <Text style={styles.playerStationName}>
-          {language === 'ar' ? currentStation.nameAr || currentStation.name : currentStation.name}
+      <View style={[styles.playerInfo, {
+        flex: 1,
+        alignItems: isRTL ? 'flex-end' : 'flex-start',
+        justifyContent: 'center',
+      }]}>
+        <Text style={[styles.playerStationName, {
+          textAlign: isRTL ? 'right' : 'left',
+          writingDirection: isRTL ? 'rtl' : 'ltr',
+        }]}>
+          {getStationName(currentStation)}
         </Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
+        <View style={{ 
+          flexDirection: isRTL ? 'row-reverse' : 'row', 
+          alignItems: 'center', 
+          marginTop: 2,
+        }}>
           <StreamStatus 
             currentStation={currentStation}
             isPlaying={isPlaying}
@@ -27,13 +50,24 @@ const BottomPlayer = ({ styles, currentStation, isPlaying, isLoading, togglePlay
             showText={true}
             textColor="#rgba(255,255,255,0.8)"
             iconColor="#fff"
-            style={{ marginRight: 8 }}
+            style={{ 
+              marginRight: isRTL ? 0 : 8,
+              marginLeft: isRTL ? 8 : 0 
+            }}
           />
-          <Text style={styles.playerDescription}>Live Radio</Text>
+          <Text style={[styles.playerDescription, {
+            textAlign: isRTL ? 'right' : 'left',
+            writingDirection: isRTL ? 'rtl' : 'ltr',
+          }]}>
+            {getLocalizedString('liveRadio', language)}
+          </Text>
         </View>
       </View>
       <TouchableOpacity
-        style={styles.favoriteButton}
+        style={[styles.favoriteButton, {
+          marginRight: isRTL ? 0 : 10,
+          marginLeft: isRTL ? 10 : 0,
+        }]}
         onPress={(e) => {
           e.stopPropagation();
           toggleFavorite(currentStation);
