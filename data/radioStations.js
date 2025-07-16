@@ -151,7 +151,7 @@ const radioStations = [
     description: 'Oldies',
     descriptionAr: 'أغاني قديمة',
     color: ['#7D3C98', '#8E44AD'],
-    image: require('../radioimg/souvenirsradio.png'),
+    image: require('../radioimg/souvenire.png'),
     genre: 'Music & Entertainment'
   },
   {
@@ -162,7 +162,7 @@ const radioStations = [
     description: 'Variety',
     descriptionAr: 'منوعات',
     color: ['#34495E', '#5D6D7E'],
-    image: require('../radioimg/ibmradio.png'),
+    image: require('../radioimg/ibmmradio.png'),
     genre: 'Music & Entertainment'
   },
   {
@@ -173,7 +173,7 @@ const radioStations = [
     description: 'Arabic Music',
     descriptionAr: 'موسيقى عربية',
     color: ['#B7950B', '#D4AC0D'],
-    image: require('../radioimg/alhaan.png'),
+    image: require('../radioimg/alhann1.png'),
     genre: 'Music & Entertainment'
   },
   {
@@ -206,18 +206,18 @@ const radioStations = [
     description: 'صوت المدى',
     descriptionAr: 'صوت المدى',
     color: ['#45B7D1', '#96C93D'],
-    image: require('../radioimg/sawtelghad.png'), // Using sawtelghad as placeholder
+    image: require('../radioimg/elmada.png'),
     genre: 'Music & Entertainment'
   },
   {
     id: 20,
     name: 'The Vibe Radio',
     nameAr: 'ذا ڤايب راديو',
-    url: 'https://stream-162.zeno.fm/zr736mbgqrhvv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJ6cjczNm1iZ3FyaHZ2IiwiaG9zdCI6InN0cmVhbS0xNjIuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6IlNQdnlURWxSUzNtTzRoQzZBUUFjU0EiLCJpYXQiOjE3NTE4MjcyMTksImV4cCI6MTc1MTgyNzI3OX0.jm5FkL3UZcjQTRY46nVl9-PhSBS0sHK3wE0nNXqDXLY',
+    url: 'https://stream-160.zeno.fm/zr736mbgqrhvv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJ6cjczNm1iZ3FyaHZ2IiwiaG9zdCI6InN0cmVhbS0xNjAuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6Ik9ybmQwRmpUUlJlQWlBSy01SGZhbkEiLCJpYXQiOjE3NTI2ODExNzcsImV4cCI6MTc1MjY4MTIzN30.2fdSJ37_6fcIfWvg5rzo5KByEEyomq5ityB-mWZKJOo',
     description: 'Hip-Hop, R&B',
     descriptionAr: 'هيب هوب، آر آند بي',
     color: ['#2C3E50', '#34495E'],
-    image: require('../radioimg/mixfm.png'), // Using mixfm as placeholder
+    image: require('../radioimg/thevibe.png'),
     genre: 'Music & Entertainment'
   },
   {
@@ -263,7 +263,7 @@ const radioStations = [
     description: 'Pop, News, Folk',
     descriptionAr: 'بوب، أخبار، فولكلور',
     color: ['#17A2B8', '#138496'],
-    image: require('../radioimg/sawtelghad.png'), // Using sawtelghad as placeholder
+    image: require('../radioimg/sotelshaeb.png'),
     genre: 'News & Talk'
   },
   {
@@ -298,7 +298,7 @@ const radioStations = [
     description: 'Christian, Talk',
     descriptionAr: 'مسيحي، برامج حوارية',
     color: ['#007BFF', '#0056B3'],
-    image: require('../radioimg/voixduliban.png'), // Using voixduliban as placeholder
+    image: require('../radioimg/voiceofcharity.png'),
     genre: 'Religious'
   },
   {
@@ -309,7 +309,7 @@ const radioStations = [
     description: 'Islamic Content',
     descriptionAr: 'محتوى إسلامي',
     color: ['#28A745', '#155724'],
-    image: require('../radioimg/sotaalhoda.png'),
+    image: require('../radioimg/sawtelhoda.jpg'),
     genre: 'Religious'
   },
   {
@@ -320,7 +320,7 @@ const radioStations = [
     description: 'Quranic Recitations',
     descriptionAr: 'تلاوات قرآنية',
     color: ['#198754', '#0F5132'],
-    image: require('../radioimg/ayat.png'),
+    image: require('../radioimg/ayaat.png'),
     genre: 'Religious'
   },
   {
@@ -333,6 +333,391 @@ const radioStations = [
     color: ['#FF6B6B', '#FF8E8E'],
     image: require('../radioimg/alnour.png'),
     genre: ['Religious', 'News & Talk']
+  },
+  {
+    id: 31,
+    name: 'Ashohra Radio',
+    nameAr: 'راديو الشهرة',
+    url: 'https://cp9.serverse.com/proxy/fzqxpbgi/stream',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#FF6B6B', '#FF8E8E'],
+    image: require('../radioimg/ashohra.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 32,
+    name: 'Albal Radio',
+    nameAr: 'راديو البال',
+    url: 'https://albal-lbnet2.radioca.st/stream',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#4ECDC4', '#44A08D'],
+    image: require('../radioimg/Albal.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 33,
+    name: 'Beirut Nights',
+    nameAr: 'ليالي بيروت',
+    url: 'https://stream1.rcast.net/67679',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#9B59B6', '#8E44AD'],
+    image: require('../radioimg/beirutnights.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 34,
+    name: 'Rahbaniyat',
+    nameAr: 'الرهبانيات',
+    url: 'https://stream-162.zeno.fm/ctmapun6ot5vv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJjdG1hcHVuNm90NXZ2IiwiaG9zdCI6InN0cmVhbS0xNjIuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6Im5uUXNqY3g4Uk5PV21mWFRMYjcwQkEiLCJpYXQiOjE3NTI2ODEwNzIsImV4cCI6MTc1MjY4MTEzMn0.8CygGOxyKmhysXFCODWBDK4xMfEoo_w74JadZ16tAgs',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#45B7D1', '#96C93D'],
+    image: require('../radioimg/rahbaniyat.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 35,
+    name: 'Sawt Al Hob',
+    nameAr: 'صوت الحب',
+    url: 'https://stream-157.zeno.fm/0b97ef7rxchvv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiIwYjk3ZWY3cnhjaHZ2IiwiaG9zdCI6InN0cmVhbS0xNTcuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6IkQ5N0pnYlNVU05Tc0ZvZzluUWNRS3ciLCJpYXQiOjE3NTI2ODExMTEsImV4cCI6MTc1MjY4MTE3MX0.jQJKPNn4KOxsTAcAyJqRwxbwGJoJ6l-YgNuVGxbaDAo',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#E74C3C', '#C0392B'],
+    image: require('../radioimg/sawtalhob.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 36,
+    name: 'Middle East Radio International',
+    nameAr: 'راديو الشرق الأوسط الدولي',
+    url: 'https://listen.radioking.com/radio/343456/stream/392077',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#F39C12', '#E67E22'],
+    image: require('../radioimg/middeast.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 37,
+    name: 'Flashback Radio',
+    nameAr: 'راديو فلاش باك',
+    url: 'https://stream-172.zeno.fm/p84ztwx4ynhvv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJwODR6dHd4NHluaHZ2IiwiaG9zdCI6InN0cmVhbS0xNzIuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6Ik05c1EyLUxUU2VlcTU3TDhfSjhURnciLCJpYXQiOjE3NTI2ODEyNzUsImV4cCI6MTc1MjY4MTMzNX0.DUrGALiHB0UY-nUd5uoDmqeNWNpxrRXcQUTTdchd0mM',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#8E44AD', '#9B59B6'],
+    image: require('../radioimg/flashback.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 38,
+    name: 'Radio Liban',
+    nameAr: 'راديو لبنان',
+    url: 'https://media2.streambrothers.com:2020/stream/8194',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#16A085', '#1ABC9C'],
+    image: require('../radioimg/radioliban.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 39,
+    name: 'Voice of Grace',
+    nameAr: 'صوت النعمة',
+    url: 'https://securestreams5.reliastream.com:1820/;',
+    description: 'Christian',
+    descriptionAr: 'مسيحي',
+    color: ['#27AE60', '#2ECC71'],
+    image: require('../radioimg/vograce.png'),
+    genre: 'Religious'
+  },
+  {
+    id: 40,
+    name: 'Sabah Radio',
+    nameAr: 'راديو صباح',
+    url: 'https://stream-160.zeno.fm/3p1ec6shguhvv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiIzcDFlYzZzaGd1aHZ2IiwiaG9zdCI6InN0cmVhbS0xNjAuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6IkFmeXgwMkYwUkVLb0VaUjR4akJjV1EiLCJpYXQiOjE3NTI2ODE0MzksImV4cCI6MTc1MjY4MTQ5OX0.0i6pFu315d7eZxLia1DtaIp-etZhqhvbBz7lF1a6a9I',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#2980B9', '#3498DB'],
+    image: require('../radioimg/sabah.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 41,
+    name: 'Radio Reve',
+    nameAr: 'راديو ريف',
+    url: 'https://eu9.fastcast4u.com/proxy/revelebanon?mp=/1',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#D35400', '#E67E22'],
+    image: require('../radioimg/revee.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 42,
+    name: 'Next Radio',
+    nameAr: 'راديو نكست',
+    url: 'https://stream-176.zeno.fm/uwe0t9g52s8uv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJ1d2UwdDlnNTJzOHV2IiwiaG9zdCI6InN0cmVhbS0xNzYuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6IkR5T2h5RlkyUllDZDZsNnZPMFJfS3ciLCJpYXQiOjE3NTI2ODE1NzIsImV4cCI6MTc1MjY4MTYzMn0.07n_s45hoih4noivnDSyzES5NmlVtpgha-WrEjXwCz0',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#A569BD', '#BB8FCE'],
+    image: require('../radioimg/next.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 43,
+    name: 'Matrix FM',
+    nameAr: 'راديو ماتريكس',
+    url: 'https://play.matrixfmlebanon.com:8003/;stream.mp3',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#E74C3C', '#F1948A'],
+    image: require('../radioimg/matrix.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 44,
+    name: 'Libano Armenia',
+    nameAr: 'لبنان أرمينيا',
+    url: 'https://c7.radioboss.fm:18299/stream',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#7D3C98', '#8E44AD'],
+    image: require('../radioimg/libano.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 45,
+    name: 'Sancta Maria',
+    nameAr: 'سانتا ماريا',
+    url: 'https://streaming.radio.co/sa7e0251a2/listen',
+    description: 'Religious',
+    descriptionAr: 'ديني',
+    color: ['#34495E', '#5D6D7E'],
+    image: require('../radioimg/sancta.png'),
+    genre: 'Religious'
+  },
+  {
+    id: 46,
+    name: 'Radio Strike',
+    nameAr: 'راديو سترايك',
+    url: 'https://stream-175.zeno.fm/zbm72tcd2d0uv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJ6Ym03MnRjZDJkMHV2IiwiaG9zdCI6InN0cmVhbS0xNzUuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6Ik5SNmxMdlA4UjZHbm1tMWRiQkRuNFEiLCJpYXQiOjE3NTI2ODE3MjksImV4cCI6MTc1MjY4MTc4OX0.79fMcuVzKhrqrKIzV51OpKMPH3HWG_DJbvV0zIlqtJo',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#B7950B', '#D4AC0D'],
+    image: require('../radioimg/strike.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 47,
+    name: 'Voix du Liban Arabe',
+    nameAr: 'صوت لبنان العربي',
+    url: 'https://stream-157.zeno.fm/eek5rvi7rxytv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJlZWs1cnZpN3J4eXR2IiwiaG9zdCI6InN0cmVhbS0xNTcuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6Im5STUtPb1J5VGVLYUs3RzAtelBtLVEiLCJpYXQiOjE3NTI2ODE4MDgsImV4cCI6MTc1MjY4MTg2OH0.LHZtacQCEefSbXjilqXpBgpJeuhtBSOpQv0MYYosfTY',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#E67E22', '#F39C12'],
+    image: require('../radioimg/vdlarabe.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 48,
+    name: 'Sawt El Majd',
+    nameAr: 'صوت المجد',
+    url: 'https://stream-178.zeno.fm/u5gbt0e73d0uv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJ1NWdidDBlNzNkMHV2IiwiaG9zdCI6InN0cmVhbS0xNzguemVuby5mbSIsInJ0dGwiOjUsImp0aSI6IktSeV9aZ1FMUTBpN0tGSW5HWlluVFEiLCJpYXQiOjE3NTI2ODE4NTAsImV4cCI6MTc1MjY4MTkxMH0.vJwpoOe88HjedW66YOM9MPmB5_tdWofe92R1twLxMWw',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#C0392B', '#E74C3C'],
+    image: require('../radioimg/majd.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 49,
+    name: 'ABC Radio',
+    nameAr: 'راديو أ ب س',
+    url: 'https://stream-156.zeno.fm/uq9wmejy9hytv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJ1cTl3bWVqeTloeXR2IiwiaG9zdCI6InN0cmVhbS0xNTYuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6IkhVd1dnVE40UmZxYndvdUU4ZWtWanciLCJpYXQiOjE3NTI2ODE4ODgsImV4cCI6MTc1MjY4MTk0OH0.irz3wDUH-1o1gCkbG6Jjr2eIElez5lVXd51M4n98aDM',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#45B7D1', '#96C93D'],
+    image: require('../radioimg/abc.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 50,
+    name: 'Star Radio',
+    nameAr: 'راديو ستار',
+    url: 'https://streaming.radio.co/saf5721deb/listen',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#148F77', '#16A085'],
+    image: require('../radioimg/starradio.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 51,
+    name: 'Fajr Radio',
+    nameAr: 'راديو فجر',
+    url: 'http://vps1.osina.cloud:9306/;',
+    description: 'Talk',
+    descriptionAr: 'برامج حوارية',
+    color: ['#17A2B8', '#138496'],
+    image: require('../radioimg/fajer.png'),
+    genre: 'News & Talk'
+  },
+  {
+    id: 52,
+    name: 'Star FM',
+    nameAr: 'ستار إف إم',
+    url: 'http://78.129.185.81:10436/;',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#6C757D', '#495057'],
+    image: require('../radioimg/starfm.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 53,
+    name: 'Radio Liban Culture',
+    nameAr: 'راديو لبنان الثقافة',
+    url: 'http://184.154.90.186:8029/stream',
+    description: 'Culture',
+    descriptionAr: 'ثقافة',
+    color: ['#28A745', '#20C997'],
+    image: require('../radioimg/libanculture.png'),
+    genre: 'News & Talk'
+  },
+  {
+    id: 54,
+    name: 'TLIG Radio',
+    nameAr: 'راديو تي إل آي جي',
+    url: 'https://stream.tligradio.org/listen/arabic/radio.mp3',
+    description: 'Religious',
+    descriptionAr: 'ديني',
+    color: ['#007BFF', '#0056B3'],
+    image: require('../radioimg/tlig.png'),
+    genre: 'Religious'
+  },
+  {
+    id: 55,
+    name: 'Radio Haramoon',
+    nameAr: 'راديو هرمون',
+    url: 'https://stream-176.zeno.fm/hhcz6xx4gnuvv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJoaGN6Nnh4NGdudXZ2IiwiaG9zdCI6InN0cmVhbS0xNzYuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6IlpsdV9KXzYwUU1TUG1XTXdNU1N2TVEiLCJpYXQiOjE3NTI2ODIxOTIsImV4cCI6MTc1MjY4MjI1Mn0.M5JaDQl1lkzAp-cyGFGCsHg-UIdSwZ8sxP-zsIY1HOw',
+    description: 'Talk',
+    descriptionAr: 'برامج حوارية',
+    color: ['#28A745', '#155724'],
+    image: require('../radioimg/haramoon.png'),
+    genre: 'News & Talk'
+  },
+  {
+    id: 56,
+    name: 'Radio Yan',
+    nameAr: 'راديو يان',
+    url: 'http://83.169.36.75:8000/stream',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#198754', '#0F5132'],
+    image: require('../radioimg/yan.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 57,
+    name: 'Vibe Lebanon Radio',
+    nameAr: 'راديو ڤايب لبنان',
+    url: 'https://a2.asurahosting.com:7380/radio.aac',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#FF6B6B', '#FF8E8E'],
+    image: require('../radioimg/vibeleb.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 58,
+    name: 'Radio New Power',
+    nameAr: 'راديو نيو باور',
+    url: 'https://stream-154.zeno.fm/x91nx8gp2uhvv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJ4OTFueDhncDJ1aHZ2IiwiaG9zdCI6InN0cmVhbS0xNTQuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6Ink5VU5rQ3dUUzZpWE1zR3M3T2dsa1EiLCJpYXQiOjE3NTI2ODIzMTQsImV4cCI6MTc1MjY4MjM3NH0.TrA008WW_RRbfRXQnYLC3AUHq5eVhlhTE0R8SFQlhAY',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#4ECDC4', '#44A08D'],
+    image: require('../radioimg/newpower.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 59,
+    name: 'X All Hits',
+    nameAr: 'إكس أول هيتس',
+    url: 'https://stream-174.zeno.fm/upoihhijqcyvv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJ1cG9paGhpanFjeXZ2IiwiaG9zdCI6InN0cmVhbS0xNzQuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6IkJPRjhQU2pqVFdPY1BqYVJYYmp2SHciLCJpYXQiOjE3NTI2ODIzNTQsImV4cCI6MTc1MjY4MjQxNH0.frQ-5VA4M8U1N2tyn-D9eBFvbLRnlYwB1Ai-At7veto',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#9B59B6', '#8E44AD'],
+    image: require('../radioimg/xallhits.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 60,
+    name: 'Radio Zahle',
+    nameAr: 'راديو زحلة',
+    url: 'https://radiozahle.net/proxy/radiozahlelive/stream',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#45B7D1', '#96C93D'],
+    image: require('../radioimg/zahle.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 61,
+    name: 'Radio Rama',
+    nameAr: 'راديو راما',
+    url: 'https://radiorama-lbnet2.radioca.st/rama',
+    description: 'Talk',
+    descriptionAr: 'برامج حوارية',
+    color: ['#E74C3C', '#C0392B'],
+    image: require('../radioimg/rama.png'),
+    genre: 'News & Talk'
+  },
+  {
+    id: 62,
+    name: 'Hit Flow FM',
+    nameAr: 'هيت فلو إف إم',
+    url: 'https://stream-173.zeno.fm/8veq8zf5ng0uv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiI4dmVxOHpmNW5nMHV2IiwiaG9zdCI6InN0cmVhbS0xNzMuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6Im1zRWFVamhYUW8tZVBYajRaMUhLX2ciLCJpYXQiOjE3NTI2ODI0NDksImV4cCI6MTc1MjY4MjUwOX0.q3vxvKUAPsh0SrKuv5aWfl4tJ4vXNH715pDDEU6Ttr0',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#F39C12', '#E67E22'],
+    image: require('../radioimg/hitflow.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 63,
+    name: 'Sawt Erzal Saadeh',
+    nameAr: 'صوت إرزال سعادة',
+    url: 'https://listen.radioking.com/radio/701414/stream/766706',
+    description: 'Talk',
+    descriptionAr: 'برامج حوارية',
+    color: ['#8E44AD', '#9B59B6'],
+    image: require('../radioimg/erzal.png'),
+    genre: 'News & Talk'
+  },
+  {
+    id: 64,
+    name: 'Star LB FM Remix',
+    nameAr: 'ستار لبنان إف إم ريميكس',
+    url: 'https://stream-154.zeno.fm/5u91z7t3afhvv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiI1dTkxejd0M2FmaHZ2IiwiaG9zdCI6InN0cmVhbS0xNTQuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6InloXzN3SWU0VEsyNG5CMmllQVpxMHciLCJpYXQiOjE3NTI2ODI1NjcsImV4cCI6MTc1MjY4MjYyN30.ZyNBiLAWM1ml2JRM6Vvsd7T_6S-RxtpG1z0PnEm1Bgs',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#16A085', '#1ABC9C'],
+    image: require('../radioimg/startlbfm.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 65,
+    name: 'Classic Rock Lebanon',
+    nameAr: 'كلاسيك روك لبنان',
+    url: 'https://stream-153.zeno.fm/k5265cgk4p8uv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJrNTI2NWNnazRwOHV2IiwiaG9zdCI6InN0cmVhbS0xNTMuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6IldEM29fS2p6UU51Zmw0a2VOMERha2ciLCJpYXQiOjE3NTI2ODI1OTgsImV4cCI6MTc1MjY4MjY1OH0._NupRx7j5sAnPV_Nl2l9o4gchwzUY7Mqt08_QYlvbNY',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#27AE60', '#2ECC71'],
+    image: require('../radioimg/classrock.png'),
+    genre: 'Music & Entertainment'
   }
 ];
 
