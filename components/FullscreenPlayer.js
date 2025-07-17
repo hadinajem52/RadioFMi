@@ -45,7 +45,7 @@ const FullscreenPlayer = ({
       onRequestClose={onClose}
     >
       <LinearGradient
-        colors={currentStation.color || ['#333', '#666']}
+        colors={['#1a1e37', '#0a0e27']}
         style={{
           flex: 1,
           paddingTop: 50,
@@ -106,23 +106,25 @@ const FullscreenPlayer = ({
           <View style={{
             width: width * 0.7,
             height: width * 0.7,
-            backgroundColor: 'rgba(255,255,255,0.1)',
-            borderRadius: 20,
+            backgroundColor: 'rgba(255,255,255,0.05)',
+            borderRadius: 30,
             justifyContent: 'center',
             alignItems: 'center',
             marginBottom: 40,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 10 },
-            shadowOpacity: 0.3,
-            shadowRadius: 20,
+            shadowColor: '#7C4DFF',
+            shadowOffset: { width: 0, height: 0 },
+            shadowOpacity: 0.6,
+            shadowRadius: 25,
             elevation: 10,
+            borderWidth: 1,
+            borderColor: 'rgba(255, 255, 255, 0.1)',
           }}>
             <Image 
               source={currentStation.image} 
               style={{
                 width: '80%',
                 height: '80%',
-                borderRadius: 15,
+                borderRadius: 20,
               }}
               resizeMode="contain"
             />
@@ -131,7 +133,7 @@ const FullscreenPlayer = ({
           {/* Station Info */}
           <Text style={{
             color: '#fff',
-            fontSize: 24,
+            fontSize: 28,
             fontWeight: 'bold',
             textAlign: 'center',
             marginBottom: 8,
@@ -140,7 +142,7 @@ const FullscreenPlayer = ({
             {getStationName(currentStation)}
           </Text>
           <Text style={{
-            color: 'rgba(255,255,255,0.8)',
+            color: 'rgba(255,255,255,0.7)',
             fontSize: 16,
             textAlign: 'center',
             marginBottom: 20,
@@ -236,26 +238,28 @@ const FullscreenPlayer = ({
                 width: 80,
                 height: 80,
                 borderRadius: 40,
-                backgroundColor: '#fff',
+                backgroundColor: 'rgba(124, 77, 255, 0.8)',
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginHorizontal: 30,
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.3,
-                shadowRadius: 8,
+                shadowColor: '#7C4DFF',
+                shadowOffset: { width: 0, height: 0 },
+                shadowOpacity: 0.8,
+                shadowRadius: 12,
                 elevation: 8,
+                borderWidth: 2,
+                borderColor: 'rgba(255, 255, 255, 0.2)',
               }}
               onPress={togglePlayPause}
               disabled={isLoading}
             >
               {isLoading ? (
-                <ActivityIndicator size="large" color="#333" />
+                <ActivityIndicator size="large" color="#fff" />
               ) : (
                 <Ionicons 
                   name={isPlaying ? "pause" : "play"} 
                   size={32} 
-                  color="#333" 
+                  color="#fff" 
                   style={{ marginLeft: isPlaying ? 0 : 3 }}
                 />
               )}
@@ -278,65 +282,7 @@ const FullscreenPlayer = ({
             </TouchableOpacity>
           </View>
 
-          {/* Volume Control */}
-          {volume !== undefined && setVolume && (
-            <View style={{
-              flexDirection: isRTL ? 'row-reverse' : 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginTop: 20,
-            }}>
-              <TouchableOpacity onPress={() => {
-                const newVolume = Math.max(0, volume - 0.1);
-                if (typeof newVolume === 'number' && !isNaN(newVolume)) {
-                  setVolume(newVolume);
-                }
-              }}>
-                <Ionicons name="volume-low" size={20} color="rgba(255,255,255,0.8)" />
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={{
-                  flex: 1,
-                  height: 40,
-                  justifyContent: 'center',
-                  marginHorizontal: 15,
-                }}
-                onPress={(e) => {
-                  try {
-                    const { locationX } = e.nativeEvent;
-                    const { width } = e.currentTarget.measure ? e.currentTarget : { width: 200 };
-                    const newVolume = Math.max(0, Math.min(1, locationX / (width || 200)));
-                    if (typeof newVolume === 'number' && !isNaN(newVolume)) {
-                      setVolume(newVolume);
-                    }
-                  } catch (error) {
-                    console.warn('Error setting volume from touch:', error);
-                  }
-                }}
-              >
-                <View style={{
-                  height: 4,
-                  backgroundColor: 'rgba(255,255,255,0.3)',
-                  borderRadius: 2,
-                }}>
-                  <View style={{
-                    width: `${Math.max(0, Math.min(100, (volume || 0) * 100))}%`,
-                    height: '100%',
-                    backgroundColor: '#fff',
-                    borderRadius: 2,
-                  }} />
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => {
-                const newVolume = Math.min(1, volume + 0.1);
-                if (typeof newVolume === 'number' && !isNaN(newVolume)) {
-                  setVolume(newVolume);
-                }
-              }}>
-                <Ionicons name="volume-high" size={20} color="rgba(255,255,255,0.8)" />
-              </TouchableOpacity>
-            </View>
-          )}
+          
         </View>
       </LinearGradient>
       

@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Image
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 import TrackPlayer, { usePlaybackState, useProgress, State } from 'react-native-track-player';
@@ -303,158 +304,165 @@ function App() {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
+      <LinearGradient
+        colors={['#0a0e27', '#1a1f3a', '#2d1b69', '#4a1c6e', '#5a2d5a']}
+        style={styles.gradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
+        <StatusBar style="light" />
 
-      {/* Loading Screen */}
-      {isAppLoading ? (
-        <View style={styles.loadingContainer}>
-          <View style={styles.loadingContent}>
-            <Image 
-              source={require('./assets/icon.png')} 
-              style={styles.loadingLogo}
-              resizeMode="contain"
-            />
-            <Text style={styles.loadingTitle}>RadioFMi</Text>
-            <Text style={styles.loadingSubtitle}>Your favorite radio stations</Text>
-            <ActivityIndicator 
-              size="large" 
-              color="#007AFF" 
-              style={styles.loadingSpinner}
-            />
-            <Text style={styles.loadingText}>Loading...</Text>
+        {/* Loading Screen */}
+        {isAppLoading ? (
+          <View style={styles.loadingContainer}>
+            <View style={styles.loadingContent}>
+              <Image 
+                source={require('./assets/icon.png')} 
+                style={styles.loadingLogo}
+                resizeMode="contain"
+              />
+              <Text style={styles.loadingTitle}>RadioFMi</Text>
+              <Text style={styles.loadingSubtitle}>Your favorite radio stations</Text>
+              <ActivityIndicator 
+                size="large" 
+                color="#7C4DFF" 
+                style={styles.loadingSpinner}
+              />
+              <Text style={styles.loadingText}>Loading...</Text>
+            </View>
           </View>
-        </View>
-      ) : (
-        <>
-          {/* Header */}
-          <Header 
-            styles={styles} 
-            onSearchPress={() => setShowSearchModal(true)}
-            onMenuPress={() => setShowSideMenu(true)}
-          />
+        ) : (
+          <>
+            <FlatList
+              data={[1]} // Single item to wrap all content
+              renderItem={() => (
+                <View>
+                  {/* Featured Radios Section */}
+                  <FeaturedRadios 
+                    styles={styles}
+                    radioStations={radioStations}
+                    currentStation={currentStation}
+                    isPlaying={isPlaying}
+                    playStation={playStation}
+                    togglePlayPause={togglePlayPause}
+                    language={language}
+                  />
 
-          <FlatList
-        data={[1]} // Single item to wrap all content
-        renderItem={() => (
-          <View>
-            {/* Featured Radios Section */}
-            <FeaturedRadios 
-              styles={styles}
-              radioStations={radioStations}
+                  {/* Favorites Section */}
+                  <Favorites 
+                    styles={styles}
+                    favorites={favorites}
+                    currentStation={currentStation}
+                    isPlaying={isPlaying}
+                    playStation={playStation}
+                    togglePlayPause={togglePlayPause}
+                    language={language}
+                  />
+
+                  {/* Lebanese Radio Stations Section */}
+                  <LebaneseRadioStations
+                    styles={styles}
+                    radioStations={radioStations}
+                    currentStation={currentStation}
+                    isPlaying={isPlaying}
+                    playStation={playStation}
+                    togglePlayPause={togglePlayPause}
+                    language={language}
+                  />
+                </View>
+              )}
+              keyExtractor={() => 'content'}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.listContent}
+            />
+
+            {/* Header */}
+            <Header 
+              styles={styles} 
+              onSearchPress={() => setShowSearchModal(true)}
+              onMenuPress={() => setShowSideMenu(true)}
+            />
+
+            {/* Bottom Player */}
+            {currentStation && (
+              <BottomPlayer
+                styles={styles}
+                currentStation={currentStation}
+                isPlaying={isPlaying}
+                isLoading={isLoading}
+                togglePlayPause={togglePlayPause}
+                onPress={() => setShowFullscreenPlayer(true)}
+                favorites={favorites}
+                toggleFavorite={toggleFavorite}
+                language={language}
+              />
+            )}
+
+            {/* Fullscreen Player Modal */}
+            <FullscreenPlayer
+              visible={showFullscreenPlayer}
+              onClose={() => setShowFullscreenPlayer(false)}
               currentStation={currentStation}
               isPlaying={isPlaying}
-              playStation={playStation}
+              isLoading={isLoading}
               togglePlayPause={togglePlayPause}
-              language={language}
-            />
-
-            {/* Favorites Section */}
-            <Favorites 
-              styles={styles}
+              playNextStation={playNextStation}
+              playPreviousStation={playPreviousStation}
+              volume={volume}
+              setVolume={setSafeVolume}
               favorites={favorites}
-              currentStation={currentStation}
-              isPlaying={isPlaying}
-              playStation={playStation}
-              togglePlayPause={togglePlayPause}
+              toggleFavorite={toggleFavorite}
               language={language}
             />
 
-            {/* Lebanese Radio Stations Section */}
-            <LebaneseRadioStations
-              styles={styles}
+            {/* Search Modal */}
+            <SearchModal
+              visible={showSearchModal}
+              onClose={() => setShowSearchModal(false)}
               radioStations={radioStations}
               currentStation={currentStation}
               isPlaying={isPlaying}
               playStation={playStation}
               togglePlayPause={togglePlayPause}
+              styles={styles}
               language={language}
             />
-          </View>
+
+            {/* Side Menu */}
+            <SideMenu
+              visible={showSideMenu}
+              onClose={() => setShowSideMenu(false)}
+              onGenreSelect={handleGenreSelect}
+              onSettingsPress={handleSettingsPress}
+              styles={styles}
+              language={language}
+            />
+
+            {/* Genre Radio Stations Modal */}
+            <GenreRadioStations
+              visible={showGenreModal}
+              onClose={() => setShowGenreModal(false)}
+              genreId={selectedGenre}
+              radioStations={radioStations}
+              currentStation={currentStation}
+              isPlaying={isPlaying}
+              playStation={playStation}
+              togglePlayPause={togglePlayPause}
+              styles={styles}
+              language={language}
+            />
+
+            {/* Settings Modal */}
+            <Settings
+              visible={showSettings}
+              onClose={() => setShowSettings(false)}
+              volume={volume}
+              setVolume={setSafeVolume}
+              styles={styles}
+            />
+          </>
         )}
-        keyExtractor={() => 'content'}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.listContent}
-      />
-
-      {/* Bottom Player */}
-      {currentStation && (
-        <BottomPlayer
-          styles={styles}
-          currentStation={currentStation}
-          isPlaying={isPlaying}
-          isLoading={isLoading}
-          togglePlayPause={togglePlayPause}
-          onPress={() => setShowFullscreenPlayer(true)}
-          favorites={favorites}
-          toggleFavorite={toggleFavorite}
-          language={language}
-        />
-      )}
-
-      {/* Fullscreen Player Modal */}
-      <FullscreenPlayer
-        visible={showFullscreenPlayer}
-        onClose={() => setShowFullscreenPlayer(false)}
-        currentStation={currentStation}
-        isPlaying={isPlaying}
-        isLoading={isLoading}
-        togglePlayPause={togglePlayPause}
-        playNextStation={playNextStation}
-        playPreviousStation={playPreviousStation}
-        volume={volume}
-        setVolume={setSafeVolume}
-        favorites={favorites}
-        toggleFavorite={toggleFavorite}
-        language={language}
-      />
-
-      {/* Search Modal */}
-      <SearchModal
-        visible={showSearchModal}
-        onClose={() => setShowSearchModal(false)}
-        radioStations={radioStations}
-        currentStation={currentStation}
-        isPlaying={isPlaying}
-        playStation={playStation}
-        togglePlayPause={togglePlayPause}
-        styles={styles}
-        language={language}
-      />
-
-      {/* Side Menu */}
-      <SideMenu
-        visible={showSideMenu}
-        onClose={() => setShowSideMenu(false)}
-        onGenreSelect={handleGenreSelect}
-        onSettingsPress={handleSettingsPress}
-        styles={styles}
-        language={language}
-      />
-
-      {/* Genre Radio Stations Modal */}
-      <GenreRadioStations
-        visible={showGenreModal}
-        onClose={() => setShowGenreModal(false)}
-        genreId={selectedGenre}
-        radioStations={radioStations}
-        currentStation={currentStation}
-        isPlaying={isPlaying}
-        playStation={playStation}
-        togglePlayPause={togglePlayPause}
-        styles={styles}
-        language={language}
-      />
-
-      {/* Settings Modal */}
-      <Settings
-        visible={showSettings}
-        onClose={() => setShowSettings(false)}
-        volume={volume}
-        setVolume={setSafeVolume}
-        styles={styles}
-      />
-        </>
-      )}
+      </LinearGradient>
     </View>
   );
 }

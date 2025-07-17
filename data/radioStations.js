@@ -526,17 +526,17 @@ const radioStations = [
     name: 'Sawt El Majd',
     nameAr: 'صوت المجد',
     url: 'https://stream-178.zeno.fm/u5gbt0e73d0uv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJ1NWdidDBlNzNkMHV2IiwiaG9zdCI6InN0cmVhbS0xNzguemVuby5mbSIsInJ0dGwiOjUsImp0aSI6IktSeV9aZ1FMUTBpN0tGSW5HWlluVFEiLCJpYXQiOjE3NTI2ODE4NTAsImV4cCI6MTc1MjY4MTkxMH0.vJwpoOe88HjedW66YOM9MPmB5_tdWofe92R1twLxMWw',
-    description: 'Music',
+    description: 'Religious',
     descriptionAr: 'موسيقى',
     color: ['#C0392B', '#E74C3C'],
     image: require('../radioimg/majd.png'),
-    genre: 'Music & Entertainment'
+    genre: 'Religious'
   },
   {
     id: 49,
     name: 'ABC Radio',
     nameAr: 'راديو أ ب س',
-    url: 'https://stream-156.zeno.fm/uq9wmejy9hytv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJ1cTl3bWVqeTloeXR2IiwiaG9zdCI6InN0cmVhbS0xNTYuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6IkhVd1dnVE40UmZxYndvdUU4ZWtWanciLCJpYXQiOjE3NTI2ODE4ODgsImV4cCI6MTc1MjY4MTk0OH0.irz3wDUH-1o1gCkbG6Jjr2eIElez5lVXd51M4n98aDM',
+    url: 'https://stream-156.zeno.fm/uq9wmejy9hytv?zt=eRyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJ1cTl3bWVqeTloeXR2IiwiaG9zdCI6InN0cmVhbS0xNTYuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6IkhVd1dnVE40UmZxYndvdUU4ZWtWanciLCJpYXQiOjE3NTI2ODE4ODgsImV4cCI6MTc1MjY4MTk0OH0.irz3wDUH-1o1gCkbG6Jjr2eIElez5lVXd51M4n98aDM',
     description: 'Music',
     descriptionAr: 'موسيقى',
     color: ['#45B7D1', '#96C93D'],

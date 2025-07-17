@@ -200,7 +200,7 @@ const Settings = ({
         <Ionicons 
           name={item.icon} 
           size={22} 
-          color="#666" 
+          color="#fff" 
           style={isRTL ? styles.rtlSettingsItemIcon : styles.settingsItemIcon}
         />
         <View style={isRTL ? styles.rtlSettingsItemText : styles.settingsItemText}>
@@ -305,7 +305,7 @@ const Settings = ({
             style={styles.settingsBackButton}
             onPress={onClose}
           >
-            <Ionicons name={isRTL ? "arrow-forward" : "arrow-back"} size={24} color="#333" />
+            <Ionicons name={isRTL ? "arrow-forward" : "arrow-back"} size={24} color="#fff" />
           </TouchableOpacity>
           
           <Text style={isRTL ? styles.rtlSettingsHeaderTitle : styles.settingsHeaderTitle}>{t.settings}</Text>

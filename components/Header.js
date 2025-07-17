@@ -11,11 +11,11 @@ const Header = ({ styles, onSearchPress, onMenuPress }) => {
     <View style={styles.header}>
       <View style={styles.headerContent}>
         <TouchableOpacity onPress={onMenuPress} style={styles.menuButton}>
-          <Ionicons name="menu" size={24} color="#666" />
+          <Ionicons name="menu" size={24} style={styles.headerIcon} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{getLocalizedString('appTitle', language)}</Text>
         <TouchableOpacity onPress={onSearchPress} style={styles.searchButton}>
-          <Ionicons name="search" size={24} color="#666" />
+          <Ionicons name="search" size={24} style={styles.headerIcon} />
         </TouchableOpacity>
       </View>
     </View>

@@ -98,7 +98,7 @@ const SideMenu = ({ visible, onClose, onGenreSelect, onSettingsPress, styles }) 
           <View style={isRTL ? styles.rtlSideMenuHeader : styles.sideMenuHeader}>
             <Text style={isRTL ? styles.rtlSideMenuTitle : styles.sideMenuTitle}>{getLocalizedString('appTitle', language)}</Text>
             <TouchableOpacity onPress={handleClose} style={styles.sideMenuCloseButton}>
-              <Ionicons name="close" size={24} color="#333" />
+              <Ionicons name="close" size={24} color="#ffffff" />
             </TouchableOpacity>
           </View>
 
@@ -115,11 +115,11 @@ const SideMenu = ({ visible, onClose, onGenreSelect, onSettingsPress, styles }) 
                 <Ionicons 
                   name={genre.icon} 
                   size={22} 
-                  color="#666" 
+                  color="#ffffff" 
                   style={isRTL ? styles.rtlSideMenuItemIcon : styles.sideMenuItemIcon}
                 />
                 <Text style={isRTL ? styles.rtlSideMenuItemText : styles.sideMenuItemText}>{genre.name}</Text>
-                <Ionicons name={isRTL ? "chevron-back" : "chevron-forward"} size={20} color="#ccc" />
+                <Ionicons name={isRTL ? "chevron-back" : "chevron-forward"} size={20} color="#ffffff" />
               </TouchableOpacity>
             ))}
 
@@ -134,11 +134,11 @@ const SideMenu = ({ visible, onClose, onGenreSelect, onSettingsPress, styles }) 
               <Ionicons 
                 name="settings-outline" 
                 size={22} 
-                color="#666" 
+                color="#ffffff" 
                 style={isRTL ? styles.rtlSideMenuItemIcon : styles.sideMenuItemIcon}
               />
               <Text style={isRTL ? styles.rtlSideMenuItemText : styles.sideMenuItemText}>{getLocalizedString('settings', language)}</Text>
-              <Ionicons name={isRTL ? "chevron-back" : "chevron-forward"} size={20} color="#ccc" />
+              <Ionicons name={isRTL ? "chevron-back" : "chevron-forward"} size={20} color="#ffffff" />
             </TouchableOpacity>
 
             {/* Language Switch */}
@@ -146,7 +146,7 @@ const SideMenu = ({ visible, onClose, onGenreSelect, onSettingsPress, styles }) 
               <Ionicons 
                 name="language-outline" 
                 size={22} 
-                color="#666" 
+                color="#ffffff" 
                 style={isRTL ? styles.rtlSideMenuItemIcon : styles.sideMenuItemIcon}
               />
               <View style={isRTL ? styles.rtlSideMenuLanguageContent : styles.sideMenuLanguageContent}>

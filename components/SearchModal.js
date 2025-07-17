@@ -104,7 +104,7 @@ const SearchModal = ({
           <Ionicons
             name={shouldShowPause ? 'pause' : 'play'}
             size={20}
-            color={isCurrentStation ? '#007AFF' : '#666'}
+            color="#ffffff"
           />
         </TouchableOpacity>
       </TouchableOpacity>
@@ -131,14 +131,14 @@ const SearchModal = ({
             style={[styles.searchBackButton, isRTL && styles.rtlSearchBackButton]}
             onPress={onClose}
           >
-            <Ionicons name={isRTL ? "arrow-forward" : "arrow-back"} size={24} color="#333" />
+            <Ionicons name={isRTL ? "arrow-forward" : "arrow-back"} size={24} color="#ffffff" />
           </TouchableOpacity>
           
           <View style={[styles.searchInputContainer, isRTL && styles.rtlSearchInputContainer]}>
             <Ionicons 
               name="search" 
               size={20} 
-              color="#666" 
+              color="#ffffff" 
               style={[styles.searchIcon, isRTL && styles.rtlSearchIcon]} 
             />
             <TextInput
@@ -155,7 +155,7 @@ const SearchModal = ({
                 style={[styles.clearButton, isRTL && styles.rtlClearButton]}
                 onPress={clearSearch}
               >
-                <Ionicons name="close-circle" size={20} color="#666" />
+                <Ionicons name="close-circle" size={20} color="#ffffff" />
               </TouchableOpacity>
             )}
           </View>

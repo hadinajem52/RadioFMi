@@ -151,7 +151,7 @@ const GenreRadioStations = ({
           <Ionicons
             name={shouldShowPause ? 'pause' : 'play'}
             size={20}
-            color={isCurrentStation ? '#007AFF' : '#666'}
+            color="#ffffff"
           />
         </TouchableOpacity>
       </TouchableOpacity>
@@ -174,14 +174,14 @@ const GenreRadioStations = ({
             style={styles.genreBackButton}
             onPress={onClose}
           >
-            <Ionicons name="arrow-back" size={24} color="#333" />
+            <Ionicons name="arrow-back" size={24} color="#ffffff" />
           </TouchableOpacity>
           
           <View style={[styles.genreHeaderContent, isRTL && styles.rtlGenreHeaderContent]}>
             <Ionicons 
               name={genreInfo.icon} 
               size={20} 
-              color="#666" 
+              color="#ffffff" 
               style={[styles.genreHeaderIcon, isRTL && styles.rtlGenreHeaderIcon]}
             />
             <Text style={[styles.genreHeaderTitle, isRTL && styles.rtlGenreHeaderTitle]}>
@@ -210,6 +210,7 @@ const GenreRadioStations = ({
 
         {/* Stations List */}
         <FlatList
+          style={{ flex: 1 }}
           data={filteredStations}
           renderItem={renderStationItem}
           keyExtractor={(item) => item.id.toString()}
