@@ -108,6 +108,7 @@ const StreamMonitor = ({ visible, onClose, currentStation }) => {
             color: '#fff',
             fontSize: 20,
             fontWeight: 'bold',
+            fontFamily: 'Poppins-Bold',
           }}>
             Stream Diagnostics
           </Text>
@@ -129,17 +130,18 @@ const StreamMonitor = ({ visible, onClose, currentStation }) => {
                 color: '#fff',
                 fontSize: 16,
                 fontWeight: 'bold',
+                fontFamily: 'Poppins-Bold',
                 marginBottom: 10,
               }}>
                 Current Station
               </Text>
-              <Text style={{ color: '#ccc', marginBottom: 5 }}>
+              <Text style={{ color: '#ccc', marginBottom: 5, fontFamily: 'Poppins-Regular' }}>
                 Name: {currentStation.name}
               </Text>
-              <Text style={{ color: '#ccc', marginBottom: 5 }}>
+              <Text style={{ color: '#ccc', marginBottom: 5, fontFamily: 'Poppins-Regular' }}>
                 URL: {currentStation.url}
               </Text>
-              <Text style={{ color: '#ccc' }}>
+              <Text style={{ color: '#ccc', fontFamily: 'Poppins-Regular' }}>
                 Description: {currentStation.description}
               </Text>
             </View>
@@ -157,6 +159,7 @@ const StreamMonitor = ({ visible, onClose, currentStation }) => {
                 color: '#fff',
                 fontSize: 16,
                 fontWeight: 'bold',
+                fontFamily: 'Poppins-Bold',
                 marginBottom: 10,
               }}>
                 Playback Status
@@ -173,17 +176,17 @@ const StreamMonitor = ({ visible, onClose, currentStation }) => {
                   backgroundColor: getStateColor(diagnostics.state),
                   marginRight: 10,
                 }} />
-                <Text style={{ color: '#ccc' }}>
+                <Text style={{ color: '#ccc', fontFamily: 'Poppins-Regular' }}>
                   State: {diagnostics.state || 'Unknown'}
                 </Text>
               </View>
-              <Text style={{ color: '#ccc', marginBottom: 5 }}>
+              <Text style={{ color: '#ccc', marginBottom: 5, fontFamily: 'Poppins-Regular' }}>
                 Position: {Math.floor(diagnostics.position || 0)}s
               </Text>
-              <Text style={{ color: '#ccc', marginBottom: 5 }}>
+              <Text style={{ color: '#ccc', marginBottom: 5, fontFamily: 'Poppins-Regular' }}>
                 Duration: {diagnostics.duration ? Math.floor(diagnostics.duration) + 's' : 'Live Stream'}
               </Text>
-              <Text style={{ color: '#ccc' }}>
+              <Text style={{ color: '#ccc', fontFamily: 'Poppins-Regular' }}>
                 Is Live Stream: {diagnostics.isLiveStream ? 'Yes' : 'No'}
               </Text>
             </View>
@@ -201,6 +204,7 @@ const StreamMonitor = ({ visible, onClose, currentStation }) => {
                 color: '#fff',
                 fontSize: 16,
                 fontWeight: 'bold',
+                fontFamily: 'Poppins-Bold',
                 marginBottom: 10,
               }}>
                 Network Status
@@ -217,27 +221,27 @@ const StreamMonitor = ({ visible, onClose, currentStation }) => {
                   backgroundColor: getNetworkStatusColor(diagnostics.network.status),
                   marginRight: 10,
                 }} />
-                <Text style={{ color: '#ccc' }}>
+                <Text style={{ color: '#ccc', fontFamily: 'Poppins-Regular' }}>
                   Status: {diagnostics.network.status}
                 </Text>
               </View>
               {diagnostics.network.responseTime && (
-                <Text style={{ color: '#ccc', marginBottom: 5 }}>
+                <Text style={{ color: '#ccc', marginBottom: 5, fontFamily: 'Poppins-Regular' }}>
                   Response Time: {diagnostics.network.responseTime}ms
                 </Text>
               )}
               {diagnostics.network.statusCode && (
-                <Text style={{ color: '#ccc', marginBottom: 5 }}>
+                <Text style={{ color: '#ccc', marginBottom: 5, fontFamily: 'Poppins-Regular' }}>
                   HTTP Status: {diagnostics.network.statusCode}
                 </Text>
               )}
               {diagnostics.network.contentType && (
-                <Text style={{ color: '#ccc', marginBottom: 5 }}>
+                <Text style={{ color: '#ccc', marginBottom: 5, fontFamily: 'Poppins-Regular' }}>
                   Content Type: {diagnostics.network.contentType}
                 </Text>
               )}
               {diagnostics.network.error && (
-                <Text style={{ color: '#ff4444' }}>
+                <Text style={{ color: '#ff4444', fontFamily: 'Poppins-Regular' }}>
                   Error: {diagnostics.network.error}
                 </Text>
               )}
@@ -256,11 +260,12 @@ const StreamMonitor = ({ visible, onClose, currentStation }) => {
                 color: '#ff4444',
                 fontSize: 16,
                 fontWeight: 'bold',
+                fontFamily: 'Poppins-Bold',
                 marginBottom: 10,
               }}>
                 Error Details
               </Text>
-              <Text style={{ color: '#ff6666' }}>
+              <Text style={{ color: '#ff6666', fontFamily: 'Poppins-Regular' }}>
                 {diagnostics.error}
               </Text>
             </View>
@@ -277,14 +282,15 @@ const StreamMonitor = ({ visible, onClose, currentStation }) => {
               color: '#fff',
               fontSize: 16,
               fontWeight: 'bold',
+              fontFamily: 'Poppins-Bold',
               marginBottom: 10,
             }}>
               Debug Information
             </Text>
-            <Text style={{ color: '#ccc', marginBottom: 5 }}>
+            <Text style={{ color: '#ccc', marginBottom: 5, fontFamily: 'Poppins-Regular' }}>
               Last Updated: {diagnostics?.lastUpdated || 'Never'}
             </Text>
-            <Text style={{ color: '#ccc' }}>
+            <Text style={{ color: '#ccc', fontFamily: 'Poppins-Regular' }}>
               Auto-refresh: Every 2 seconds
             </Text>
           </View>
@@ -315,6 +321,7 @@ const StreamMonitor = ({ visible, onClose, currentStation }) => {
               color: '#fff',
               fontSize: 16,
               fontWeight: 'bold',
+              fontFamily: 'Poppins-Bold',
             }}>
               {refreshing ? 'Refreshing...' : 'Refresh Now'}
             </Text>

@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: '700',
+    fontFamily: 'Poppins-Bold',
     color: '#ffffff',
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 1, height: 1 },
@@ -47,6 +48,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 22,
     fontWeight: '700',
+    fontFamily: 'Poppins-Bold',
     color: '#ffffff',
     marginBottom: 20,
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
@@ -80,6 +82,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#e0e0e0',
     fontWeight: '600',
+    fontFamily: 'Poppins-SemiBold',
     textAlign: 'center',
   },
   stationRow: {
@@ -110,11 +113,13 @@ const styles = StyleSheet.create({
   stationName: {
     fontSize: 16,
     fontWeight: '600',
+    fontFamily: 'Poppins-SemiBold',
     color: '#ffffff',
     marginBottom: 4,
   },
   stationDescription: {
     fontSize: 14,
+    fontFamily: 'Poppins-Regular',
     color: '#b0b0b0',
   },
   listContent: {
@@ -159,11 +164,13 @@ const styles = StyleSheet.create({
   playerStationName: {
     fontSize: 16,
     fontWeight: '600',
+    fontFamily: 'Poppins-SemiBold',
     color: '#ffffff',
     marginBottom: 4,
   },
   playerDescription: {
     fontSize: 14,
+    fontFamily: 'Poppins-Regular',
     color: '#b0b0b0',
   },
   favoriteButton: {
@@ -212,12 +219,14 @@ const styles = StyleSheet.create({
   noFavoritesText: {
     fontSize: 18,
     fontWeight: '600',
+    fontFamily: 'Poppins-SemiBold',
     color: '#ffffff',
     marginBottom: 8,
     textAlign: 'center',
   },
   noFavoritesSubtext: {
     fontSize: 14,
+    fontFamily: 'Poppins-Regular',
     color: '#b0b0b0',
     textAlign: 'center',
     paddingHorizontal: 20,
@@ -278,6 +287,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 16,
+    fontFamily: 'Poppins-Regular',
     color: '#ffffff',
     paddingVertical: 0,
     placeholderTextColor: '#b0b0b0',
@@ -298,6 +308,7 @@ const styles = StyleSheet.create({
     color: '#b0b0b0',
     marginVertical: 15,
     fontWeight: '600',
+    fontFamily: 'Poppins-SemiBold',
   },
   searchResultsList: {
     paddingBottom: 20,
@@ -316,6 +327,7 @@ const styles = StyleSheet.create({
   },
   stationGenre: {
     fontSize: 12,
+    fontFamily: 'Poppins-Regular',
     color: '#9090a0',
     marginTop: 4,
   },
@@ -345,6 +357,7 @@ const styles = StyleSheet.create({
   noResultsText: {
     fontSize: 20,
     fontWeight: '700',
+    fontFamily: 'Poppins-Bold',
     color: '#ffffff',
     marginTop: 15,
     marginBottom: 8,
@@ -352,6 +365,7 @@ const styles = StyleSheet.create({
   },
   noResultsSubtext: {
     fontSize: 14,
+    fontFamily: 'Poppins-Regular',
     color: '#b0b0b0',
     textAlign: 'center',
     paddingHorizontal: 20,
@@ -386,6 +400,7 @@ const styles = StyleSheet.create({
   sideMenuTitle: {
     fontSize: 20,
     fontWeight: '700',
+    fontFamily: 'Poppins-Bold',
     color: '#ffffff',
   },
   sideMenuCloseButton: {
@@ -400,6 +415,7 @@ const styles = StyleSheet.create({
   sideMenuSectionTitle: {
     fontSize: 12,
     fontWeight: '700',
+    fontFamily: 'Poppins-Bold',
     color: '#9090a0',
     textTransform: 'uppercase',
     letterSpacing: 1,
@@ -427,6 +443,7 @@ const styles = StyleSheet.create({
   sideMenuItemText: {
     flex: 1,
     fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
     color: '#ffffff',
     fontWeight: '600',
   },
@@ -454,6 +471,7 @@ const styles = StyleSheet.create({
   },
   sideMenuLanguageSubtext: {
     fontSize: 13,
+    fontFamily: 'Poppins-Regular',
     color: '#b0b0b0',
     marginTop: 2,
     fontWeight: '400',
@@ -479,6 +497,7 @@ const styles = StyleSheet.create({
   rtlSideMenuTitle: {
     fontSize: 20,
     fontWeight: '700',
+    fontFamily: 'Poppins-Bold',
     color: '#ffffff',
     textAlign: 'right',
     writingDirection: 'rtl',
@@ -486,6 +505,7 @@ const styles = StyleSheet.create({
   rtlSideMenuSectionTitle: {
     fontSize: 12,
     fontWeight: '700',
+    fontFamily: 'Poppins-Bold',
     color: '#9090a0',
     textTransform: 'uppercase',
     letterSpacing: 1,
@@ -516,6 +536,7 @@ const styles = StyleSheet.create({
   rtlSideMenuItemText: {
     flex: 1,
     fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
     color: '#ffffff',
     fontWeight: '600',
     textAlign: 'right',
@@ -543,6 +564,7 @@ const styles = StyleSheet.create({
   },
   rtlSideMenuLanguageSubtext: {
     fontSize: 13,
+    fontFamily: 'Poppins-Regular',
     color: '#b0b0b0',
     marginTop: 2,
     fontWeight: '400',
@@ -589,6 +611,7 @@ const styles = StyleSheet.create({
   genreHeaderTitle: {
     fontSize: 18,
     fontWeight: '700',
+    fontFamily: 'Poppins-Bold',
     color: '#ffffff',
   },
   genreDescriptionContainer: {
@@ -603,6 +626,7 @@ const styles = StyleSheet.create({
   },
   genreDescription: {
     fontSize: 14,
+    fontFamily: 'Poppins-Regular',
     color: '#b0b0b0',
     textAlign: 'center',
     fontStyle: 'italic',
@@ -614,6 +638,7 @@ const styles = StyleSheet.create({
   },
   genreStationsCountText: {
     fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
     color: '#9090a0',
     fontWeight: '600',
   },
@@ -656,6 +681,7 @@ const styles = StyleSheet.create({
   noStationsText: {
     fontSize: 20,
     fontWeight: '700',
+    fontFamily: 'Poppins-Bold',
     color: '#ffffff',
     marginTop: 15,
     marginBottom: 8,
@@ -663,6 +689,7 @@ const styles = StyleSheet.create({
   },
   noStationsSubtext: {
     fontSize: 14,
+    fontFamily: 'Poppins-Regular',
     color: '#b0b0b0',
     textAlign: 'center',
     paddingHorizontal: 20,
@@ -698,6 +725,7 @@ const styles = StyleSheet.create({
   settingsHeaderTitle: {
     fontSize: 18,
     fontWeight: '700',
+    fontFamily: 'Poppins-Bold',
     color: '#ffffff',
   },
   settingsContent: {
@@ -710,6 +738,7 @@ const styles = StyleSheet.create({
   settingsSectionTitle: {
     fontSize: 12,
     fontWeight: '700',
+    fontFamily: 'Poppins-Bold',
     color: '#9090a0',
     textTransform: 'uppercase',
     letterSpacing: 1,
@@ -748,16 +777,19 @@ const styles = StyleSheet.create({
   },
   settingsItemTitle: {
     fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
     color: '#ffffff',
     fontWeight: '600',
     marginBottom: 2,
   },
   settingsItemSubtitle: {
     fontSize: 13,
+    fontFamily: 'Poppins-Regular',
     color: '#b0b0b0',
   },
   settingsItemValue: {
     fontSize: 14,
+    fontFamily: 'Poppins-Regular',
     color: '#9090a0',
     marginRight: 8,
   },
@@ -799,6 +831,7 @@ const styles = StyleSheet.create({
   rtlSectionTitle: {
     fontSize: 22,
     fontWeight: '700',
+    fontFamily: 'Poppins-Bold',
     color: '#ffffff',
     marginBottom: 20,
     textAlign: 'right',
@@ -826,6 +859,7 @@ const styles = StyleSheet.create({
   },
   rtlShowName: {
     fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
     color: '#e0e0e0',
     fontWeight: '600',
     textAlign: 'center',
@@ -844,6 +878,7 @@ const styles = StyleSheet.create({
   rtlNoFavoritesText: {
     fontSize: 18,
     fontWeight: '600',
+    fontFamily: 'Poppins-SemiBold',
     color: '#ffffff',
     marginBottom: 8,
     textAlign: 'center',
@@ -851,6 +886,7 @@ const styles = StyleSheet.create({
   },
   rtlNoFavoritesSubtext: {
     fontSize: 14,
+    fontFamily: 'Poppins-Regular',
     color: '#b0b0b0',
     textAlign: 'center',
     writingDirection: 'rtl',
@@ -878,6 +914,7 @@ const styles = StyleSheet.create({
   rtlSettingsHeaderTitle: {
     fontSize: 18,
     fontWeight: '700',
+    fontFamily: 'Poppins-Bold',
     color: '#ffffff',
     textAlign: 'right',
     writingDirection: 'rtl',
@@ -885,6 +922,7 @@ const styles = StyleSheet.create({
   rtlSettingsSectionTitle: {
     fontSize: 12,
     fontWeight: '700',
+    fontFamily: 'Poppins-Bold',
     color: '#9090a0',
     textTransform: 'uppercase',
     letterSpacing: 1,
@@ -927,6 +965,7 @@ const styles = StyleSheet.create({
   },
   rtlSettingsItemTitle: {
     fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
     color: '#ffffff',
     fontWeight: '600',
     marginBottom: 2,
@@ -935,12 +974,14 @@ const styles = StyleSheet.create({
   },
   rtlSettingsItemSubtitle: {
     fontSize: 13,
+    fontFamily: 'Poppins-Regular',
     color: '#b0b0b0',
     textAlign: 'right',
     writingDirection: 'rtl',
   },
   rtlSettingsItemValue: {
     fontSize: 14,
+    fontFamily: 'Poppins-Regular',
     color: '#9090a0',
     marginLeft: 8,
     marginRight: 0,
@@ -1008,11 +1049,13 @@ const styles = StyleSheet.create({
   languageModalTitle: {
     fontSize: 18,
     fontWeight: '700',
+    fontFamily: 'Poppins-Bold',
     color: '#ffffff',
   },
   rtlLanguageModalTitle: {
     fontSize: 18,
     fontWeight: '700',
+    fontFamily: 'Poppins-Bold',
     color: '#ffffff',
     textAlign: 'right',
     writingDirection: 'rtl',
@@ -1062,12 +1105,14 @@ const styles = StyleSheet.create({
   languageOptionName: {
     fontSize: 16,
     fontWeight: '600',
+    fontFamily: 'Poppins-SemiBold',
     color: '#ffffff',
     marginBottom: 2,
   },
   rtlLanguageOptionName: {
     fontSize: 16,
     fontWeight: '600',
+    fontFamily: 'Poppins-SemiBold',
     color: '#ffffff',
     marginBottom: 2,
     textAlign: 'right',
@@ -1075,10 +1120,12 @@ const styles = StyleSheet.create({
   },
   languageOptionNative: {
     fontSize: 14,
+    fontFamily: 'Poppins-Regular',
     color: '#b0b0b0',
   },
   rtlLanguageOptionNative: {
     fontSize: 14,
+    fontFamily: 'Poppins-Regular',
     color: '#b0b0b0',
     textAlign: 'right',
     writingDirection: 'rtl',
@@ -1119,6 +1166,7 @@ const styles = StyleSheet.create({
   loadingTitle: {
     fontSize: 32,
     fontWeight: '800',
+    fontFamily: 'Poppins-ExtraBold',
     color: '#ffffff',
     marginBottom: 12,
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
@@ -1127,6 +1175,7 @@ const styles = StyleSheet.create({
   },
   loadingSubtitle: {
     fontSize: 16,
+    fontFamily: 'Poppins-Regular',
     color: '#b0b0b0',
     marginBottom: 40,
     textAlign: 'center',
@@ -1138,6 +1187,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
     color: '#e0e0e0',
     textAlign: 'center',
     fontWeight: '600',

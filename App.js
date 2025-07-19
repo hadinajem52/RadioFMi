@@ -11,6 +11,27 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
+import * as Font from 'expo-font';
+import {
+  Poppins_100Thin,
+  Poppins_100Thin_Italic,
+  Poppins_200ExtraLight,
+  Poppins_200ExtraLight_Italic,
+  Poppins_300Light,
+  Poppins_300Light_Italic,
+  Poppins_400Regular,
+  Poppins_400Regular_Italic,
+  Poppins_500Medium,
+  Poppins_500Medium_Italic,
+  Poppins_600SemiBold,
+  Poppins_600SemiBold_Italic,
+  Poppins_700Bold,
+  Poppins_700Bold_Italic,
+  Poppins_800ExtraBold,
+  Poppins_800ExtraBold_Italic,
+  Poppins_900Black,
+  Poppins_900Black_Italic,
+} from '@expo-google-fonts/poppins';
 import TrackPlayer, { usePlaybackState, useProgress, State } from 'react-native-track-player';
 import { 
   setupPlayer, 
@@ -41,6 +62,7 @@ import styles from './styles/styles';
 function App() {
   const { language } = useLanguage();
   const [isAppLoading, setIsAppLoading] = useState(true);
+  const [fontsLoaded, setFontsLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [currentStation, setCurrentStation] = useState(null);
   const [favorites, setFavorites] = useState([]);
@@ -74,6 +96,20 @@ function App() {
   useEffect(() => {
     const initializeApp = async () => {
       try {
+        // Load custom fonts
+        await Font.loadAsync({
+          'Poppins-Thin': Poppins_100Thin,
+          'Poppins-ExtraLight': Poppins_200ExtraLight,
+          'Poppins-Light': Poppins_300Light,
+          'Poppins-Regular': Poppins_400Regular,
+          'Poppins-Medium': Poppins_500Medium,
+          'Poppins-SemiBold': Poppins_600SemiBold,
+          'Poppins-Bold': Poppins_700Bold,
+          'Poppins-ExtraBold': Poppins_800ExtraBold,
+          'Poppins-Black': Poppins_900Black,
+        });
+        setFontsLoaded(true);
+
         // Initialize TrackPlayer
         const isSetup = await setupPlayer();
         setIsPlayerReady(isSetup);
@@ -313,7 +349,7 @@ function App() {
         <StatusBar style="light" />
 
         {/* Loading Screen */}
-        {isAppLoading ? (
+        {(isAppLoading || !fontsLoaded) ? (
           <View style={styles.loadingContainer}>
             <View style={styles.loadingContent}>
               <Image 
