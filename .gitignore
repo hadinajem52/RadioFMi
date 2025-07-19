@@ -2,6 +2,10 @@
 
 # dependencies
 node_modules/
+my-release-key.keystore
+
+# Keystore properties (contains sensitive information)
+android/keystore.properties
 
 # Expo
 .expo/
