@@ -23,7 +23,7 @@ const StreamHealthIndicator = ({ station, size = 16, style = {} }) => {
         method: 'HEAD',
         signal: controller.signal,
         headers: {
-          'User-Agent': 'RadioFMi/1.0',
+          'User-Agent': 'Lebanese Radio Player/1.0',
           'Accept': 'audio/*',
         }
       });

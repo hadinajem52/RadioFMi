@@ -357,7 +357,7 @@ function App() {
                 style={styles.loadingLogo}
                 resizeMode="contain"
               />
-              <Text style={styles.loadingTitle}>RadioFMi</Text>
+              <Text style={styles.loadingTitle}>Lebanese Radio Player</Text>
               <Text style={styles.loadingSubtitle}>Your favorite radio stations</Text>
               <ActivityIndicator 
                 size="large" 

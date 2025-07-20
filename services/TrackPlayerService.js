@@ -78,7 +78,7 @@ export async function addTrack(station, retryCount = 0) {
       artwork: station.image,
       isLiveStream: true,
       headers: {
-        'User-Agent': 'RadioFMi/1.0',
+        'User-Agent': 'Lebanese Radio Player/1.0',
         'Accept': 'audio/*',
       },
     });

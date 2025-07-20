@@ -151,7 +151,7 @@ const radioStations = [
     description: 'Oldies',
     descriptionAr: 'أغاني قديمة',
     color: ['#7D3C98', '#8E44AD'],
-    image: require('../radioimg/souvenire.jpg'),
+    image: require('../radioimg/souvenire.png'),
     genre: 'Music & Entertainment'
   },
   {
@@ -162,7 +162,7 @@ const radioStations = [
     description: 'Variety',
     descriptionAr: 'منوعات',
     color: ['#34495E', '#5D6D7E'],
-    image: require('../radioimg/ibmmradio.jpg'),
+    image: require('../radioimg/ibmmradio.png'),
     genre: 'Music & Entertainment'
   },
   {
@@ -309,7 +309,7 @@ const radioStations = [
     description: 'Islamic Content',
     descriptionAr: 'محتوى إسلامي',
     color: ['#28A745', '#155724'],
-    image: require('../radioimg/sawtelhoda.jpg'),
+    image: require('../radioimg/sawtelhoda.png'),
     genre: 'Religious'
   },
   {
@@ -375,7 +375,7 @@ const radioStations = [
     description: 'Music',
     descriptionAr: 'موسيقى',
     color: ['#45B7D1', '#96C93D'],
-    image: require('../radioimg/rahbaniyat.jpg'),
+    image: require('../radioimg/rahbaniyat.png'),
     genre: 'Music & Entertainment'
   },
   {
@@ -386,7 +386,7 @@ const radioStations = [
     description: 'Music',
     descriptionAr: 'موسيقى',
     color: ['#E74C3C', '#C0392B'],
-    image: require('../radioimg/sawtalhob.jpg'),
+    image: require('../radioimg/sawtalhob.png'),
     genre: 'Music & Entertainment'
   },
   {
@@ -507,7 +507,7 @@ const radioStations = [
     description: 'Music',
     descriptionAr: 'موسيقى',
     color: ['#B7950B', '#D4AC0D'],
-    image: require('../radioimg/strike.jpg'),
+    image: require('../radioimg/strike.png'),
     genre: 'Music & Entertainment'
   },
   {
@@ -606,7 +606,7 @@ const radioStations = [
     description: 'Talk',
     descriptionAr: 'برامج حوارية',
     color: ['#28A745', '#155724'],
-    image: require('../radioimg/haramoon.jpg'),
+    image: require('../radioimg/haramoon.png'),
     genre: 'News & Talk'
   },
   {
