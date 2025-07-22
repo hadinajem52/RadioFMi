@@ -238,7 +238,7 @@ const FullscreenPlayer = ({
                 width: 80,
                 height: 80,
                 borderRadius: 40,
-                backgroundColor: 'rgba(124, 77, 255, 0.8)',
+                backgroundColor: '#7C4DFF',
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginHorizontal: 30,

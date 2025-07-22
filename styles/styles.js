@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   stationIcon: {
     width: 50,
     height: 50,
-    borderRadius: 12,
+    borderRadius: 15,
     marginRight: 15,
     // Add glow effect
     shadowColor: '#7C4DFF',
