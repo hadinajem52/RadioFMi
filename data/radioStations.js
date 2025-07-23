@@ -59,7 +59,7 @@ const radioStations = [
     id: 6,
     name: 'NRJ Radio',
     nameAr: 'راديو إن آر جي',
-    url: 'http://185.52.127.172/lb/55219/aac_64.mp3',
+    url: 'https://stream-156.zeno.fm/2p8qbgfegphvv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiIycDhxYmdmZWdwaHZ2IiwiaG9zdCI6InN0cmVhbS0xNTYuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6IjUwbHRaODNzUlFXMnhZS0tPOXZhUmciLCJpYXQiOjE3NTMyMTUxODksImV4cCI6MTc1MzIxNTI0OX0.wVy1c6I7XWSGv4yjA2YWsX6wVq7AFXK4d6Z6-c0pmBQ&an-uid=6447012835167222949&dot-uid=0bdc220400e226d1daf339da&triton-uid=cookie%3Aeaed8994-d828-4d8c-bd52-f85d539d0f66&amb-uid=2502222035618165934&dbm-uid=CAESEDtQiBn1tzj8osMiRyqI_cw&cto-uid=24126d87-95c9-4166-8ec7-f08df2bf6400-6809fa7e-4c42&bsw-uid=225b4769-20fe-4ee4-8446-08e4d042c4eb&dyn-uid=1862044988421082701&ttd-uid=3f39463e-6723-4202-9ba1-17ca8e997b9c&aw_0_req_lsid=6a5ed8802cc03bcfdcaf8924d5021a1b',
     description: 'Top 40, Pop, Electronic',
     descriptionAr: 'أفضل 40، بوب، إلكتروني',
     color: ['#F39C12', '#E67E22'],
@@ -332,7 +332,7 @@ const radioStations = [
     descriptionAr: 'إذاعة النور',
     color: ['#FF6B6B', '#FF8E8E'],
     image: require('../radioimg/alnour.png'),
-    genre: ['Religious', 'News & Talk']
+    genre: 'Religious'
   },
   {
     id: 31,
@@ -717,6 +717,94 @@ const radioStations = [
     descriptionAr: 'موسيقى',
     color: ['#27AE60', '#2ECC71'],
     image: require('../radioimg/classrock.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 66,
+    name: 'Fame FM',
+    nameAr: 'فيم إف إم',
+    url: 'https://stream-162.zeno.fm/9va0cebhguhvv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiI5dmEwY2ViaGd1aHZ2IiwiaG9zdCI6InN0cmVhbS0xNjIuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6IlJlcXpYZFZLUlNtTWtFc3plQzl2VlEiLCJpYXQiOjE3NTMyMTQwNjMsImV4cCI6MTc1MzIxNDEyM30.FXC-GlMTzpxybVdYnFCvYHAKEia4i5YN18f4hPA5pq0&an-uid=6447012835167222949&dot-uid=0bdc220400e226d1daf339da&triton-uid=cookie%3Aeaed8994-d828-4d8c-bd52-f85d539d0f66&amb-uid=2502222035618165934&dbm-uid=CAESEDtQiBn1tzj8osMiRyqI_cw&cto-uid=24126d87-95c9-4166-8ec7-f08df2bf6400-6809fa7e-4c42&bsw-uid=225b4769-20fe-4ee4-8446-08e4d042c4eb&dyn-uid=1862044988421082701&ttd-uid=3f39463e-6723-4202-9ba1-17ca8e997b9c&aw_0_req_lsid=6a5ed8802cc03bcfdcaf8924d5021a1b',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#E91E63', '#F06292'],
+    image: require('../radioimg/famefm.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 67,
+    name: 'Sky News Arabia',
+    nameAr: 'سكاي نيوز عربية',
+    url: 'https://radio.skynewsarabia.com/stream/radio/skynewsarabia',
+    description: 'News',
+    descriptionAr: 'أخبار',
+    color: ['#1565C0', '#1976D2'],
+    image: require('../radioimg/skynewsara.png'),
+    genre: 'News & Talk'
+  },
+  {
+    id: 68,
+    name: 'One FM',
+    nameAr: 'ون إف إم',
+    url: 'https://hms.pfs.gdn/hms/v1/broadcast/onefmaudio/primary/tracks-a1/mono.m3u8?token=xQt-N8hG8klUXeEeEUpFYw:3hH4P89nth4cn8dWt91lFZ2cUovhsWwP0i83H5na3snm_OKfB2QurVIZJi_LBGPmItffU0OYsrkmIrO9yAVtMYDnaDrgOtnAp0hE0bxAarOD5sZ7MY-UXooSr2rltF5rdvBZ88beqXjC2Xyak_q39Hx7cOMd46Oy1wCM2dXwi8tlqlbtdQZ-7OXsXkd_boiLqph7P29OZMKjfP7EpuResQ',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#FF5722', '#FF7043'],
+    image: require('../radioimg/onefm.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 69,
+    name: 'Sawt El Nojoum',
+    nameAr: 'صوت النجوم',
+    url: 'https://radiozahle.net/proxy/rzoldies/;stream/1?ver=618401',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#9C27B0', '#BA68C8'],
+    image: require('../radioimg/sawtelnojoum.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 70,
+    name: 'Rotana FM',
+    nameAr: 'روتانا إف إم',
+    url: 'https://stream-161.zeno.fm/0mz814shguhvv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiIwbXo4MTRzaGd1aHZ2IiwiaG9zdCI6InN0cmVhbS0xNjEuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6Ii1ETVpKRTREVDhlUk1za2g1TWQ1UWciLCJpYXQiOjE3NTMyMTQ2MDUsImV4cCI6MTc1MzIxNDY2NX0.JO3vkJ_AY3o4AO8js5K15HQjv8h6c2a1DD5JM9vUTS4',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#FF9800', '#FFB74D'],
+    image: require('../radioimg/rotana.png'),
+    genre: 'Music & Entertainment'
+  },
+  {
+    id: 71,
+    name: 'Monte Carlo International',
+    nameAr: 'مونت كارلو الدولية',
+    url: 'https://montecarlodoualiya128k.ice.infomaniak.ch/mc-doualiya.mp3',
+    description: 'News',
+    descriptionAr: 'أخبار',
+    color: ['#607D8B', '#78909C'],
+    image: require('../radioimg/montecarlo.png'),
+    genre: 'News & Talk'
+  },
+  {
+    id: 72,
+    name: 'Al Jazeera',
+    nameAr: 'الجزيرة',
+    url: 'https://live-hls-audio-web-aja.getaj.net/VOICE-AJA/20230209T014506-01-7730870.ts',
+    description: 'News',
+    descriptionAr: 'أخبار',
+    color: ['#FF6F00', '#FF8F00'],
+    image: require('../radioimg/aljazira.png'), 
+    genre: 'News & Talk'
+  },
+  {
+    id: 73,
+    name: 'NRJ France',
+    nameAr: 'إن آر جي فرنسا',
+    url: 'https://streaming.nrjaudio.fm/oufdfatx4thg?origine=playernrj&aw_0_req.userConsentV2=&aw_0_1st.station=&listenerid=2bd09834888fb6882bfb166c6402d122&awparams=companionAds%3Atrue',
+    description: 'Music',
+    descriptionAr: 'موسيقى',
+    color: ['#3F51B5', '#5C6BC0'],
+    image: require('../radioimg/nrjfrance.png'),
     genre: 'Music & Entertainment'
   }
 ];

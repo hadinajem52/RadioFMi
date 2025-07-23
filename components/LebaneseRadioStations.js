@@ -1,19 +1,63 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getLocalizedString } from '../localization/strings';
+import SortOptionsModal from './SortOptionsModal';
 
-const LebaneseRadioStations = ({ styles, radioStations, currentStation, isPlaying, playStation, togglePlayPause, language }) => {
+const LebaneseRadioStations = ({ 
+  styles, 
+  radioStations, 
+  currentStation, 
+  isPlaying, 
+  playStation, 
+  togglePlayPause, 
+  language,
+  sortOption,
+  onSortOptionChange,
+  favorites = []
+}) => {
   const { language: contextLanguage } = useLanguage();
   const activeLanguage = language || contextLanguage;
   const isRTL = activeLanguage === 'ar';
+  const [showSortModal, setShowSortModal] = useState(false);
   
   return (
     <View style={styles.section}>
-      <Text style={[styles.sectionTitle, isRTL && { textAlign: 'right' }]}>
-        {getLocalizedString('lebaneseRadioStations', activeLanguage)}
-      </Text>
+      {/* Section Title */}
+      <View style={[styles.sectionTitleContainer, isRTL && { flexDirection: 'row-reverse' }]}>
+
+        <Text style={[styles.sectionTitle, isRTL && { textAlign: 'right' }]}>
+          {getLocalizedString('lebaneseRadioStations', activeLanguage)}
+        </Text>
+      </View>
+      
+      {/* Sort Button */}
+      <TouchableOpacity
+        style={[
+          styles.sortButton,
+          styles.sortButtonFullWidth,
+          isRTL && { 
+            flexDirection: 'row-reverse',
+            alignSelf: 'flex-end'
+          }
+        ]}
+        onPress={() => setShowSortModal(true)}
+      >
+        <Ionicons 
+          name="options-outline" 
+          size={20} 
+          color="#7C4DFF" 
+        />
+        <Text style={[
+          styles.sortButtonText,
+          isRTL && { marginLeft: 0, marginRight: 5 }
+        ]}>
+          {getLocalizedString('sortBy', activeLanguage)}
+        </Text>
+      </TouchableOpacity>
+
+      {/* Radio Stations List */}
       {radioStations.map((station) => (
         <TouchableOpacity
           key={station.id}
@@ -63,6 +107,16 @@ const LebaneseRadioStations = ({ styles, radioStations, currentStation, isPlayin
           />
         </TouchableOpacity>
       ))}
+
+      {/* Sort Options Modal */}
+      <SortOptionsModal
+        visible={showSortModal}
+        onClose={() => setShowSortModal(false)}
+        currentSortOption={sortOption}
+        onSortOptionSelect={onSortOptionChange}
+        styles={styles}
+        language={activeLanguage}
+      />
     </View>
   );
 };

@@ -112,9 +112,11 @@ const Favorites = ({ styles, favorites, currentStation, isPlaying, playStation, 
 
   return (
     <View style={[styles.section, isRTL && styles.rtlSection]}>
-      <Text style={[styles.sectionTitle, isRTL && styles.rtlSectionTitle]}>
-        {getLocalizedString('favorites', language)}
-      </Text>
+      <View style={[styles.sectionTitleContainer, isRTL && { flexDirection: 'row-reverse' }]}>
+        <Text style={[styles.sectionTitle, isRTL && styles.rtlSectionTitle]}>
+          {getLocalizedString('favorites', language)}
+        </Text>
+      </View>
       {favorites.length === 0 ? (
         <View style={[styles.noFavoritesContainer, isRTL && styles.rtlNoFavoritesContainer]}>
           <Text style={[styles.noFavoritesText, isRTL && styles.rtlNoFavoritesText]}>

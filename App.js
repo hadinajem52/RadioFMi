@@ -25,6 +25,7 @@ import {
 import TrackPlayer from 'react-native-track-player';
 import { usePlayer } from './hooks/usePlayer';
 import { useFavorites } from './hooks/useFavorites';
+import { useSorting } from './hooks/useSorting';
 import Header from './components/Header';
 import FeaturedRadios from './components/FeaturedRadios';
 import Favorites from './components/Favorites';
@@ -72,6 +73,7 @@ function App() {
   } = usePlayer();
   
   const { favorites, toggleFavorite } = useFavorites();
+  const { sortOption, setSortPreference, sortStations, isLoaded: isSortingLoaded } = useSorting();
 
   // Initialize app - Load fonts and setup basic app state
   useEffect(() => {
@@ -176,12 +178,15 @@ function App() {
                   {/* Lebanese Radio Stations Section */}
                   <LebaneseRadioStations
                     styles={styles}
-                    radioStations={radioStations}
+                    radioStations={isSortingLoaded ? sortStations(radioStations, favorites, currentStation) : radioStations}
                     currentStation={currentStation}
                     isPlaying={isPlaying}
                     playStation={playStation}
                     togglePlayPause={togglePlayPause}
                     language={language}
+                    sortOption={sortOption}
+                    onSortOptionChange={setSortPreference}
+                    favorites={favorites}
                   />
                 </View>
               )}

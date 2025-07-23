@@ -127,9 +127,11 @@ const FeaturedRadios = ({ styles, radioStations, playStation, currentStation, is
 
   return (
     <View style={[styles.section, isRTL && styles.rtlSection]}>
-      <Text style={[styles.sectionTitle, isRTL && styles.rtlSectionTitle]}>
-        {getLocalizedString('featuredRadios', language)}
-      </Text>
+      <View style={[styles.sectionTitleContainer, isRTL && { flexDirection: 'row-reverse' }]}>
+        <Text style={[styles.sectionTitle, isRTL && styles.rtlSectionTitle]}>
+          {getLocalizedString('featuredRadios', language)}
+        </Text>
+      </View>
       <ScrollView 
         horizontal={true}
         showsHorizontalScrollIndicator={false}

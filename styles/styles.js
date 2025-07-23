@@ -55,6 +55,73 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,
   },
+  sectionTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  sortButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: 'rgba(124, 77, 255, 0.2)',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(124, 77, 255, 0.3)',
+  },
+  sortButtonFullWidth: {
+    alignSelf: 'flex-start',
+    marginBottom: 15,
+  },
+  sortButtonText: {
+    color: '#7C4DFF',
+    fontSize: 12,
+    fontWeight: '600',
+    fontFamily: 'Poppins-SemiBold',
+    marginLeft: 5,
+  },
+  sortOptionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    marginHorizontal: 8,
+    marginVertical: 2,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+  },
+  sortOptionItemSelected: {
+    backgroundColor: 'rgba(124, 77, 255, 0.2)',
+    borderWidth: 1,
+    borderColor: 'rgba(124, 77, 255, 0.4)',
+  },
+  sortOptionIconContainer: {
+    marginRight: 15,
+    width: 24,
+    alignItems: 'center',
+  },
+  sortOptionText: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: '500',
+    fontFamily: 'Poppins-Medium',
+    color: '#ffffff',
+  },
+  sortOptionTextSelected: {
+    color: '#7C4DFF',
+    fontWeight: '600',
+  },
+  sortOptionCheckmark: {
+    marginLeft: 'auto',
+  },
   showsContainer: {
     flexDirection: 'row',
     gap: 15,

@@ -72,6 +72,15 @@ export const strings = {
     aboutContent: 'Radio FM - Lebanese Radio Stations\nVersion 1.0.0\n\nEnjoy listening to your favorite Lebanese radio stations.',
     ok: 'OK',
     
+    // Sorting
+    sortBy: 'Sort by',
+    sortOptions: 'Sort Options',
+    sortByName: 'Name (A-Z)',
+    sortByNameDesc: 'Name (Z-A)',
+    sortByGenre: 'Genre',
+    sortByFavorites: 'Favorites First',
+    sortByRecentlyPlayed: 'Recently Played',
+    
     // Common
     loading: 'Loading...',
     error: 'Error',
@@ -151,6 +160,15 @@ export const strings = {
     aboutTitle: 'حول راديو FM',
     aboutContent: 'راديو FM - محطات الراديو اللبنانية\nالإصدار 1.0.0\n\nاستمتع بالاستماع إلى محطات الراديو اللبنانية المفضلة لديك.',
     ok: 'موافق',
+    
+    // Sorting
+    sortBy: 'ترتيب حسب',
+    sortOptions: 'خيارات الترتيب',
+    sortByName: 'الاسم (أ-ي)',
+    sortByNameDesc: 'الاسم (ي-أ)',
+    sortByGenre: 'النوع',
+    sortByFavorites: 'المفضلة أولاً',
+    sortByRecentlyPlayed: 'المُشغلة مؤخراً',
     
     // Common
     loading: 'جاري التحميل...',
