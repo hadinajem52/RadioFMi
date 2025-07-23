@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { 
   View, 
-  FlatList, 
+  ScrollView, 
   Alert,
   Text,
   ActivityIndicator,
@@ -118,6 +118,14 @@ function App() {
     setShowSettings(true);
   };
 
+  // Memoize the sorted list of radio stations to prevent re-sorting on every render
+  const sortedStations = useMemo(() => {
+    if (!isSortingLoaded) {
+      return radioStations;
+    }
+    return sortStations(radioStations, favorites, currentStation);
+  }, [sortOption, radioStations, favorites, currentStation, isSortingLoaded, sortStations]);
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -149,51 +157,49 @@ function App() {
           </View>
         ) : (
           <>
-            <FlatList
-              data={[1]} // Single item to wrap all content
-              renderItem={() => (
-                <View>
-                  {/* Featured Radios Section */}
-                  <FeaturedRadios 
-                    styles={styles}
-                    radioStations={radioStations}
-                    currentStation={currentStation}
-                    isPlaying={isPlaying}
-                    playStation={playStation}
-                    togglePlayPause={togglePlayPause}
-                    language={language}
-                  />
-
-                  {/* Favorites Section */}
-                  <Favorites 
-                    styles={styles}
-                    favorites={favorites}
-                    currentStation={currentStation}
-                    isPlaying={isPlaying}
-                    playStation={playStation}
-                    togglePlayPause={togglePlayPause}
-                    language={language}
-                  />
-
-                  {/* Lebanese Radio Stations Section */}
-                  <LebaneseRadioStations
-                    styles={styles}
-                    radioStations={isSortingLoaded ? sortStations(radioStations, favorites, currentStation) : radioStations}
-                    currentStation={currentStation}
-                    isPlaying={isPlaying}
-                    playStation={playStation}
-                    togglePlayPause={togglePlayPause}
-                    language={language}
-                    sortOption={sortOption}
-                    onSortOptionChange={setSortPreference}
-                    favorites={favorites}
-                  />
-                </View>
-              )}
-              keyExtractor={() => 'content'}
+            {/* Use ScrollView instead of FlatList for non-virtualized content */}
+            <ScrollView
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.listContent}
-            />
+            >
+              <View>
+                {/* Featured Radios Section */}
+                <FeaturedRadios 
+                  styles={styles}
+                  radioStations={radioStations}
+                  currentStation={currentStation}
+                  isPlaying={isPlaying}
+                  playStation={playStation}
+                  togglePlayPause={togglePlayPause}
+                  language={language}
+                />
+
+                {/* Favorites Section */}
+                <Favorites 
+                  styles={styles}
+                  favorites={favorites}
+                  currentStation={currentStation}
+                  isPlaying={isPlaying}
+                  playStation={playStation}
+                  togglePlayPause={togglePlayPause}
+                  language={language}
+                />
+
+                {/* Lebanese Radio Stations Section */}
+                <LebaneseRadioStations
+                  styles={styles}
+                  radioStations={sortedStations}
+                  currentStation={currentStation}
+                  isPlaying={isPlaying}
+                  playStation={playStation}
+                  togglePlayPause={togglePlayPause}
+                  language={language}
+                  sortOption={sortOption}
+                  onSortOptionChange={setSortPreference}
+                  favorites={favorites}
+                />
+              </View>
+            </ScrollView>
 
             {/* Header */}
             <Header 
@@ -225,68 +231,74 @@ function App() {
               />
             )}
 
-            {/* Fullscreen Player Modal */}
-            <FullscreenPlayer
-              visible={showFullscreenPlayer}
-              onClose={() => setShowFullscreenPlayer(false)}
-              currentStation={currentStation}
-              isPlaying={isPlaying}
-              isLoading={isLoading}
-              togglePlayPause={togglePlayPause}
-              playNextStation={playNextStation}
-              playPreviousStation={playPreviousStation}
-              volume={volume}
-              setVolume={setSafeVolume}
-              favorites={favorites}
-              toggleFavorite={toggleFavorite}
-              language={language}
-            />
+            {/* Conditionally render modals to improve performance */}
+            {showFullscreenPlayer && (
+              <FullscreenPlayer
+                visible={showFullscreenPlayer}
+                onClose={() => setShowFullscreenPlayer(false)}
+                currentStation={currentStation}
+                isPlaying={isPlaying}
+                isLoading={isLoading}
+                togglePlayPause={togglePlayPause}
+                playNextStation={playNextStation}
+                playPreviousStation={playPreviousStation}
+                volume={volume}
+                setVolume={setSafeVolume}
+                favorites={favorites}
+                toggleFavorite={toggleFavorite}
+                language={language}
+              />
+            )}
 
-            {/* Search Modal */}
-            <SearchModal
-              visible={showSearchModal}
-              onClose={() => setShowSearchModal(false)}
-              radioStations={radioStations}
-              currentStation={currentStation}
-              isPlaying={isPlaying}
-              playStation={playStation}
-              togglePlayPause={togglePlayPause}
-              styles={styles}
-              language={language}
-            />
+            {showSearchModal && (
+              <SearchModal
+                visible={showSearchModal}
+                onClose={() => setShowSearchModal(false)}
+                radioStations={radioStations}
+                currentStation={currentStation}
+                isPlaying={isPlaying}
+                playStation={playStation}
+                togglePlayPause={togglePlayPause}
+                styles={styles}
+                language={language}
+              />
+            )}
 
-            {/* Side Menu */}
-            <SideMenu
-              visible={showSideMenu}
-              onClose={() => setShowSideMenu(false)}
-              onGenreSelect={handleGenreSelect}
-              onSettingsPress={handleSettingsPress}
-              styles={styles}
-              language={language}
-            />
+            {showSideMenu && (
+              <SideMenu
+                visible={showSideMenu}
+                onClose={() => setShowSideMenu(false)}
+                onGenreSelect={handleGenreSelect}
+                onSettingsPress={handleSettingsPress}
+                styles={styles}
+                language={language}
+              />
+            )}
 
-            {/* Genre Radio Stations Modal */}
-            <GenreRadioStations
-              visible={showGenreModal}
-              onClose={() => setShowGenreModal(false)}
-              genreId={selectedGenre}
-              radioStations={radioStations}
-              currentStation={currentStation}
-              isPlaying={isPlaying}
-              playStation={playStation}
-              togglePlayPause={togglePlayPause}
-              styles={styles}
-              language={language}
-            />
+            {showGenreModal && (
+              <GenreRadioStations
+                visible={showGenreModal}
+                onClose={() => setShowGenreModal(false)}
+                genreId={selectedGenre}
+                radioStations={radioStations}
+                currentStation={currentStation}
+                isPlaying={isPlaying}
+                playStation={playStation}
+                togglePlayPause={togglePlayPause}
+                styles={styles}
+                language={language}
+              />
+            )}
 
-            {/* Settings Modal */}
-            <Settings
-              visible={showSettings}
-              onClose={() => setShowSettings(false)}
-              volume={volume}
-              setVolume={setSafeVolume}
-              styles={styles}
-            />
+            {showSettings && (
+              <Settings
+                visible={showSettings}
+                onClose={() => setShowSettings(false)}
+                volume={volume}
+                setVolume={setSafeVolume}
+                styles={styles}
+              />
+            )}
           </>
         )}
       </LinearGradient>
