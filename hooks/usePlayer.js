@@ -81,6 +81,22 @@ export const usePlayer = () => {
                 }
               ]
             );
+          } else if (/source error/i.test(error.message)) {
+            Alert.alert(
+              'Station Unavailable',
+              'We reached the station but its audio source did not start streaming. This usually means the station is temporarily offline or blocking connections. You can retry or pick another station.',
+              [
+                { text: 'OK', onPress: () => setStreamError(null) },
+                {
+                  text: 'Retry',
+                  onPress: () => {
+                    if (currentStation) {
+                      setTimeout(() => playStation(currentStation), 1500);
+                    }
+                  }
+                }
+              ]
+            );
           } else if (!hasGoodConnection()) {
             Alert.alert(
               'Network Error', 
@@ -232,6 +248,9 @@ export const usePlayer = () => {
         } else {
           errorMessage = 'Unable to connect to the radio station. This may be due to a poor connection or the station may be temporarily unavailable.';
         }
+      } else if (/source error/i.test(error.message)) {
+        errorTitle = 'Station Unavailable';
+        errorMessage = 'The station responded but its audio source did not start. It may be offline temporarily. Try again in a moment or choose another station.';
       } else if (error.message.includes('Invalid stream URL')) {
         errorTitle = 'Station Error';
         errorMessage = 'This radio station is currently unavailable or the stream URL is invalid.';

@@ -11,6 +11,7 @@ let streamStatusCallback = null;
 let errorCallback = null;
 let connectionTimeoutId = null;
 let bufferingTimeoutId = null;
+let lastStation = null; // Keep reference to last attempted station for retries
 
 // Stream monitoring configuration
 const STREAM_CONFIG = {
@@ -68,6 +69,9 @@ export async function addTrack(station, retryCount = 0) {
     if (!station.url || !isValidStreamUrl(station.url)) {
       throw new Error('Invalid stream URL');
     }
+
+  // Remember the station for potential recovery retries
+  lastStation = station;
 
     await TrackPlayer.add({
       id: station.id.toString(),
@@ -231,12 +235,41 @@ function isValidStreamUrl(url) {
 function handleStreamError(message, station = null, retryCount = 0) {
   console.error('Stream error:', message);
   clearStreamTimeouts();
-  
+
+  // Determine if this error type is eligible for automatic retry
+  const isTimeout = /timeout/i.test(message) || /buffering/i.test(message);
+  const targetStation = station || lastStation;
+
+  if (isTimeout && targetStation && retryCount < STREAM_CONFIG.RETRY_ATTEMPTS) {
+    const nextAttempt = retryCount + 1;
+    console.log(`Auto-retry attempt ${nextAttempt} of ${STREAM_CONFIG.RETRY_ATTEMPTS} for station: ${targetStation.name}`);
+    // Inform UI we're retrying without surfacing a fatal error
+    if (streamStatusCallback) {
+      streamStatusCallback({ state: 'retrying', attempt: nextAttempt, message });
+    }
+    // Schedule retry
+    setTimeout(async () => {
+      try {
+        await stopTrack(); // Ensure clean state
+      } catch {}
+      try {
+        await addTrack(targetStation, nextAttempt); // addTrack will set its own timeouts
+        await playTrack();
+      } catch (e) {
+        // If add/play fails here, recurse to potentially continue retries or emit final error
+        handleStreamError(e.message || 'Retry failure', targetStation, nextAttempt);
+      }
+    }, STREAM_CONFIG.RETRY_DELAY);
+    return; // Defer error callback until final failure
+  }
+
+  // Final failure (or non-timeout error) -> notify UI
   if (errorCallback) {
     errorCallback({
       message,
-      station,
+      station: targetStation,
       retryCount,
+      final: true,
       timestamp: new Date().toISOString()
     });
   }
@@ -247,10 +280,11 @@ async function checkBufferingStatus() {
   try {
     const state = await TrackPlayer.getState();
     if (state === State.Buffering) {
-      handleStreamError('Buffering timeout - stream may be slow or unavailable');
+      // Pass along lastStation & assume retryCount 0 for first buffering timeout if not already set.
+      handleStreamError('Buffering timeout - stream may be slow or unavailable', lastStation, 0);
     }
   } catch (error) {
-    handleStreamError(`Status check error: ${error.message}`);
+    handleStreamError(`Status check error: ${error.message}`, lastStation, 0);
   }
 }
 
