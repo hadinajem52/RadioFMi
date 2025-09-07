@@ -126,6 +126,13 @@ function App() {
     return sortStations(radioStations, favorites, currentStation);
   }, [sortOption, radioStations, favorites, currentStation, isSortingLoaded, sortStations]);
 
+  // Auto-open fullscreen player on buffering failure to give user immediate controls/retry
+  useEffect(() => {
+    if (connectionStatus === 'buffering_failed' && currentStation) {
+      setShowFullscreenPlayer(true);
+    }
+  }, [connectionStatus, currentStation]);
+
   return (
     <View style={styles.container}>
       <LinearGradient

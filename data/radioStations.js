@@ -906,17 +906,7 @@ const radioStations = [
     image: require('../radioimg/alaraby.png'),
     genre: 'News & Talk'
   },
-  {
-    id: 80,
-    name: 'Kawkab El Sharq',
-    nameAr: 'كوكب الشرق',
-    url: 'http://sawtelghad.org:8006/;',
-    description: 'Arabic Music',
-    descriptionAr: 'موسيقى عربية',
-    color: ['#F59E0B', '#FBBF24'],
-    image: require('../radioimg/kaawkabelsharq.png'),
-    genre: 'Music & Entertainment'
-  },
+
   {
     id: 81,
     name: 'Radio Angham',

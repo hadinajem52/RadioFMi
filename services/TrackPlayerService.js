@@ -16,7 +16,7 @@ let lastStation = null; // Keep reference to last attempted station for retries
 // Stream monitoring configuration
 const STREAM_CONFIG = {
   CONNECTION_TIMEOUT: 15000, // 15 seconds
-  BUFFERING_TIMEOUT: 30000,  // 30 seconds
+  BUFFERING_TIMEOUT: 45000,  // 45 seconds (give slow streams more time)
   RETRY_ATTEMPTS: 3,
   RETRY_DELAY: 2000, // 2 seconds
 };
@@ -278,11 +278,54 @@ function handleStreamError(message, station = null, retryCount = 0) {
 // Check buffering status
 async function checkBufferingStatus() {
   try {
-    const state = await TrackPlayer.getState();
-    if (state === State.Buffering) {
-      // Pass along lastStation & assume retryCount 0 for first buffering timeout if not already set.
-      handleStreamError('Buffering timeout - stream may be slow or unavailable', lastStation, 0);
+    // Sometimes streams take a little longer to prime. Do several quick re-checks
+    // before deciding the stream has failed. This reduces false positives for
+    // slow-but-working stations.
+    const maxChecks = 5;
+    const checkDelayMs = 2000; // 2 seconds between quick re-checks
+
+    for (let i = 0; i < maxChecks; i++) {
+      // If timeouts were cleared elsewhere (e.g., state changed to Playing), abort
+      if (!bufferingTimeoutId) return;
+
+      const state = await TrackPlayer.getState();
+      if (state !== State.Buffering) {
+        // Playback progressed; clear timeouts and return without surfacing an error
+        clearStreamTimeouts();
+        return;
+      }
+
+      if (i < maxChecks - 1) {
+        await new Promise(resolve => setTimeout(resolve, checkDelayMs));
+      }
     }
+
+    // After repeated checks still buffering -> do a lightweight HEAD probe of the stream
+    // If the probe shows the endpoint is reachable, extend the buffering window once
+    try {
+      if (lastStation && lastStation.url) {
+        const controller = new AbortController();
+        const probeTimeout = setTimeout(() => controller.abort(), 5000);
+        const response = await fetch(lastStation.url, { method: 'HEAD', signal: controller.signal });
+        clearTimeout(probeTimeout);
+
+        if (response && response.ok) {
+          // Stream endpoint reachable; give more time and reschedule a check
+          bufferingTimeoutId = setTimeout(() => checkBufferingStatus(), Math.floor(STREAM_CONFIG.BUFFERING_TIMEOUT / 2));
+          return;
+        }
+      }
+    } catch (probeError) {
+      // Ignore probe errors and fall through to final failure handling
+      console.log('Stream probe failed during buffering check:', probeError?.message || probeError);
+    }
+
+    // Still buffering after retries and probe -> treat as failure
+    // Notify UI explicitly about buffering failure before triggering error handling
+    if (streamStatusCallback) {
+      try { streamStatusCallback({ state: 'buffering_failed', station: lastStation }); } catch {}
+    }
+    handleStreamError('Buffering timeout - stream may be slow or unavailable', lastStation, 0);
   } catch (error) {
     handleStreamError(`Status check error: ${error.message}`, lastStation, 0);
   }
@@ -313,6 +356,18 @@ export async function getStreamStatus() {
       error: error.message,
       timestamp: new Date().toISOString()
     };
+  }
+}
+
+// Public helper to trigger an immediate buffering re-check from UI components
+export async function recheckBuffering() {
+  // If a buffering timeout was not previously set, still attempt a status check
+  try {
+    await checkBufferingStatus();
+    return true;
+  } catch (error) {
+    console.error('recheckBuffering failed:', error);
+    return false;
   }
 }
 

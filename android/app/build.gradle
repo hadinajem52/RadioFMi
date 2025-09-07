@@ -99,8 +99,8 @@ android {
         applicationId 'com.hhhhjjj.RadioFMi'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 3
-        versionName "2.0.0"
+        versionCode 5
+        versionName "3.1.0"
     }
     signingConfigs {
         debug {
@@ -116,7 +116,6 @@ android {
                 keyAlias keystoreProperties['keyAlias']
                 keyPassword keystoreProperties['keyPassword']
             } else {
-                // Fallback values for when keystore.properties doesn't exist
                 storeFile file("my-release-key.keystore")
                 storePassword "your-keystore-password"
                 keyAlias "your-key-alias"

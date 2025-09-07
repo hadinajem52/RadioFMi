@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, ActivityIndicator, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import TrackPlayer, { usePlaybackState, State } from 'react-native-track-player';
+import { recheckBuffering } from '../services/TrackPlayerService';
 
 const StreamStatus = ({ 
   currentStation, 
@@ -21,6 +22,7 @@ const StreamStatus = ({
   const playbackState = usePlaybackState();
   const timeoutRef = useRef(null);
   const bufferingTimeoutRef = useRef(null);
+  const lastRecheckRef = useRef(0);
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
   // Size configurations
@@ -102,6 +104,18 @@ const StreamStatus = ({
         bufferingTimeoutRef.current = setTimeout(() => {
           if (playbackState?.state === State.Buffering) {
             setConnectionTimeout(true);
+
+            // Trigger an immediate recheck when UI marks buffering as failed.
+            const now = Date.now();
+            if (now - lastRecheckRef.current > 5000) { // 5s debounce
+              lastRecheckRef.current = now;
+              recheckBuffering().then((ok) => {
+                if (ok) {
+                  // Re-check succeeded; clear the timeout flag so UI returns to buffering or live
+                  setConnectionTimeout(false);
+                }
+              }).catch(() => {});
+            }
           }
         }, 30000); // 30 second buffering timeout
         break;
