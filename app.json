@@ -21,7 +21,13 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.hhhhjjj.RadioFMi"
+      "package": "com.hhhhjjj.RadioFMi",
+      "permissions": [
+        "INTERNET",
+        "MODIFY_AUDIO_SETTINGS",
+        "FOREGROUND_SERVICE",
+        "WAKE_LOCK"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"

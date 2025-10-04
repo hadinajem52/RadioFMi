@@ -888,7 +888,8 @@ const radioStations = [
     descriptionAr: 'أخبار',
     color: ['#FF6F00', '#FF8F00'],
     image: require('../radioimg/aljazira.png'), 
-    genre: 'News & Talk'
+    genre: 'News & Talk',
+    webViewFallbackUrl: 'https://onlineradiobox.com/qa/aljazeeraarabic/?cs=qa.aljazeeraarabic&played=1'
   },
   {
     id: 73,

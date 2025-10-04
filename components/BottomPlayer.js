@@ -55,12 +55,14 @@ const BottomPlayer = ({ styles, currentStation, isPlaying, isLoading, togglePlay
               marginLeft: isRTL ? 8 : 0 
             }}
           />
-          <Text style={[styles.playerDescription, {
-            textAlign: isRTL ? 'right' : 'left',
-            writingDirection: isRTL ? 'rtl' : 'ltr',
-          }]}>
-            {getLocalizedString('liveRadio', language)}
-          </Text>
+          {isPlaying && !isLoading && (
+            <Text style={[styles.playerDescription, {
+              textAlign: isRTL ? 'right' : 'left',
+              writingDirection: isRTL ? 'rtl' : 'ltr',
+            }]}>
+              {getLocalizedString('liveRadio', language)}
+            </Text>
+          )}
         </View>
       </View>
       <TouchableOpacity

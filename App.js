@@ -33,6 +33,10 @@ import LebaneseRadioStations from './components/LebaneseRadioStations';
 import BottomPlayer from './components/BottomPlayer';
 import FullscreenPlayer from './components/FullscreenPlayer';
 import SearchModal from './components/SearchModal';
+import StationWebViewModal from './components/StationWebViewModal';
+import BackgroundWebViewService from './components/BackgroundWebViewService';
+import { registerWebViewOpener } from './utils/webViewFallback';
+import { stopTrack } from './services/TrackPlayerService';
 import SideMenu from './components/SideMenu';
 import GenreRadioStations from './components/GenreRadioStations';
 import NetworkStatusIndicator from './components/NetworkStatusIndicator';
@@ -50,6 +54,9 @@ function App() {
   const [showGenreModal, setShowGenreModal] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [selectedGenre, setSelectedGenre] = useState(null);
+  const [webViewVisible, setWebViewVisible] = useState(false);
+  const [webViewUrl, setWebViewUrl] = useState('');
+  const [webViewTitle, setWebViewTitle] = useState('Web Player');
   
   // Custom hooks for player and favorites management
   const {
@@ -107,6 +114,22 @@ function App() {
     };
 
     initializeApp();
+  }, []);
+
+  // Register a global opener for the fallback web view
+  useEffect(() => {
+    registerWebViewOpener(async (url, title) => {
+      try {
+        // Force stop any ongoing radio playback before opening WebView
+        await stopTrack();
+      } catch (_) {
+        // ignore
+      } finally {
+        setWebViewUrl(url);
+        setWebViewTitle(title || 'Web Player');
+        setWebViewVisible(true);
+      }
+    });
   }, []);
 
   const handleGenreSelect = (genreId) => {
@@ -306,6 +329,20 @@ function App() {
                 styles={styles}
               />
             )}
+
+            {/* Fallback Web Player Modal */}
+            <StationWebViewModal
+              visible={webViewVisible}
+              url={webViewUrl}
+              title={webViewTitle}
+              onClose={() => setWebViewVisible(false)}
+            />
+
+            {/* Background WebView Service - keeps audio playing when app is backgrounded */}
+            <BackgroundWebViewService
+              url={webViewVisible ? webViewUrl : null}
+              isActive={webViewVisible}
+            />
           </>
         )}
       </LinearGradient>

@@ -24,6 +24,7 @@ const StreamStatus = ({
   const bufferingTimeoutRef = useRef(null);
   const lastRecheckRef = useRef(0);
   const pulseAnim = useRef(new Animated.Value(1)).current;
+  const errorLoggedRef = useRef(false);
 
   // Size configurations
   const sizeConfig = {
@@ -173,9 +174,15 @@ const StreamStatus = ({
     const checkForErrors = async () => {
       try {
         const state = await TrackPlayer.getState();
-        // Don't set error status, just log for debugging
+        // Log only once per error transition
         if (state === State.Error) {
-          console.log('TrackPlayer error state detected');
+          if (!errorLoggedRef.current) {
+            console.log('TrackPlayer error state detected');
+            errorLoggedRef.current = true;
+          }
+        } else if (errorLoggedRef.current) {
+          // Reset flag when leaving error state so future errors log once again
+          errorLoggedRef.current = false;
         }
       } catch (error) {
         console.log('Error checking TrackPlayer state:', error);

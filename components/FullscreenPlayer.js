@@ -6,6 +6,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { getLocalizedString } from '../localization/strings';
 import StreamStatus from './StreamStatus';
 import StreamMonitor from './StreamMonitor';
+import { openORBForStation } from '../utils/webViewFallback';
 
 const { width, height } = Dimensions.get('window');
 
@@ -202,6 +203,32 @@ const FullscreenPlayer = ({
                 {getLocalizedString('streamingQuality', language)}
               </Text>
             </View>
+          </View>
+
+          {/* Optional: Open Web Player fallback */}
+          <View style={{ alignItems: 'center', marginBottom: 24 }}>
+            <TouchableOpacity
+              onPress={() => openORBForStation(currentStation)}
+              style={{
+                flexDirection: isRTL ? 'row-reverse' : 'row',
+                alignItems: 'center',
+                backgroundColor: 'rgba(255,255,255,0.15)',
+                paddingHorizontal: 14,
+                paddingVertical: 10,
+                borderRadius: 22,
+              }}
+              accessibilityLabel="Open Web Player"
+            >
+              <Ionicons 
+                name="globe-outline" 
+                size={18} 
+                color="#fff" 
+                style={{ marginRight: isRTL ? 0 : 6, marginLeft: isRTL ? 6 : 0 }}
+              />
+              <Text style={{ color: '#fff', fontSize: 14, writingDirection: isRTL ? 'rtl' : 'ltr' }}>
+                Open Web Player
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
 

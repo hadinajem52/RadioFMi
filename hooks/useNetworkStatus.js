@@ -9,7 +9,6 @@ export const useNetworkStatus = () => {
   useEffect(() => {
     // Subscribe to network state updates
     const unsubscribe = NetInfo.addEventListener(state => {
-      console.log('Network state change:', state);
       setIsConnected(state.isConnected);
       setConnectionType(state.type);
       setIsInternetReachable(state.isInternetReachable);
@@ -17,7 +16,6 @@ export const useNetworkStatus = () => {
 
     // Get initial network state
     NetInfo.fetch().then(state => {
-      console.log('Initial network state:', state);
       setIsConnected(state.isConnected);
       setConnectionType(state.type);
       setIsInternetReachable(state.isInternetReachable);
