@@ -204,7 +204,7 @@ Global styles are defined in the `styles/` directory. Modify these files to chan
 
 ## 📄 License
 
-This project is private and proprietary.
+This project is available on GitHub for educational and personal use.
 
 ## 👨‍💻 Author
 
