@@ -303,7 +303,7 @@ const radioStations = [
     id: 26,
     name: 'LBI Radio',
     nameAr: 'راديو إل بي آي',
-    url: 'https://lbigroup.radioca.st/stream?type=http&amp;nocache=91',
+    url: 'https://live.lbiradio.com/listen/station_1/1',
     description: 'Talk, Local Content',
     descriptionAr: 'برامج حوارية، محتوى محلي',
     color: ['#28A745', '#20C997'],
@@ -406,7 +406,7 @@ const radioStations = [
   {
     id: 32,
     name: 'Albal Radio',
-    nameAr: 'راديو البال',
+    nameAr: 'راديو عالبال',
     url: 'https://albal-lbnet2.radioca.st/stream',
     description: 'Music',
     descriptionAr: 'موسيقى',
