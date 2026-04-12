@@ -46,8 +46,8 @@ const SortOptionsModal = ({
       icon: 'heart-outline'
     },
     {
-      key: SORT_OPTIONS.RECENTLY_PLAYED,
-      label: getLocalizedString('sortByRecentlyPlayed', activeLanguage),
+      key: SORT_OPTIONS.PLAYING_AND_FAVORITES,
+      label: getLocalizedString('sortByPlayingAndFavorites', activeLanguage),
       icon: 'time-outline'
     }
   ];

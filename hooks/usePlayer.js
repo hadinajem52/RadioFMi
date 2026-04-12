@@ -7,39 +7,248 @@ import {
   playTrack, 
   pauseTrack, 
   stopTrack,
-  setVolume as setPlayerVolume,
   setStreamStatusCallback,
   setErrorCallback,
 } from '../services/TrackPlayerService';
 import { useNetworkStatus } from './useNetworkStatus';
 import { openORBForStation } from '../utils/webViewFallback';
 import StreamUrlCache from '../services/StreamUrlCache';
-import { testInternetConnectivity, testRadioStreamConnectivity } from '../utils/networkUtils';
+import { testInternetConnectivity } from '../utils/networkUtils';
+import { PLAYBACK_STATUS } from '../utils/playbackStatus';
 import radioStations from '../data/radioStations';
 
 export const usePlayer = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [currentStation, setCurrentStation] = useState(null);
   const [isPlayerReady, setIsPlayerReady] = useState(false);
-  const [volume, setVolume] = useState(1.0);
-  const [streamError, setStreamError] = useState(null);
-  const [connectionStatus, setConnectionStatus] = useState('idle');
-  
-  const isRetrying = useRef(false);
+  const [connectionStatus, setConnectionStatus] = useState(PLAYBACK_STATUS.IDLE);
 
   const playbackState = usePlaybackState();
   const { hasGoodConnection, getConnectionStatusMessage, isConnected, isInternetReachable } = useNetworkStatus();
+  const isRetrying = useRef(false);
+  const currentStationRef = useRef(null);
+  const networkStateRef = useRef({
+    hasGoodConnection,
+    getConnectionStatusMessage,
+    isConnected,
+    isInternetReachable,
+  });
+
+  const normalizeConnectionState = (state) => {
+    switch (state) {
+      case State.Playing:
+        return PLAYBACK_STATUS.PLAYING;
+      case State.Buffering:
+        return PLAYBACK_STATUS.BUFFERING;
+      case State.Paused:
+        return PLAYBACK_STATUS.PAUSED;
+      case State.Stopped:
+        return PLAYBACK_STATUS.STOPPED;
+      case State.Ready:
+        return PLAYBACK_STATUS.READY;
+      case State.Error:
+        return PLAYBACK_STATUS.ERROR;
+      default:
+        return typeof state === 'string' ? state : PLAYBACK_STATUS.IDLE;
+    }
+  };
 
   // Derive isPlaying from playbackState
   const isPlaying = playbackState?.state === State.Playing;
 
-  // Safe volume setter with validation
-  const setSafeVolume = (newVolume) => {
-    if (typeof newVolume === 'number' && !isNaN(newVolume) && newVolume >= 0 && newVolume <= 1) {
-      setVolume(newVolume);
-    } else {
-      console.warn('Invalid volume value:', newVolume, 'keeping current volume:', volume);
+  useEffect(() => {
+    currentStationRef.current = currentStation;
+  }, [currentStation]);
+
+  useEffect(() => {
+    networkStateRef.current = {
+      hasGoodConnection,
+      getConnectionStatusMessage,
+      isConnected,
+      isInternetReachable,
+    };
+  }, [hasGoodConnection, getConnectionStatusMessage, isConnected, isInternetReachable]);
+
+  const getErrorMessage = (error) => error?.message || 'Unknown error';
+
+  const isSourceErrorMessage = (message) => /source error/i.test(message);
+
+  const isNetworkErrorMessage = (message) => (
+    message.includes('network') ||
+    message.includes('timeout') ||
+    message.includes('ENOTFOUND') ||
+    message.includes('ECONNREFUSED') ||
+    message.includes('ETIMEDOUT') ||
+    message.includes('Internet connectivity test failed') ||
+    !networkStateRef.current.hasGoodConnection()
+  );
+
+  const getCurrentConnectionStatusMessage = () => networkStateRef.current.getConnectionStatusMessage();
+
+  const getStationFromTrackInfo = (trackInfo, fallbackStation = currentStationRef.current) => {
+    if (fallbackStation) {
+      return fallbackStation;
     }
+
+    if (!trackInfo) {
+      return null;
+    }
+
+    const trackId = typeof trackInfo.id === 'string' ? parseInt(trackInfo.id, 10) : trackInfo.id;
+    return radioStations.find((station) => station.id === trackId) || trackInfo;
+  };
+
+  const getCurrentTrackInfo = async () => {
+    try {
+      const trackIndex = await TrackPlayer.getCurrentTrack();
+      if (trackIndex === null || trackIndex === undefined) {
+        return null;
+      }
+
+      return await TrackPlayer.getTrack(trackIndex);
+    } catch (error) {
+      console.log('Could not get current track:', error);
+      return null;
+    }
+  };
+
+  const retryStationPlayback = (station, delay = 1000) => {
+    if (!station) {
+      return;
+    }
+
+    setTimeout(() => playStation(station), delay);
+  };
+
+  const openWebPlayerFallback = (station) => {
+    if (!station) {
+      return;
+    }
+
+    console.log('Opening webview automatically for:', station.name || station.title);
+    setTimeout(() => openORBForStation(station), 100);
+  };
+
+  const retryWithFreshStreamUrl = async (station) => {
+    if (!station || isRetrying.current) {
+      return false;
+    }
+
+    isRetrying.current = true;
+    let retryScheduled = false;
+
+    try {
+      const freshUrl = await StreamUrlCache.refetch(station);
+      if (!freshUrl) {
+        return false;
+      }
+
+      console.log('StreamUrlCache: retrying with fresh URL for', station.name);
+      retryScheduled = true;
+      setTimeout(async () => {
+        try {
+          await playStation({ ...station, url: freshUrl });
+        } finally {
+          isRetrying.current = false;
+        }
+      }, 300);
+      return true;
+    } catch (error) {
+      console.error('Error fetching fresh stream URL:', error);
+      return false;
+    } finally {
+      if (!retryScheduled) {
+        isRetrying.current = false;
+      }
+    }
+  };
+
+  const handleSourceErrorRecovery = async (station, { retryFreshUrl = false } = {}) => {
+    if (!station) {
+      console.error('No station info available for webview fallback');
+      Alert.alert(
+        'Station Unavailable',
+        'This station seems offline or blocking in-app playback.',
+        [{ text: 'OK' }]
+      );
+      return true;
+    }
+
+    if (retryFreshUrl) {
+      await StreamUrlCache.invalidate(station.id);
+      if (await retryWithFreshStreamUrl(station)) {
+        return true;
+      }
+    }
+
+    console.log('Final station has webViewFallbackUrl:', !!station.webViewFallbackUrl);
+    openWebPlayerFallback(station);
+    return true;
+  };
+
+  const getPlaybackErrorAlert = (message) => {
+    const { isConnected: hasNetworkConnection, isInternetReachable: canReachInternet } = networkStateRef.current;
+
+    if (isNetworkErrorMessage(message)) {
+      if (!hasNetworkConnection) {
+        return {
+          title: 'Connection Error',
+          message: 'No internet connection. Please connect to WiFi or mobile data and try again.',
+        };
+      }
+
+      if (!canReachInternet) {
+        return {
+          title: 'Connection Error',
+          message: 'Connected to network but no internet access. Please check your connection.',
+        };
+      }
+
+      if (message.includes('Internet connectivity test failed')) {
+        return {
+          title: 'Connection Error',
+          message: 'Unable to reach the internet. Please check your connection and try again.',
+        };
+      }
+
+      return {
+        title: 'Connection Error',
+        message: 'Unable to connect to the radio station. This may be due to a poor connection or the station may be temporarily unavailable.',
+      };
+    }
+
+    if (isSourceErrorMessage(message)) {
+      return {
+        title: 'Station Unavailable',
+        message: 'This station seems offline or blocking in-app playback. Opening Web Player automatically...',
+      };
+    }
+
+    if (message.includes('Invalid stream URL')) {
+      return {
+        title: 'Station Error',
+        message: 'This radio station is currently unavailable or the stream URL is invalid.',
+      };
+    }
+
+    if (message.includes('format') || message.includes('codec')) {
+      return {
+        title: 'Format Error',
+        message: 'This radio station uses an unsupported audio format.',
+      };
+    }
+
+    if (message.includes('permission')) {
+      return {
+        title: 'Permission Error',
+        message: 'Unable to access audio playback. Please check app permissions.',
+      };
+    }
+
+    return {
+      title: 'Playback Error',
+      message: 'Failed to play radio station',
+    };
   };
 
   // Initialize TrackPlayer
@@ -53,145 +262,58 @@ export const usePlayer = () => {
         // Set up stream monitoring callbacks
         setStreamStatusCallback((event) => {
           console.log('Stream status update:', event);
-          setConnectionStatus(event.state || 'unknown');
+          setConnectionStatus(normalizeConnectionState(event.state));
         });
         
         setErrorCallback(async (error) => {
+          const message = getErrorMessage(error);
           console.error('Stream error callback:', error);
-          setStreamError(error);
           setIsLoading(false);
-          
-          // Get current track info from TrackPlayer
-          let trackInfo = null;
-          try {
-            const trackIndex = await TrackPlayer.getCurrentTrack();
-            if (trackIndex !== null && trackIndex !== undefined) {
-              trackInfo = await TrackPlayer.getTrack(trackIndex);
-            }
-          } catch (e) {
-            console.log('Could not get current track:', e);
-          }
+          setConnectionStatus(PLAYBACK_STATUS.ERROR);
+ 
+          const trackInfo = await getCurrentTrackInfo();
+          const station = getStationFromTrackInfo(trackInfo);
           
           // Check network status when error occurs
-          const networkStatus = getConnectionStatusMessage();
+          const networkStatus = getCurrentConnectionStatusMessage();
           console.log('Network status during error:', networkStatus);
           console.log('Track info during error:', trackInfo);
           
           // Show user-friendly error message based on error type and network status
-          if (error.message.includes('timeout')) {
-            // Find the original station object from radioStations array
-            let station = currentStation;
-            if (!station && trackInfo) {
-              // TrackPlayer stores IDs as strings, so we need to parse
-              const trackId = typeof trackInfo.id === 'string' ? parseInt(trackInfo.id, 10) : trackInfo.id;
-              station = radioStations.find(s => s.id === trackId) || trackInfo;
-            }
-            
+          if (message.includes('timeout')) {
             const buttons = [
-              { text: 'OK', onPress: () => setStreamError(null) },
-              { 
-                text: 'Retry', 
-                onPress: () => {
-                  if (currentStation) {
-                    // Wait a moment before retrying
-                    setTimeout(() => playStation(currentStation), 2000);
-                  }
-                }
-              }
+              { text: 'OK' },
+              { text: 'Retry', onPress: () => retryStationPlayback(currentStationRef.current, 2000) }
             ];
             if (station) {
-              buttons.push({ text: 'Open Web Player', onPress: () => openORBForStation(station) });
+              buttons.push({ text: 'Open Web Player', onPress: () => openWebPlayerFallback(station) });
             }
             Alert.alert(
               'Connection Timeout', 
-              !hasGoodConnection() 
+              !networkStateRef.current.hasGoodConnection() 
                 ? `${networkStatus}. Please check your connection and try again.`
                 : 'Unable to connect to the radio station within the timeout period. The station may be experiencing issues or your connection may be slow.',
               buttons
             );
-          } else if (/source error/i.test(error.message)) {
-            // Find the original station object from radioStations array
-            let station = currentStation;
-            
-            if (!station && trackInfo) {
-              // Try to find station by ID from trackInfo
-              // TrackPlayer stores IDs as strings, so we need to parse
-              const trackId = typeof trackInfo.id === 'string' ? parseInt(trackInfo.id, 10) : trackInfo.id;
-              station = radioStations.find(s => s.id === trackId);
-              console.log('TrackInfo ID:', trackInfo.id, 'Parsed ID:', trackId);
-              console.log('Found station from radioStations by ID:', station?.name);
-              console.log('Station webViewFallbackUrl:', station?.webViewFallbackUrl);
-            }
-            
-            if (!station && trackInfo) {
-              // Fallback: use trackInfo directly
-              station = trackInfo;
-              console.log('Using trackInfo as fallback (no match found in radioStations)');
-            }
-            
-            if (station) {
-              // Invalidate stale cache entry
-              await StreamUrlCache.invalidate(station.id);
-              // Try to get a fresh URL from ORB before falling back to WebView
-              if (!isRetrying.current) {
-                isRetrying.current = true;
-                let retryScheduled = false;
-                try {
-                  const freshUrl = await StreamUrlCache.refetch(station);
-                  if (freshUrl) {
-                    retryScheduled = true;
-                    setStreamError(null);
-                    console.log('StreamUrlCache: retrying with fresh URL for', station.name);
-                    setTimeout(async () => {
-                      await playStation({ ...station, url: freshUrl });
-                      isRetrying.current = false;
-                    }, 300);
-                    return;
-                  }
-                } finally {
-                  if (!retryScheduled) {
-                    isRetrying.current = false;
-                  }
-                }
-              }
-              // Fresh URL unavailable or retry already attempted — open WebView
-              setStreamError(null);
-              console.log('Opening webview automatically for:', station.name || station.title);
-              console.log('Final station has webViewFallbackUrl:', !!station.webViewFallbackUrl);
-              setTimeout(() => openORBForStation(station), 100);
-            } else {
-              // Fallback if no station info available
-              console.error('No station info available for webview fallback');
-              Alert.alert(
-                'Station Unavailable',
-                'This station seems offline or blocking in-app playback.',
-                [{ text: 'OK', onPress: () => setStreamError(null) }]
-              );
-            }
-          } else if (!hasGoodConnection()) {
+          } else if (isSourceErrorMessage(message)) {
+            await handleSourceErrorRecovery(station, { retryFreshUrl: true });
+          } else if (!networkStateRef.current.hasGoodConnection()) {
             Alert.alert(
-              'Network Error', 
+              'Network Error',
               `${networkStatus}. Radio streaming requires an active internet connection.`,
               [
-                { text: 'OK', onPress: () => setStreamError(null) },
-                { 
-                  text: 'Retry', 
-                  onPress: () => {
-                    if (currentStation) {
-                      setTimeout(() => playStation(currentStation), 1000);
-                    }
-                  }
-                }
+                { text: 'OK' },
+                { text: 'Retry', onPress: () => retryStationPlayback(currentStationRef.current) }
               ]
             );
           } else {
-            const buttons = [ { text: 'OK', onPress: () => setStreamError(null) } ];
-            if (currentStation) {
-              buttons.push({ text: 'Open Web Player', onPress: () => openORBForStation(currentStation) });
+            const buttons = [{ text: 'OK' }];
+            if (currentStationRef.current) {
+              buttons.push({ text: 'Open Web Player', onPress: () => openWebPlayerFallback(currentStationRef.current) });
             }
             Alert.alert(
-              'Stream Error', 
-              error.message || 'Unable to play this radio station. The station may be temporarily unavailable.',
+              'Stream Error',
+              message || 'Unable to play this radio station. The station may be temporarily unavailable.',
               buttons
             );
           }
@@ -205,26 +327,12 @@ export const usePlayer = () => {
 
     initializePlayer();
 
-  }, []);
-
-  // Update player volume when volume state changes
-  useEffect(() => {
-    const updateVolume = async () => {
-      try {
-        if (typeof volume === 'number' && !isNaN(volume) && volume >= 0 && volume <= 1) {
-          await setPlayerVolume(volume);
-        } else {
-          console.warn('Invalid volume value:', volume, 'skipping update');
-        }
-      } catch (error) {
-        console.error('Error setting volume:', error);
-      }
+    return () => {
+      setStreamStatusCallback(null);
+      setErrorCallback(null);
     };
-    
-    if (isPlayerReady && volume !== undefined) {
-      updateVolume();
-    }
-  }, [volume, isPlayerReady]);
+
+  }, []);
 
   const playStation = async (station) => {
     if (!isPlayerReady) {
@@ -257,8 +365,7 @@ export const usePlayer = () => {
     try {
       setIsLoading(true);
       setCurrentStation(station);
-      setStreamError(null);
-      setConnectionStatus('connecting');
+      setConnectionStatus(PLAYBACK_STATUS.CONNECTING);
       
       // Additional connectivity tests for better error detection
       console.log('Testing internet connectivity...');
@@ -268,17 +375,6 @@ export const usePlayer = () => {
         throw new Error('Internet connectivity test failed - no internet access detected');
       }
 
-      // Test if the specific radio stream is reachable
-      if (station.url) {
-        console.log('Testing radio stream connectivity...');
-        const streamReachable = await testRadioStreamConnectivity(station.url, 8000);
-        
-        if (!streamReachable) {
-          console.warn(`Radio stream ${station.url} appears to be unreachable`);
-          // Don't throw error here, let TrackPlayer try - stream test might give false negatives
-        }
-      }
-      
       // Stop current playback and clear queue
       await stopTrack();
 
@@ -288,82 +384,33 @@ export const usePlayer = () => {
 
       // Add the resolved station and play
       await addTrack(trackToPlay);
-      await playTrack();
+      await playTrack(trackToPlay);
       
       setIsLoading(false);
-      setConnectionStatus('connected');
+      setConnectionStatus(PLAYBACK_STATUS.PLAYING);
     } catch (error) {
+      const message = getErrorMessage(error);
       console.error('Error playing station:', error);
       setIsLoading(false);
-      setConnectionStatus('error');
-      
-      // Enhanced error handling with network-specific messages
-  let errorMessage = 'Failed to play radio station';
-  let errorTitle = 'Playback Error';
-      
-      // Check if it's a network-related error
-      const isNetworkError = 
-        error.message.includes('network') || 
-        error.message.includes('timeout') || 
-        error.message.includes('ENOTFOUND') ||
-        error.message.includes('ECONNREFUSED') ||
-        error.message.includes('ETIMEDOUT') ||
-        error.message.includes('Internet connectivity test failed') ||
-        !hasGoodConnection();
-      
-      if (isNetworkError) {
-        errorTitle = 'Connection Error';
-        if (!isConnected) {
-          errorMessage = 'No internet connection. Please connect to WiFi or mobile data and try again.';
-        } else if (!isInternetReachable) {
-          errorMessage = 'Connected to network but no internet access. Please check your connection.';
-        } else if (error.message.includes('Internet connectivity test failed')) {
-          errorMessage = 'Unable to reach the internet. Please check your connection and try again.';
-        } else {
-          errorMessage = 'Unable to connect to the radio station. This may be due to a poor connection or the station may be temporarily unavailable.';
-        }
-      } else if (/source error/i.test(error.message)) {
-        errorTitle = 'Station Unavailable';
-        errorMessage = 'This station seems offline or blocking in-app playback. Opening Web Player automatically...';
-      } else if (error.message.includes('Invalid stream URL')) {
-        errorTitle = 'Station Error';
-        errorMessage = 'This radio station is currently unavailable or the stream URL is invalid.';
-      } else if (error.message.includes('format') || error.message.includes('codec')) {
-        errorTitle = 'Format Error';
-        errorMessage = 'This radio station uses an unsupported audio format.';
-      } else if (error.message.includes('permission')) {
-        errorTitle = 'Permission Error';
-        errorMessage = 'Unable to access audio playback. Please check app permissions.';
+      setConnectionStatus(PLAYBACK_STATUS.ERROR);
+
+      if (isSourceErrorMessage(message)) {
+        await handleSourceErrorRecovery(station);
+        return;
       }
-      
-      // Handle source errors by opening webview immediately
-      if (/source error/i.test(error.message)) {
-        if (station) {
-          // Automatically open webview immediately without alert
-          console.log('Opening webview automatically for:', station.name);
-          setTimeout(() => openORBForStation(station), 100);
-          return; // Skip alert
-        }
-      }
-      
-      // For all other errors, show alert with appropriate buttons
-      let buttons = [
+
+      const errorAlert = getPlaybackErrorAlert(message);
+      const buttons = [
         { text: 'OK' },
-        { 
-          text: 'Retry', 
-          onPress: () => {
-            // Add a small delay before retrying
-            setTimeout(() => playStation(station), 1000);
-          }
-        }
+        { text: 'Retry', onPress: () => retryStationPlayback(station) }
       ];
       
       // Add web fallback for other non-network failures
-      if (!isNetworkError && !(/source error/i.test(error.message))) {
-        buttons.push({ text: 'Open Web Player', onPress: () => openORBForStation(station) });
+      if (!isNetworkErrorMessage(message)) {
+        buttons.push({ text: 'Open Web Player', onPress: () => openWebPlayerFallback(station) });
       }
 
-      Alert.alert(errorTitle, errorMessage, buttons);
+      Alert.alert(errorAlert.title, errorAlert.message, buttons);
     }
   };
 
@@ -398,19 +445,14 @@ export const usePlayer = () => {
         await pauseTrack();
       } else {
         console.log('Attempting to play...');
-        await playTrack();
+        await playTrack(currentStation);
       }
       console.log('Action completed, new state:', await TrackPlayer.getState());
     } catch (error) {
+      const message = getErrorMessage(error);
       console.error('Error toggling play/pause:', error);
-      
-      // Check if it's a network-related error
-      const isNetworkError = 
-        error.message.includes('network') || 
-        error.message.includes('timeout') ||
-        !hasGoodConnection();
-      
-      if (isNetworkError) {
+
+      if (isNetworkErrorMessage(message)) {
         Alert.alert(
           'Connection Error',
           'Lost connection to the radio stream. Please check your internet connection.',
@@ -420,7 +462,7 @@ export const usePlayer = () => {
               text: 'Retry',
               onPress: () => {
                 if (currentStation) {
-                  playStation(currentStation);
+                  retryStationPlayback(currentStation, 0);
                 }
               }
             }
@@ -454,8 +496,6 @@ export const usePlayer = () => {
     isLoading,
     currentStation,
     isPlayerReady,
-    volume,
-    streamError,
     connectionStatus,
     isPlaying,
     playbackState,
@@ -471,6 +511,5 @@ export const usePlayer = () => {
     togglePlayPause,
     playNextStation,
     playPreviousStation,
-    setSafeVolume,
   };
 };

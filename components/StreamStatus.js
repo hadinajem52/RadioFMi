@@ -1,27 +1,21 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View, Text, ActivityIndicator, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import TrackPlayer, { usePlaybackState, State } from 'react-native-track-player';
-import { recheckBuffering } from '../services/TrackPlayerService';
+import { usePlaybackState, State } from 'react-native-track-player';
+import { PLAYBACK_STATUS } from '../utils/playbackStatus';
 
 const StreamStatus = ({ 
   currentStation, 
   isPlaying, 
   isLoading, 
+  connectionStatus,
   size = 'medium',
   showText = true,
   textColor = '#fff',
   style = {}
 }) => {
-  const [streamStatus, setStreamStatus] = useState('idle');
-  const [connectionTimeout, setConnectionTimeout] = useState(false);
-  
   const playbackState = usePlaybackState();
-  const timeoutRef = useRef(null);
-  const bufferingTimeoutRef = useRef(null);
-  const lastRecheckRef = useRef(0);
   const pulseAnim = useRef(new Animated.Value(1)).current;
-  const errorLoggedRef = useRef(false);
 
   // Size configurations
   const sizeConfig = {
@@ -31,6 +25,58 @@ const StreamStatus = ({
   };
 
   const config = sizeConfig[size] || sizeConfig.medium;
+
+  const getStreamStatus = () => {
+    if (!currentStation) {
+      return PLAYBACK_STATUS.IDLE;
+    }
+
+    if (connectionStatus === PLAYBACK_STATUS.BUFFERING_FAILED) {
+      return PLAYBACK_STATUS.BUFFERING_FAILED;
+    }
+
+    if (connectionStatus === PLAYBACK_STATUS.RETRYING) {
+      return PLAYBACK_STATUS.RETRYING;
+    }
+
+    if (connectionStatus === PLAYBACK_STATUS.ERROR) {
+      return PLAYBACK_STATUS.ERROR;
+    }
+
+    if (isLoading || connectionStatus === PLAYBACK_STATUS.CONNECTING) {
+      return PLAYBACK_STATUS.CONNECTING;
+    }
+
+    switch (connectionStatus) {
+      case PLAYBACK_STATUS.PLAYING:
+        return 'live';
+      case PLAYBACK_STATUS.BUFFERING:
+        return PLAYBACK_STATUS.BUFFERING;
+      case PLAYBACK_STATUS.PAUSED:
+        return PLAYBACK_STATUS.PAUSED;
+      case PLAYBACK_STATUS.STOPPED:
+        return PLAYBACK_STATUS.STOPPED;
+      case PLAYBACK_STATUS.READY:
+        return isPlaying ? 'live' : 'ready';
+      default:
+        switch (playbackState?.state) {
+          case State.Playing:
+            return 'live';
+          case State.Buffering:
+            return PLAYBACK_STATUS.BUFFERING;
+          case State.Paused:
+            return PLAYBACK_STATUS.PAUSED;
+          case State.Stopped:
+            return PLAYBACK_STATUS.STOPPED;
+          case State.Ready:
+            return isPlaying ? 'live' : 'ready';
+          default:
+            return PLAYBACK_STATUS.IDLE;
+        }
+    }
+  };
+
+  const streamStatus = getStreamStatus();
 
   // Pulse animation for live indicator
   useEffect(() => {
@@ -54,162 +100,46 @@ const StreamStatus = ({
     }
   }, [streamStatus, pulseAnim]);
 
-  // Monitor stream status based on playback state and loading
-  useEffect(() => {
-    if (!currentStation) {
-      setStreamStatus('idle');
-      clearTimeouts();
-      return;
-    }
-
-    // Handle loading state
-    if (isLoading) {
-      setStreamStatus('connecting');
-      setConnectionTimeout(false);
-      
-      // Set connection timeout - but don't set error status, just mark timeout
-      timeoutRef.current = setTimeout(() => {
-        setConnectionTimeout(true);
-      }, 15000); // 15 second timeout
-
-      return;
-    }
-
-    // Clear connection timeout when not loading
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-
-    // Handle playback states
-    switch (playbackState?.state) {
-      case State.Playing:
-        setStreamStatus('live');
-        setConnectionTimeout(false);
-        break;
-        
-      case State.Buffering:
-        setStreamStatus('buffering');
-        setConnectionTimeout(false);
-        
-        // Set buffering timeout - but keep buffering status
-        bufferingTimeoutRef.current = setTimeout(() => {
-          if (playbackState?.state === State.Buffering) {
-            setConnectionTimeout(true);
-
-            // Trigger an immediate recheck when UI marks buffering as failed.
-            const now = Date.now();
-            if (now - lastRecheckRef.current > 5000) { // 5s debounce
-              lastRecheckRef.current = now;
-              recheckBuffering().then((ok) => {
-                if (ok) {
-                  // Re-check succeeded; clear the timeout flag so UI returns to buffering or live
-                  setConnectionTimeout(false);
-                }
-              }).catch(() => {});
-            }
-          }
-        }, 30000); // 30 second buffering timeout
-        break;
-        
-      case State.Paused:
-        setStreamStatus('paused');
-        setConnectionTimeout(false);
-        break;
-        
-      case State.Stopped:
-        setStreamStatus('stopped');
-        setConnectionTimeout(false);
-        break;
-        
-      case State.Error:
-        // Don't set error status, fallback to stopped
-        setStreamStatus('stopped');
-        setConnectionTimeout(false);
-        break;
-        
-      case State.Ready:
-        if (isPlaying) {
-          setStreamStatus('live');
-        } else {
-          setStreamStatus('ready');
-        }
-        setConnectionTimeout(false);
-        break;
-        
-      default:
-        if (currentStation && !isLoading) {
-          setStreamStatus('idle');
-        }
-        break;
-    }
-
-    // Clear buffering timeout when state changes
-    if (playbackState?.state !== State.Buffering && bufferingTimeoutRef.current) {
-      clearTimeout(bufferingTimeoutRef.current);
-      bufferingTimeoutRef.current = null;
-    }
-
-  }, [playbackState?.state, isLoading, isPlaying, currentStation]);
-
-  // Monitor TrackPlayer errors
-  useEffect(() => {
-    const checkForErrors = async () => {
-      try {
-        const state = await TrackPlayer.getState();
-        // Log only once per error transition
-        if (state === State.Error) {
-          if (!errorLoggedRef.current) {
-            console.log('TrackPlayer error state detected');
-            errorLoggedRef.current = true;
-          }
-        } else if (errorLoggedRef.current) {
-          // Reset flag when leaving error state so future errors log once again
-          errorLoggedRef.current = false;
-        }
-      } catch (error) {
-        console.log('Error checking TrackPlayer state:', error);
-      }
-    };
-
-    if (currentStation) {
-      const interval = setInterval(checkForErrors, 2000);
-      return () => clearInterval(interval);
-    }
-  }, [currentStation]);
-
-  const clearTimeouts = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-    if (bufferingTimeoutRef.current) {
-      clearTimeout(bufferingTimeoutRef.current);
-      bufferingTimeoutRef.current = null;
-    }
-  };
-
-  // Cleanup timeouts on unmount
-  useEffect(() => {
-    return () => clearTimeouts();
-  }, []);
-
   const getStatusDisplay = () => {
     switch (streamStatus) {
       case 'connecting':
         return {
           icon: null,
-          text: connectionTimeout ? 'Connection Failed' : 'Connecting...',
-          color: connectionTimeout ? '#ffa500' : '#ffa500',
-          showSpinner: !connectionTimeout
+          text: 'Connecting...',
+          color: '#ffa500',
+          showSpinner: true
         };
-        
-      case 'buffering':
+
+      case PLAYBACK_STATUS.RETRYING:
         return {
           icon: null,
-          text: connectionTimeout ? 'Buffering Failed' : 'Buffering...',
+          text: 'Reconnecting...',
           color: '#ffa500',
-          showSpinner: !connectionTimeout
+          showSpinner: true
+        };
+        
+      case PLAYBACK_STATUS.BUFFERING:
+        return {
+          icon: null,
+          text: 'Buffering...',
+          color: '#ffa500',
+          showSpinner: true
+        };
+
+      case PLAYBACK_STATUS.BUFFERING_FAILED:
+        return {
+          icon: 'warning',
+          text: 'Buffering Failed',
+          color: '#ffa500',
+          showSpinner: false
+        };
+
+      case PLAYBACK_STATUS.ERROR:
+        return {
+          icon: 'alert-circle',
+          text: 'Connection Failed',
+          color: '#ff6b6b',
+          showSpinner: false
         };
         
       case 'live':
@@ -221,7 +151,7 @@ const StreamStatus = ({
           animated: true
         };
         
-      case 'paused':
+      case PLAYBACK_STATUS.PAUSED:
         return {
           icon: 'pause-circle',
           text: 'Paused',
@@ -229,7 +159,7 @@ const StreamStatus = ({
           showSpinner: false
         };
         
-      case 'stopped':
+      case PLAYBACK_STATUS.STOPPED:
         return {
           icon: 'stop-circle',
           text: 'Stopped',
@@ -237,7 +167,7 @@ const StreamStatus = ({
           showSpinner: false
         };
         
-      case 'ready':
+      case PLAYBACK_STATUS.READY:
         return {
           icon: 'checkmark-circle',
           text: 'Ready',
@@ -257,7 +187,7 @@ const StreamStatus = ({
 
   const statusDisplay = getStatusDisplay();
 
-  if (streamStatus === 'idle' && !currentStation) {
+  if (streamStatus === PLAYBACK_STATUS.IDLE && !currentStation) {
     return null;
   }
 

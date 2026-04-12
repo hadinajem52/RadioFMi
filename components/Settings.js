@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   View, 
   Text, 
   TouchableOpacity, 
   Modal, 
   StatusBar, 
-  Switch,
   ScrollView,
   Alert
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getLocalizedString } from '../localization/strings';
 
@@ -20,46 +18,10 @@ const Settings = ({
   styles 
 }) => {
   const { language, changeLanguage } = useLanguage();
-  const [autoPlay, setAutoPlay] = useState(true);
-  const [notifications, setNotifications] = useState(true);
-  const [highQuality, setHighQuality] = useState(false);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
 
   // Check if current language is RTL
   const isRTL = language === 'ar';
-
-  useEffect(() => {
-    const loadSettings = async () => {
-      const savedAutoPlay = await AsyncStorage.getItem('autoPlay');
-      const savedNotifications = await AsyncStorage.getItem('notifications');
-      const savedHighQuality = await AsyncStorage.getItem('highQuality');
-
-      if (savedAutoPlay !== null) setAutoPlay(JSON.parse(savedAutoPlay));
-      if (savedNotifications !== null) setNotifications(JSON.parse(savedNotifications));
-      if (savedHighQuality !== null) setHighQuality(JSON.parse(savedHighQuality));
-    };
-
-    loadSettings();
-  }, []);
-
-  const saveSetting = async (key, value) => {
-    await AsyncStorage.setItem(key, JSON.stringify(value));
-  };
-
-  const handleAutoPlayChange = (value) => {
-    setAutoPlay(value);
-    saveSetting('autoPlay', value);
-  };
-
-  const handleNotificationsChange = (value) => {
-    setNotifications(value);
-    saveSetting('notifications', value);
-  };
-
-  const handleHighQualityChange = (value) => {
-    setHighQuality(value);
-    saveSetting('highQuality', value);
-  };
 
   const handleLanguageChange = (newLanguage) => {
     changeLanguage(newLanguage);
@@ -93,14 +55,7 @@ const Settings = ({
 
   const strings = {
     settings: getLocalizedString('settings', language),
-    audio: getLocalizedString('audio', language),
     general: getLocalizedString('general', language),
-    autoPlay: getLocalizedString('autoPlay', language),
-    autoPlaySub: getLocalizedString('autoPlaySub', language),
-    notifications: getLocalizedString('notifications', language),
-    notificationsSub: getLocalizedString('notificationsSub', language),
-    quality: getLocalizedString('quality', language),
-    qualitySub: getLocalizedString('qualitySub', language),
     language: getLocalizedString('language', language),
     languageSub: getLocalizedString('languageSub', language),
     about: getLocalizedString('about', language),
@@ -110,36 +65,6 @@ const Settings = ({
   const t = strings;
 
   const settingsItems = [
-    {
-      id: 'autoplay',
-      title: t.autoPlay,
-      subtitle: t.autoPlaySub,
-      type: 'switch',
-      icon: 'play-circle-outline',
-      value: autoPlay,
-      onValueChange: handleAutoPlayChange
-    },
-    {
-      id: 'notifications',
-      title: t.notifications,
-      subtitle: t.notificationsSub,
-      type: 'switch',
-      icon: 'notifications-outline',
-      value: notifications,
-      onValueChange: handleNotificationsChange
-    },
-    {
-      id: 'quality',
-      title: t.quality,
-      subtitle: t.qualitySub,
-      type: 'switch',
-      icon: 'musical-note-outline',
-      value: highQuality,
-      onValueChange: handleHighQualityChange
-    }
-  ];
-
-  const actionItems = [
     {
       id: 'language',
       title: t.language,
@@ -157,40 +82,7 @@ const Settings = ({
     }
   ];
 
-  const renderSettingItem = (item) => {
-    if (item.type === 'switch') {
-      return (
-        <TouchableOpacity 
-          key={item.id} 
-          style={isRTL ? styles.rtlSettingsItem : styles.settingsItem}
-          onPress={() => item.onValueChange && item.onValueChange(!item.value)}
-        >
-          <View style={isRTL ? styles.rtlSettingsItemLeft : styles.settingsItemLeft}>
-            <Ionicons 
-              name={item.icon} 
-              size={22} 
-              color="#666" 
-              style={isRTL ? styles.rtlSettingsItemIcon : styles.settingsItemIcon}
-            />
-            <View style={isRTL ? styles.rtlSettingsItemText : styles.settingsItemText}>
-              <Text style={isRTL ? styles.rtlSettingsItemTitle : styles.settingsItemTitle}>{item.title}</Text>
-              <Text style={isRTL ? styles.rtlSettingsItemSubtitle : styles.settingsItemSubtitle}>{item.subtitle}</Text>
-            </View>
-          </View>
-          <Switch
-            value={item.value}
-            onValueChange={item.onValueChange}
-            trackColor={{ false: '#e0e0e0', true: '#007AFF' }}
-            thumbColor="#fff"
-          />
-        </TouchableOpacity>
-      );
-    }
-
-    return null;
-  };
-
-  const renderActionItem = (item) => (
+  const renderSettingItem = (item) => (
     <TouchableOpacity 
       key={item.id} 
       style={isRTL ? styles.rtlSettingsItem : styles.settingsItem}
@@ -296,38 +188,31 @@ const Settings = ({
         transparent={false}
         onRequestClose={onClose}
       >
-      <View style={styles.settingsContainer}>
-        <StatusBar barStyle="dark-content" />
-        
-        {/* Header */}
-        <View style={isRTL ? styles.rtlSettingsHeader : styles.settingsHeader}>
-          <TouchableOpacity
-            style={styles.settingsBackButton}
-            onPress={onClose}
-          >
-            <Ionicons name={isRTL ? "arrow-forward" : "arrow-back"} size={24} color="#fff" />
-          </TouchableOpacity>
-          
-          <Text style={isRTL ? styles.rtlSettingsHeaderTitle : styles.settingsHeaderTitle}>{t.settings}</Text>
-          
-          <View style={{ width: 24 }} />
+        <View style={styles.settingsContainer}>
+          <StatusBar barStyle="dark-content" />
+
+          {/* Header */}
+          <View style={isRTL ? styles.rtlSettingsHeader : styles.settingsHeader}>
+            <TouchableOpacity
+              style={styles.settingsBackButton}
+              onPress={onClose}
+            >
+              <Ionicons name={isRTL ? "arrow-forward" : "arrow-back"} size={24} color="#fff" />
+            </TouchableOpacity>
+
+            <Text style={isRTL ? styles.rtlSettingsHeaderTitle : styles.settingsHeaderTitle}>{t.settings}</Text>
+
+            <View style={{ width: 24 }} />
+          </View>
+
+          <ScrollView style={styles.settingsContent}>
+            <View style={styles.settingsSection}>
+              <Text style={isRTL ? styles.rtlSettingsSectionTitle : styles.settingsSectionTitle}>{t.general}</Text>
+              {settingsItems.map(renderSettingItem)}
+            </View>
+          </ScrollView>
         </View>
-
-        <ScrollView style={styles.settingsContent}>
-          {/* Audio Settings */}
-          <View style={styles.settingsSection}>
-            <Text style={isRTL ? styles.rtlSettingsSectionTitle : styles.settingsSectionTitle}>{t.audio}</Text>
-            {settingsItems.map(renderSettingItem)}
-          </View>
-
-          {/* General Settings */}
-          <View style={styles.settingsSection}>
-            <Text style={isRTL ? styles.rtlSettingsSectionTitle : styles.settingsSectionTitle}>{t.general}</Text>
-            {actionItems.map(renderActionItem)}
-          </View>
-        </ScrollView>
-      </View>
-    </Modal>
+      </Modal>
     </>
   );
 };

@@ -16,6 +16,7 @@ const FullscreenPlayer = ({
   currentStation, 
   isPlaying, 
   isLoading, 
+  connectionStatus,
   togglePlayPause,
   playNextStation,
   playPreviousStation,
@@ -159,6 +160,7 @@ const FullscreenPlayer = ({
               currentStation={currentStation}
               isPlaying={isPlaying}
               isLoading={isLoading}
+              connectionStatus={connectionStatus}
               size="large"
               showText={true}
               textColor="#fff"

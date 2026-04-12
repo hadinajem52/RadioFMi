@@ -46,19 +46,11 @@ export const strings = {
     
     // Settings
     settings: 'Settings',
-    audio: 'Audio',
     general: 'General',
-    autoPlay: 'Auto-play next station',
-    autoPlaySub: 'Automatically play next station when current ends',
-    notifications: 'Notifications',
-    notificationsSub: 'Show notifications for now playing',
-    quality: 'High Quality Audio',
-    qualitySub: 'Use higher bitrate streams when available',
     language: 'Language',
     languageSub: 'Choose your preferred language',
     about: 'About',
     aboutSub: 'App information and version',
-    volume: 'Volume',
     
     // Language Selection
     selectLanguage: 'Select Language',
@@ -79,7 +71,7 @@ export const strings = {
     sortByNameDesc: 'Name (Z-A)',
     sortByGenre: 'Genre',
     sortByFavorites: 'Favorites First',
-    sortByRecentlyPlayed: 'Recently Played',
+    sortByPlayingAndFavorites: 'Playing + Favorites',
     
     // Common
     loading: 'Loading...',
@@ -135,19 +127,11 @@ export const strings = {
     
     // Settings
     settings: 'الإعدادات',
-    audio: 'الصوت',
     general: 'عام',
-    autoPlay: 'التشغيل التلقائي للمحطة التالية',
-    autoPlaySub: 'تشغيل المحطة التالية تلقائياً عند انتهاء الحالية',
-    notifications: 'الإشعارات',
-    notificationsSub: 'إظهار إشعارات للعرض الحالي',
-    quality: 'جودة صوت عالية',
-    qualitySub: 'استخدام بث بمعدل أعلى عند توفره',
     language: 'اللغة',
     languageSub: 'اختر لغتك المفضلة',
     about: 'حول',
     aboutSub: 'معلومات التطبيق والإصدار',
-    volume: 'مستوى الصوت',
     
     // Language Selection
     selectLanguage: 'اختر اللغة',
@@ -168,7 +152,7 @@ export const strings = {
     sortByNameDesc: 'الاسم (ي-أ)',
     sortByGenre: 'النوع',
     sortByFavorites: 'المفضلة أولاً',
-    sortByRecentlyPlayed: 'المُشغلة مؤخراً',
+    sortByPlayingAndFavorites: 'قيد التشغيل + المفضلة',
     
     // Common
     loading: 'جاري التحميل...',

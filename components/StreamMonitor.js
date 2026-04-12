@@ -19,44 +19,15 @@ const StreamMonitor = ({ visible, onClose, currentStation }) => {
     try {
       setRefreshing(true);
       const status = await getStreamStatus();
-      
-      // Add network diagnostics
-      const networkInfo = await checkNetworkStatus(currentStation?.url);
-      
+
       setDiagnostics({
         ...status,
-        network: networkInfo,
         lastUpdated: new Date().toLocaleTimeString()
       });
     } catch (error) {
       console.error('Error fetching diagnostics:', error);
     } finally {
       setRefreshing(false);
-    }
-  };
-
-  const checkNetworkStatus = async (url) => {
-    if (!url) return { status: 'unknown' };
-    
-    try {
-      const startTime = Date.now();
-      const response = await fetch(url, { 
-        method: 'HEAD',
-        timeout: 5000 
-      });
-      const responseTime = Date.now() - startTime;
-      
-      return {
-        status: response.ok ? 'reachable' : 'error',
-        responseTime,
-        statusCode: response.status,
-        contentType: response.headers.get('content-type')
-      };
-    } catch (error) {
-      return {
-        status: 'unreachable',
-        error: error.message
-      };
     }
   };
 
@@ -68,15 +39,6 @@ const StreamMonitor = ({ visible, onClose, currentStation }) => {
       case 'stopped': return '#888';
       case 'error': return '#ff4444';
       default: return '#fff';
-    }
-  };
-
-  const getNetworkStatusColor = (status) => {
-    switch (status) {
-      case 'reachable': return '#00ff00';
-      case 'unreachable': return '#ff4444';
-      case 'error': return '#ffa500';
-      default: return '#888';
     }
   };
 
@@ -189,62 +151,6 @@ const StreamMonitor = ({ visible, onClose, currentStation }) => {
               <Text style={{ color: '#ccc', fontFamily: 'Poppins-Regular' }}>
                 Is Live Stream: {diagnostics.isLiveStream ? 'Yes' : 'No'}
               </Text>
-            </View>
-          )}
-
-          {/* Network Status */}
-          {diagnostics?.network && (
-            <View style={{
-              backgroundColor: '#2a2a2a',
-              padding: 15,
-              borderRadius: 10,
-              marginBottom: 20,
-            }}>
-              <Text style={{
-                color: '#fff',
-                fontSize: 16,
-                fontWeight: 'bold',
-                fontFamily: 'Poppins-Bold',
-                marginBottom: 10,
-              }}>
-                Network Status
-              </Text>
-              <View style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginBottom: 5,
-              }}>
-                <View style={{
-                  width: 10,
-                  height: 10,
-                  borderRadius: 5,
-                  backgroundColor: getNetworkStatusColor(diagnostics.network.status),
-                  marginRight: 10,
-                }} />
-                <Text style={{ color: '#ccc', fontFamily: 'Poppins-Regular' }}>
-                  Status: {diagnostics.network.status}
-                </Text>
-              </View>
-              {diagnostics.network.responseTime && (
-                <Text style={{ color: '#ccc', marginBottom: 5, fontFamily: 'Poppins-Regular' }}>
-                  Response Time: {diagnostics.network.responseTime}ms
-                </Text>
-              )}
-              {diagnostics.network.statusCode && (
-                <Text style={{ color: '#ccc', marginBottom: 5, fontFamily: 'Poppins-Regular' }}>
-                  HTTP Status: {diagnostics.network.statusCode}
-                </Text>
-              )}
-              {diagnostics.network.contentType && (
-                <Text style={{ color: '#ccc', marginBottom: 5, fontFamily: 'Poppins-Regular' }}>
-                  Content Type: {diagnostics.network.contentType}
-                </Text>
-              )}
-              {diagnostics.network.error && (
-                <Text style={{ color: '#ff4444', fontFamily: 'Poppins-Regular' }}>
-                  Error: {diagnostics.network.error}
-                </Text>
-              )}
             </View>
           )}
 

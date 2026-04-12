@@ -4,13 +4,13 @@ import TrackPlayer, {
   Event,
   State
 } from 'react-native-track-player';
+import { PLAYBACK_STATUS } from '../utils/playbackStatus';
 
 // Stream status tracking
 let streamStatusCallback = null;
 let errorCallback = null;
 let connectionTimeoutId = null;
 let bufferingTimeoutId = null;
-let lastStation = null; // Keep reference to last attempted station for retries
 
 // Stream monitoring configuration
 const STREAM_CONFIG = {
@@ -69,9 +69,6 @@ export async function addTrack(station, retryCount = 0) {
       throw new Error('Invalid stream URL');
     }
 
-  // Remember the station for potential recovery retries
-  lastStation = station;
-
     await TrackPlayer.add({
       id: station.id.toString(),
       url: station.url,
@@ -93,33 +90,24 @@ export async function addTrack(station, retryCount = 0) {
 
   } catch (error) {
     console.error('Error adding track:', error);
-    
-    // Retry logic
-    if (retryCount < STREAM_CONFIG.RETRY_ATTEMPTS) {
-      console.log(`Retrying connection (${retryCount + 1}/${STREAM_CONFIG.RETRY_ATTEMPTS})...`);
-      setTimeout(() => {
-        addTrack(station, retryCount + 1);
-      }, STREAM_CONFIG.RETRY_DELAY);
-    } else {
-      handleStreamError(`Failed to add track: ${error.message}`, station, retryCount);
-      throw error;
-    }
+
+    throw error;
   }
 }
 
 // Enhanced play function with monitoring
-export async function playTrack() {
+export async function playTrack(station = null, retryCount = 0) {
   try {
     await TrackPlayer.play();
     
     // Monitor for buffering timeout
     bufferingTimeoutId = setTimeout(() => {
-      checkBufferingStatus();
+      checkBufferingStatus(station, retryCount);
     }, STREAM_CONFIG.BUFFERING_TIMEOUT);
     
   } catch (error) {
     console.error('Error playing track:', error);
-    handleStreamError(`Playback error: ${error.message}`);
+    handleStreamError(`Playback error: ${error.message}`, station, retryCount);
     throw error;
   }
 }
@@ -145,48 +133,6 @@ export async function skipToNext() {
 
 export async function skipToPrevious() {
   await TrackPlayer.skipToPrevious();
-}
-
-export async function setVolume(volume) {
-  try {
-    // Validate volume value
-    if (typeof volume !== 'number' || isNaN(volume)) {
-      console.warn('Invalid volume value:', volume, 'defaulting to 1.0');
-      volume = 1.0;
-    }
-    
-    // Clamp volume between 0 and 1
-    volume = Math.max(0, Math.min(1, volume));
-    
-    // Check if TrackPlayer is initialized by trying to get state
-    try {
-      await TrackPlayer.getState();
-    } catch (initError) {
-      console.warn('TrackPlayer not initialized, skipping volume set');
-      return;
-    }
-    
-    // Set volume with proper parameter formatting
-    await TrackPlayer.setVolume(Number(volume));
-    console.log('Volume set successfully to:', volume);
-    
-  } catch (error) {
-    console.warn('Failed to set volume:', error.message);
-    
-    // If we get the specific "Malformed calls" error, try again with a delay
-    if (error.message.includes('Malformed calls') || error.message.includes('field sizes')) {
-      setTimeout(async () => {
-        try {
-          await TrackPlayer.setVolume(Number(Math.max(0, Math.min(1, volume || 1.0))));
-          console.log('Volume set successfully on retry');
-        } catch (retryError) {
-          console.warn('Volume retry also failed:', retryError.message);
-        }
-      }, 100);
-    }
-    
-    // Don't throw the error to prevent app crashes
-  }
 }
 
 // Stream monitoring functions
@@ -220,6 +166,35 @@ function isValidStreamUrl(url) {
   }
 }
 
+function normalizeTrackToStation(track) {
+  if (!track) {
+    return null;
+  }
+
+  const stationId = typeof track.id === 'string' ? parseInt(track.id, 10) : track.id;
+  return {
+    id: stationId,
+    name: track.title,
+    url: track.url,
+    description: track.description,
+    image: track.artwork,
+  };
+}
+
+async function getCurrentTrackStation() {
+  try {
+    const trackIndex = await TrackPlayer.getCurrentTrack();
+    if (trackIndex === null || trackIndex === undefined) {
+      return null;
+    }
+
+    const track = await TrackPlayer.getTrack(trackIndex);
+    return normalizeTrackToStation(track);
+  } catch {
+    return null;
+  }
+}
+
 // Handle stream errors
 function handleStreamError(message, station = null, retryCount = 0) {
   console.error('Stream error:', message);
@@ -227,14 +202,14 @@ function handleStreamError(message, station = null, retryCount = 0) {
 
   // Determine if this error type is eligible for automatic retry
   const isTimeout = /timeout/i.test(message) || /buffering/i.test(message);
-  const targetStation = station || lastStation;
+  const targetStation = station;
 
   if (isTimeout && targetStation && retryCount < STREAM_CONFIG.RETRY_ATTEMPTS) {
     const nextAttempt = retryCount + 1;
     console.log(`Auto-retry attempt ${nextAttempt} of ${STREAM_CONFIG.RETRY_ATTEMPTS} for station: ${targetStation.name}`);
     // Inform UI we're retrying without surfacing a fatal error
     if (streamStatusCallback) {
-      streamStatusCallback({ state: 'retrying', attempt: nextAttempt, message });
+      streamStatusCallback({ state: PLAYBACK_STATUS.RETRYING, attempt: nextAttempt, message });
     }
     // Schedule retry
     setTimeout(async () => {
@@ -243,7 +218,7 @@ function handleStreamError(message, station = null, retryCount = 0) {
       } catch {}
       try {
         await addTrack(targetStation, nextAttempt); // addTrack will set its own timeouts
-        await playTrack();
+        await playTrack(targetStation, nextAttempt);
       } catch (e) {
         // If add/play fails here, recurse to potentially continue retries or emit final error
         handleStreamError(e.message || 'Retry failure', targetStation, nextAttempt);
@@ -265,7 +240,7 @@ function handleStreamError(message, station = null, retryCount = 0) {
 }
 
 // Check buffering status
-async function checkBufferingStatus() {
+async function checkBufferingStatus(station, retryCount = 0) {
   try {
     // Sometimes streams take a little longer to prime. Do several quick re-checks
     // before deciding the stream has failed. This reduces false positives for
@@ -292,15 +267,15 @@ async function checkBufferingStatus() {
     // After repeated checks still buffering -> do a lightweight HEAD probe of the stream
     // If the probe shows the endpoint is reachable, extend the buffering window once
     try {
-      if (lastStation && lastStation.url) {
+      if (station && station.url) {
         const controller = new AbortController();
         const probeTimeout = setTimeout(() => controller.abort(), 5000);
-        const response = await fetch(lastStation.url, { method: 'HEAD', signal: controller.signal });
+        const response = await fetch(station.url, { method: 'HEAD', signal: controller.signal });
         clearTimeout(probeTimeout);
 
         if (response && response.ok) {
           // Stream endpoint reachable; give more time and reschedule a check
-          bufferingTimeoutId = setTimeout(() => checkBufferingStatus(), Math.floor(STREAM_CONFIG.BUFFERING_TIMEOUT / 2));
+          bufferingTimeoutId = setTimeout(() => checkBufferingStatus(station, retryCount), Math.floor(STREAM_CONFIG.BUFFERING_TIMEOUT / 2));
           return;
         }
       }
@@ -312,11 +287,11 @@ async function checkBufferingStatus() {
     // Still buffering after retries and probe -> treat as failure
     // Notify UI explicitly about buffering failure before triggering error handling
     if (streamStatusCallback) {
-      try { streamStatusCallback({ state: 'buffering_failed', station: lastStation }); } catch {}
+      try { streamStatusCallback({ state: PLAYBACK_STATUS.BUFFERING_FAILED, station }); } catch {}
     }
-    handleStreamError('Buffering timeout - stream may be slow or unavailable', lastStation, 0);
+    handleStreamError('Buffering timeout - stream may be slow or unavailable', station, retryCount);
   } catch (error) {
-    handleStreamError(`Status check error: ${error.message}`, lastStation, 0);
+    handleStreamError(`Status check error: ${error.message}`, station, retryCount);
   }
 }
 
@@ -348,18 +323,6 @@ export async function getStreamStatus() {
   }
 }
 
-// Public helper to trigger an immediate buffering re-check from UI components
-export async function recheckBuffering() {
-  // If a buffering timeout was not previously set, still attempt a status check
-  try {
-    await checkBufferingStatus();
-    return true;
-  } catch (error) {
-    console.error('recheckBuffering failed:', error);
-    return false;
-  }
-}
-
 export const playbackService = async function() {
   TrackPlayer.addEventListener(Event.RemotePlay, () => {
     clearStreamTimeouts();
@@ -380,9 +343,10 @@ export const playbackService = async function() {
   TrackPlayer.addEventListener(Event.RemotePrevious, () => TrackPlayer.skipToPrevious());
   
   // Enhanced error handling
-  TrackPlayer.addEventListener(Event.PlaybackError, (error) => {
+  TrackPlayer.addEventListener(Event.PlaybackError, async (error) => {
     console.error('Playback error event:', error);
-    handleStreamError(`Playback error: ${error.message || 'Unknown error'}`);
+    const station = await getCurrentTrackStation();
+    handleStreamError(`Playback error: ${error.message || 'Unknown error'}`, station);
   });
   
   // Track state changes

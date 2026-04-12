@@ -22,31 +22,4 @@ export const testInternetConnectivity = async () => {
   }
 };
 
-// Test if a specific radio stream URL is reachable
-export const testRadioStreamConnectivity = async (streamUrl, timeout = 10000) => {
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeout);
-
-    const response = await fetch(streamUrl, {
-      method: 'HEAD',
-      signal: controller.signal,
-    });
-
-    clearTimeout(timeoutId);
-    
-    // Check if the response is OK and has audio content type
-    const contentType = response.headers.get('content-type');
-    const isAudioStream = contentType && (
-      contentType.includes('audio/') || 
-      contentType.includes('application/ogg') ||
-      contentType.includes('video/x-ms-asf') // For some streaming formats
-    );
-
-    return response.ok && (isAudioStream || response.status === 200);
-  } catch (error) {
-    console.log(`Radio stream connectivity test failed for ${streamUrl}:`, error.message);
-    return false;
-  }
-};
 

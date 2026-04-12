@@ -4,6 +4,12 @@ let opener = null;
 
 export const registerWebViewOpener = (fn) => {
   opener = fn;
+
+  return () => {
+    if (opener === fn) {
+      opener = null;
+    }
+  };
 };
 
 export const openWebView = (url, title = 'Web Player') => {

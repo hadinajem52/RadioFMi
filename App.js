@@ -33,7 +33,6 @@ import BottomPlayer from './components/BottomPlayer';
 import FullscreenPlayer from './components/FullscreenPlayer';
 import SearchModal from './components/SearchModal';
 import StationWebViewModal from './components/StationWebViewModal';
-import BackgroundWebViewService from './components/BackgroundWebViewService';
 import { registerWebViewOpener } from './utils/webViewFallback';
 import { stopTrack } from './services/TrackPlayerService';
 import SideMenu from './components/SideMenu';
@@ -43,6 +42,7 @@ import Settings from './components/Settings';
 import radioStations from './data/radioStations';
 import StreamUrlCache from './services/StreamUrlCache';
 import styles from './styles/styles';
+import { PLAYBACK_STATUS } from './utils/playbackStatus';
 
 function App() {
   const [isAppLoading, setIsAppLoading] = useState(true);
@@ -61,7 +61,6 @@ function App() {
   const {
     isLoading,
     currentStation,
-    volume,
     connectionStatus,
     isPlaying,
     isConnected,
@@ -71,7 +70,6 @@ function App() {
     togglePlayPause,
     playNextStation,
     playPreviousStation,
-    setSafeVolume,
   } = usePlayer();
   
   const { favorites, toggleFavorite } = useFavorites();
@@ -118,7 +116,7 @@ function App() {
 
   // Register a global opener for the fallback web view
   useEffect(() => {
-    registerWebViewOpener(async (url, title) => {
+    return registerWebViewOpener(async (url, title) => {
       try {
         // Force stop any ongoing radio playback before opening WebView
         await stopTrack();
@@ -142,7 +140,7 @@ function App() {
 
   // Auto-open fullscreen player on buffering failure to give user immediate controls/retry
   useEffect(() => {
-    if (connectionStatus === 'buffering_failed' && currentStation) {
+    if (connectionStatus === PLAYBACK_STATUS.BUFFERING_FAILED && currentStation) {
       setShowFullscreenPlayer(true);
     }
   }, [connectionStatus, currentStation]);
@@ -241,6 +239,7 @@ function App() {
                 currentStation={currentStation}
                 isPlaying={isPlaying}
                 isLoading={isLoading}
+                connectionStatus={connectionStatus}
                 togglePlayPause={togglePlayPause}
                 onPress={() => setShowFullscreenPlayer(true)}
                 favorites={favorites}
@@ -256,6 +255,7 @@ function App() {
                 currentStation={currentStation}
                 isPlaying={isPlaying}
                 isLoading={isLoading}
+                connectionStatus={connectionStatus}
                 togglePlayPause={togglePlayPause}
                 playNextStation={playNextStation}
                 playPreviousStation={playPreviousStation}
@@ -308,8 +308,6 @@ function App() {
               <Settings
                 visible={showSettings}
                 onClose={() => setShowSettings(false)}
-                volume={volume}
-                setVolume={setSafeVolume}
                 styles={styles}
               />
             )}
@@ -320,12 +318,6 @@ function App() {
               url={webViewUrl}
               title={webViewTitle}
               onClose={() => setWebViewVisible(false)}
-            />
-
-            {/* Background WebView Service - keeps audio playing when app is backgrounded */}
-            <BackgroundWebViewService
-              url={webViewVisible ? webViewUrl : null}
-              isActive={webViewVisible}
             />
           </>
         )}

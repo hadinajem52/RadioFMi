@@ -5,7 +5,7 @@ import StreamStatus from './StreamStatus';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getLocalizedString } from '../localization/strings';
 
-const BottomPlayer = ({ styles, currentStation, isPlaying, isLoading, togglePlayPause, onPress, favorites, toggleFavorite }) => {
+const BottomPlayer = ({ styles, currentStation, isPlaying, isLoading, connectionStatus, togglePlayPause, onPress, favorites, toggleFavorite }) => {
   const { language } = useLanguage();
   const isRTL = language === 'ar';
 
@@ -46,6 +46,7 @@ const BottomPlayer = ({ styles, currentStation, isPlaying, isLoading, togglePlay
             currentStation={currentStation}
             isPlaying={isPlaying}
             isLoading={isLoading}
+            connectionStatus={connectionStatus}
             size="small"
             showText={true}
             textColor="rgba(255,255,255,0.8)"
