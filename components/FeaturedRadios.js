@@ -1,129 +1,40 @@
-import React, { useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Image, ScrollView, Animated } from 'react-native';
+import React, { useCallback, useMemo } from 'react';
+import { View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLanguage } from '../contexts/LanguageContext';
+import { FEATURED_PRIMARY_STATION_ID, FEATURED_STATION_IDS } from '../data/featuredStations';
 import { getLocalizedString } from '../localization/strings';
+import PulsingGlow from './PulsingGlow';
 
 const FeaturedRadios = ({ styles, radioStations, playStation, currentStation, isPlaying, togglePlayPause }) => {
   const { language } = useLanguage();
   const isRTL = language === 'ar';
 
-  // Pulsing Glow Component
-  const PulsingGlow = ({ children, isActive }) => {
-    const pulseAnim = useRef(new Animated.Value(1)).current;
-    const glowAnim = useRef(new Animated.Value(0.3)).current;
+  const featuredStations = useMemo(
+    () =>
+      radioStations
+        .filter((station) => FEATURED_STATION_IDS.includes(station.id))
+        .sort((a, b) => {
+          if (isRTL) {
+            return a.id === FEATURED_PRIMARY_STATION_ID ? 1 : b.id === FEATURED_PRIMARY_STATION_ID ? -1 : 0;
+          }
+          return a.id === FEATURED_PRIMARY_STATION_ID ? -1 : b.id === FEATURED_PRIMARY_STATION_ID ? 1 : 0;
+        }),
+    [radioStations, isRTL]
+  );
 
-    useEffect(() => {
-      if (isActive) {
-        // Start pulsing animation
-        const pulseAnimation = Animated.loop(
-          Animated.sequence([
-            Animated.timing(pulseAnim, {
-              toValue: 1.1,
-              duration: 1500,
-              useNativeDriver: true,
-            }),
-            Animated.timing(pulseAnim, {
-              toValue: 1,
-              duration: 1500,
-              useNativeDriver: true,
-            }),
-          ])
-        );
-
-        // Start glow animation
-        const glowAnimation = Animated.loop(
-          Animated.sequence([
-            Animated.timing(glowAnim, {
-              toValue: 0.8,
-              duration: 2000,
-              useNativeDriver: true,
-            }),
-            Animated.timing(glowAnim, {
-              toValue: 0.3,
-              duration: 2000,
-              useNativeDriver: true,
-            }),
-          ])
-        );
-
-        pulseAnimation.start();
-        glowAnimation.start();
-
-        return () => {
-          pulseAnimation.stop();
-          glowAnimation.stop();
-        };
-      } else {
-        // Reset animations when not active
-        pulseAnim.setValue(1);
-        glowAnim.setValue(0.3);
-      }
-    }, [isActive, pulseAnim, glowAnim]);
-
-    return (
-      <Animated.View
-        style={{
-          transform: [{ scale: pulseAnim }],
-          position: 'relative',
-        }}
-      >
-        {/* Outer glow ring */}
-        {isActive && (
-          <Animated.View
-            style={{
-              position: 'absolute',
-              top: -8,
-              left: -8,
-              right: -8,
-              bottom: -8,
-              borderRadius: 20,
-              backgroundColor: 'transparent',
-              borderWidth: 2,
-              borderColor: '#7C4DFF',
-              opacity: glowAnim,
-              shadowColor: '#7C4DFF',
-              shadowOffset: { width: 0, height: 0 },
-              shadowOpacity: 0.8,
-              shadowRadius: 15,
-              elevation: 8,
-            }}
-          />
-        )}
-        {children}
-      </Animated.View>
-    );
-  };
-
-  // Get the featured radio stations: Al Nour, Virgin Radio, Sawt El Ghad, Virgin Radio Stars
-  const featuredStations = radioStations.filter(station => 
-    station.id === 30 || // Al Nour
-    station.id === 5 ||  // Virgin Radio
-    station.id === 21 ||  // nostalgie
-    station.id === 4 ||  // Sawt El Ghad
-    station.id === 18    // Virgin Radio Stars
-  ).sort((a, b) => {
-   
-    if (isRTL) {
-      return a.id === 30 ? 1 : b.id === 30 ? -1 : 0;
-    } else {
-      return a.id === 30 ? -1 : b.id === 30 ? 1 : 0;
-    }
-  });
-
-  const handleStationPress = (station) => {
+  const handleStationPress = useCallback((station) => {
     if (currentStation?.id === station.id) {
-      // If this station is currently selected
       togglePlayPause();
     } else {
-      // Play new station
       playStation(station);
     }
-  };
+  }, [currentStation?.id, playStation, togglePlayPause]);
 
-  const getStationName = (station) => {
-    return isRTL ? (station.nameAr || station.name) : station.name;
-  };
+  const getStationName = useCallback(
+    (station) => (isRTL ? (station.nameAr || station.name) : station.name),
+    [isRTL]
+  );
 
   return (
     <View style={[styles.section, isRTL && styles.rtlSection]}>
@@ -198,4 +109,4 @@ const FeaturedRadios = ({ styles, radioStations, playStation, currentStation, is
   );
 };
 
-export default FeaturedRadios;
+export default React.memo(FeaturedRadios);

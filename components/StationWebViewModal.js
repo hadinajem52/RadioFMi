@@ -1,5 +1,5 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { Modal, View, Text, TouchableOpacity, ActivityIndicator, SafeAreaView, AppState } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, AppState, Modal, SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { WebView } from 'react-native-webview';
 import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake';
@@ -9,10 +9,9 @@ const StationWebViewModal = ({ visible, url, onClose, title = 'Web Player' }) =>
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
 
   useEffect(() => {
-    // Activate keep awake when WebView is visible and potentially playing audio
+    // Activate keep awake only when we have explicit playback signal from WebView.
     if (visible && isAudioPlaying) {
       activateKeepAwake('webview-audio');
-      console.log('Keep awake activated for WebView audio');
     } else {
       deactivateKeepAwake('webview-audio');
     }
@@ -28,18 +27,9 @@ const StationWebViewModal = ({ visible, url, onClose, title = 'Web Player' }) =>
         appState.current.match(/inactive|background/) &&
         nextAppState === 'active'
       ) {
-        // App has come to the foreground - WebView should already be playing
-        console.log('App has come to the foreground');
-        // Re-activate keep awake if audio was playing
         if (isAudioPlaying) {
           activateKeepAwake('webview-audio');
         }
-      }
-
-      if (nextAppState.match(/inactive|background/)) {
-        // App is going to background - keep WebView alive
-        console.log('App is going to background - maintaining WebView audio');
-        // Keep awake remains active
       }
 
       appState.current = nextAppState;
@@ -98,6 +88,7 @@ const StationWebViewModal = ({ visible, url, onClose, title = 'Web Player' }) =>
         {/* WebView */}
         <WebView
           source={{ uri: url }}
+          onLoadStart={() => setIsAudioPlaying(false)}
           startInLoadingState
           renderLoading={() => (
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#0a0e27' }}>
@@ -117,82 +108,77 @@ const StationWebViewModal = ({ visible, url, onClose, title = 'Web Player' }) =>
           androidLayerType="hardware"
           androidHardwareAccelerationDisabled={false}
           onError={() => { /* keep silent; the page can show its own error */ }}
-          onLoadEnd={() => {
-            // Assume audio will start playing after page loads
-            setTimeout(() => setIsAudioPlaying(true), 2000);
-          }}
           onMessage={(event) => {
-            console.log('WebView message:', event.nativeEvent.data);
-            // Check for audio playback messages
             try {
               const data = JSON.parse(event.nativeEvent.data);
               if (data.type === 'audioState') {
-                setIsAudioPlaying(data.playing);
+                setIsAudioPlaying(Boolean(data.playing));
               }
-            } catch (e) {
-              // Not JSON, ignore
+            } catch (_) {
+              // Ignore non-JSON messages
             }
           }}
           injectedJavaScript={`
-            // Enable background audio for WebView
             (function() {
-              // Set audio context to allow background playback
               if (typeof AudioContext !== 'undefined' || typeof webkitAudioContext !== 'undefined') {
                 const AudioContextClass = window.AudioContext || window.webkitAudioContext;
                 window.audioContext = new AudioContextClass();
               }
-              
-              // Prevent audio from pausing on visibility change
+
               document.addEventListener('visibilitychange', function(e) {
                 e.stopPropagation();
               }, true);
-              
-              // Override page visibility API to always report as visible
+
               Object.defineProperty(document, 'hidden', { value: false, writable: false });
               Object.defineProperty(document, 'visibilityState', { value: 'visible', writable: false });
-              
-              // Keep audio elements playing and monitor state
-              const audioElements = document.getElementsByTagName('audio');
-              for (let audio of audioElements) {
-                audio.setAttribute('playsinline', 'true');
-                
-                // Monitor audio playback state
-                audio.addEventListener('play', function() {
-                  window.ReactNativeWebView.postMessage(JSON.stringify({
-                    type: 'audioState',
-                    playing: true
-                  }));
-                });
-                
-                audio.addEventListener('pause', function() {
-                  window.ReactNativeWebView.postMessage(JSON.stringify({
-                    type: 'audioState',
-                    playing: false
-                  }));
-                });
+
+              function postAudioState(playing) {
+                window.ReactNativeWebView.postMessage(JSON.stringify({
+                  type: 'audioState',
+                  playing: !!playing
+                }));
               }
-              
-              // Also monitor video elements
-              const videoElements = document.getElementsByTagName('video');
-              for (let video of videoElements) {
-                video.setAttribute('playsinline', 'true');
-                
-                video.addEventListener('play', function() {
-                  window.ReactNativeWebView.postMessage(JSON.stringify({
-                    type: 'audioState',
-                    playing: true
-                  }));
-                });
-                
-                video.addEventListener('pause', function() {
-                  window.ReactNativeWebView.postMessage(JSON.stringify({
-                    type: 'audioState',
-                    playing: false
-                  }));
-                });
+
+              function isAnyMediaPlaying() {
+                const mediaNodes = document.querySelectorAll('audio, video');
+                for (const media of mediaNodes) {
+                  if (!media.paused && !media.ended) {
+                    return true;
+                  }
+                }
+                return false;
               }
-              
-              true; // Required for injected JavaScript
+
+              function bindMediaNode(media) {
+                if (!media || media.__rnBound) return;
+                media.__rnBound = true;
+                media.setAttribute('playsinline', 'true');
+                media.addEventListener('play', function() { postAudioState(true); });
+                media.addEventListener('pause', function() { postAudioState(isAnyMediaPlaying()); });
+                media.addEventListener('ended', function() { postAudioState(isAnyMediaPlaying()); });
+              }
+
+              function bindAllMedia() {
+                document.querySelectorAll('audio, video').forEach(bindMediaNode);
+              }
+
+              bindAllMedia();
+              postAudioState(isAnyMediaPlaying());
+
+              const observer = new MutationObserver(function() {
+                bindAllMedia();
+                postAudioState(isAnyMediaPlaying());
+              });
+              observer.observe(document.documentElement || document.body, {
+                childList: true,
+                subtree: true
+              });
+
+              setInterval(function() {
+                postAudioState(isAnyMediaPlaying());
+              }, 2000);
+
+              true;
             })();
           `}
           style={{ flex: 1, backgroundColor: '#0a0e27' }}

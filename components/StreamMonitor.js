@@ -1,19 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Modal } from 'react-native';
+import { AppState, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { getStreamStatus } from '../services/TrackPlayerService';
 
 const StreamMonitor = ({ visible, onClose, currentStation }) => {
   const [diagnostics, setDiagnostics] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [isForeground, setIsForeground] = useState(AppState.currentState === 'active');
 
   useEffect(() => {
-    if (visible && currentStation) {
+    if (visible && currentStation && isForeground) {
       fetchDiagnostics();
-      const interval = setInterval(fetchDiagnostics, 2000);
+      const interval = setInterval(fetchDiagnostics, 5000);
       return () => clearInterval(interval);
     }
-  }, [visible, currentStation]);
+    return undefined;
+  }, [visible, currentStation, isForeground]);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextState) => {
+      setIsForeground(nextState === 'active');
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   const fetchDiagnostics = async () => {
     try {
@@ -197,7 +209,7 @@ const StreamMonitor = ({ visible, onClose, currentStation }) => {
               Last Updated: {diagnostics?.lastUpdated || 'Never'}
             </Text>
             <Text style={{ color: '#ccc', fontFamily: 'Poppins-Regular' }}>
-              Auto-refresh: Every 2 seconds
+              Auto-refresh: Every 5 seconds (foreground only)
             </Text>
           </View>
         </ScrollView>

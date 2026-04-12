@@ -1,13 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import {
-  View,
-  ScrollView,
-  Alert,
-  Text,
-  ActivityIndicator,
-  Image,
-} from 'react-native';
+import { ActivityIndicator, Alert, Image, InteractionManager, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Font from 'expo-font';
 import {
@@ -22,24 +15,25 @@ import {
   Poppins_900Black,
 } from '@expo-google-fonts/poppins';
 import {
-  Header,
-  FeaturedRadios,
-  Favorites,
-  LebaneseRadioStations,
   BottomPlayer,
+  Favorites,
+  FeaturedRadios,
   FullscreenPlayer,
-  SearchModal,
-  StationWebViewModal,
-  SideMenu,
   GenreRadioStations,
+  Header,
+  LebaneseRadioStations,
   NetworkStatusIndicator,
+  SearchModal,
   Settings,
+  SideMenu,
+  StationWebViewModal,
 } from '../components';
-import { usePlayer, useFavorites, useSorting } from '../hooks';
-import { StreamUrlCache, stopTrack } from '../services';
-import { registerWebViewOpener, PLAYBACK_STATUS } from '../utils';
+import { FEATURED_STATION_IDS } from '../data/featuredStations';
+import { useFavorites, usePlayer, useSorting } from '../hooks';
 import radioStations from '../data/radioStations';
+import { stopTrack, StreamUrlCache } from '../services';
 import styles from '../styles/styles';
+import { PLAYBACK_STATUS, registerWebViewOpener } from '../utils';
 
 const AppScreen = () => {
   const [isAppLoading, setIsAppLoading] = useState(true);
@@ -53,6 +47,7 @@ const AppScreen = () => {
   const [webViewVisible, setWebViewVisible] = useState(false);
   const [webViewUrl, setWebViewUrl] = useState('');
   const [webViewTitle, setWebViewTitle] = useState('Web Player');
+  const hasPrefetchedRef = useRef(false);
 
   const {
     isLoading,
@@ -68,10 +63,12 @@ const AppScreen = () => {
     playPreviousStation,
   } = usePlayer();
 
-  const { favorites, toggleFavorite } = useFavorites();
+  const { favorites, favoriteIdsSet, favoriteIds, toggleFavorite } = useFavorites();
   const { sortOption, setSortPreference, sortStations, isLoaded: isSortingLoaded } = useSorting();
 
   useEffect(() => {
+    let isMounted = true;
+
     const initializeApp = async () => {
       try {
         await Font.loadAsync({
@@ -85,23 +82,59 @@ const AppScreen = () => {
           'Poppins-ExtraBold': Poppins_800ExtraBold,
           'Poppins-Black': Poppins_900Black,
         });
-        setFontsLoaded(true);
 
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        if (!isMounted) {
+          return;
+        }
+
+        setFontsLoaded(true);
         setIsAppLoading(false);
       } catch (error) {
         console.error('Error setting up app:', error);
         Alert.alert('Setup Error', 'Failed to initialize app');
-        setIsAppLoading(false);
+        if (isMounted) {
+          setIsAppLoading(false);
+        }
       }
     };
 
     initializeApp();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
+  const sortedStations = useMemo(() => {
+    if (!isSortingLoaded) {
+      return radioStations;
+    }
+    return sortStations(radioStations, favoriteIdsSet, currentStation);
+  }, [currentStation, favoriteIdsSet, isSortingLoaded, sortStations]);
+
+  const prefetchPriorityStationIds = useMemo(
+    () => [...new Set([...favoriteIds, ...FEATURED_STATION_IDS])],
+    [favoriteIds]
+  );
+
   useEffect(() => {
-    StreamUrlCache.prefetchAll(radioStations);
-  }, []);
+    if (isAppLoading || !fontsLoaded || hasPrefetchedRef.current) {
+      return undefined;
+    }
+
+    const task = InteractionManager.runAfterInteractions(() => {
+      StreamUrlCache.prefetchAll(radioStations, {
+        limit: 10,
+        priorityStationIds: prefetchPriorityStationIds,
+        defer: true,
+      });
+      hasPrefetchedRef.current = true;
+    });
+
+    return () => {
+      task.cancel();
+    };
+  }, [fontsLoaded, isAppLoading, prefetchPriorityStationIds]);
 
   useEffect(() => {
     return registerWebViewOpener(async (url, title) => {
@@ -117,19 +150,50 @@ const AppScreen = () => {
     });
   }, []);
 
-  const sortedStations = useMemo(() => {
-    if (!isSortingLoaded) {
-      return radioStations;
-    }
-
-    return sortStations(radioStations, favorites, currentStation);
-  }, [sortOption, favorites, currentStation, isSortingLoaded, sortStations]);
-
   useEffect(() => {
     if (connectionStatus === PLAYBACK_STATUS.BUFFERING_FAILED && currentStation) {
       setShowFullscreenPlayer(true);
     }
   }, [connectionStatus, currentStation]);
+
+  const onOpenSearch = useCallback(() => setShowSearchModal(true), []);
+  const onOpenMenu = useCallback(() => setShowSideMenu(true), []);
+  const onCloseSearch = useCallback(() => setShowSearchModal(false), []);
+  const onCloseSideMenu = useCallback(() => setShowSideMenu(false), []);
+  const onCloseGenreModal = useCallback(() => setShowGenreModal(false), []);
+  const onCloseSettings = useCallback(() => setShowSettings(false), []);
+  const onCloseWebView = useCallback(() => setWebViewVisible(false), []);
+  const onOpenFullscreen = useCallback(() => setShowFullscreenPlayer(true), []);
+  const onCloseFullscreen = useCallback(() => setShowFullscreenPlayer(false), []);
+  const onGenreSelect = useCallback((genreId) => {
+    setSelectedGenre(genreId);
+    setShowGenreModal(true);
+  }, []);
+  const onSettingsPress = useCallback(() => setShowSettings(true), []);
+
+  const stationListHeader = useMemo(
+    () => (
+      <View>
+        <FeaturedRadios
+          styles={styles}
+          radioStations={radioStations}
+          currentStation={currentStation}
+          isPlaying={isPlaying}
+          playStation={playStation}
+          togglePlayPause={togglePlayPause}
+        />
+        <Favorites
+          styles={styles}
+          favorites={favorites}
+          currentStation={currentStation}
+          isPlaying={isPlaying}
+          playStation={playStation}
+          togglePlayPause={togglePlayPause}
+        />
+      </View>
+    ),
+    [currentStation, favorites, isPlaying, playStation, togglePlayPause]
+  );
 
   return (
     <View style={styles.container}>
@@ -153,41 +217,18 @@ const AppScreen = () => {
           </View>
         ) : (
           <>
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.listContent}>
-              <View>
-                <FeaturedRadios
-                  styles={styles}
-                  radioStations={radioStations}
-                  currentStation={currentStation}
-                  isPlaying={isPlaying}
-                  playStation={playStation}
-                  togglePlayPause={togglePlayPause}
-                />
+            <LebaneseRadioStations
+              styles={styles}
+              radioStations={sortedStations}
+              currentStation={currentStation}
+              playStation={playStation}
+              togglePlayPause={togglePlayPause}
+              sortOption={sortOption}
+              onSortOptionChange={setSortPreference}
+              listHeaderComponent={stationListHeader}
+            />
 
-                <Favorites
-                  styles={styles}
-                  favorites={favorites}
-                  currentStation={currentStation}
-                  isPlaying={isPlaying}
-                  playStation={playStation}
-                  togglePlayPause={togglePlayPause}
-                />
-
-                <LebaneseRadioStations
-                  styles={styles}
-                  radioStations={sortedStations}
-                  currentStation={currentStation}
-                  isPlaying={isPlaying}
-                  playStation={playStation}
-                  togglePlayPause={togglePlayPause}
-                  sortOption={sortOption}
-                  onSortOptionChange={setSortPreference}
-                  favorites={favorites}
-                />
-              </View>
-            </ScrollView>
-
-            <Header styles={styles} onSearchPress={() => setShowSearchModal(true)} onMenuPress={() => setShowSideMenu(true)} />
+            <Header styles={styles} onSearchPress={onOpenSearch} onMenuPress={onOpenMenu} />
 
             <NetworkStatusIndicator
               isConnected={isConnected}
@@ -204,8 +245,9 @@ const AppScreen = () => {
                 isLoading={isLoading}
                 connectionStatus={connectionStatus}
                 togglePlayPause={togglePlayPause}
-                onPress={() => setShowFullscreenPlayer(true)}
+                onPress={onOpenFullscreen}
                 favorites={favorites}
+                favoriteIdsSet={favoriteIdsSet}
                 toggleFavorite={toggleFavorite}
               />
             )}
@@ -213,7 +255,7 @@ const AppScreen = () => {
             {showFullscreenPlayer && (
               <FullscreenPlayer
                 visible={showFullscreenPlayer}
-                onClose={() => setShowFullscreenPlayer(false)}
+                onClose={onCloseFullscreen}
                 currentStation={currentStation}
                 isPlaying={isPlaying}
                 isLoading={isLoading}
@@ -222,6 +264,7 @@ const AppScreen = () => {
                 playNextStation={playNextStation}
                 playPreviousStation={playPreviousStation}
                 favorites={favorites}
+                favoriteIdsSet={favoriteIdsSet}
                 toggleFavorite={toggleFavorite}
               />
             )}
@@ -229,7 +272,7 @@ const AppScreen = () => {
             {showSearchModal && (
               <SearchModal
                 visible={showSearchModal}
-                onClose={() => setShowSearchModal(false)}
+                onClose={onCloseSearch}
                 radioStations={radioStations}
                 currentStation={currentStation}
                 isPlaying={isPlaying}
@@ -239,23 +282,18 @@ const AppScreen = () => {
               />
             )}
 
-            {showSideMenu && (
-              <SideMenu
-                visible={showSideMenu}
-                onClose={() => setShowSideMenu(false)}
-                onGenreSelect={(genreId) => {
-                  setSelectedGenre(genreId);
-                  setShowGenreModal(true);
-                }}
-                onSettingsPress={() => setShowSettings(true)}
-                styles={styles}
-              />
-            )}
+            <SideMenu
+              visible={showSideMenu}
+              onClose={onCloseSideMenu}
+              onGenreSelect={onGenreSelect}
+              onSettingsPress={onSettingsPress}
+              styles={styles}
+            />
 
             {showGenreModal && (
               <GenreRadioStations
                 visible={showGenreModal}
-                onClose={() => setShowGenreModal(false)}
+                onClose={onCloseGenreModal}
                 genreId={selectedGenre}
                 radioStations={radioStations}
                 currentStation={currentStation}
@@ -266,14 +304,9 @@ const AppScreen = () => {
               />
             )}
 
-            {showSettings && <Settings visible={showSettings} onClose={() => setShowSettings(false)} styles={styles} />}
+            {showSettings && <Settings visible={showSettings} onClose={onCloseSettings} styles={styles} />}
 
-            <StationWebViewModal
-              visible={webViewVisible}
-              url={webViewUrl}
-              title={webViewTitle}
-              onClose={() => setWebViewVisible(false)}
-            />
+            <StationWebViewModal visible={webViewVisible} url={webViewUrl} title={webViewTitle} onClose={onCloseWebView} />
           </>
         )}
       </LinearGradient>

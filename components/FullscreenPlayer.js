@@ -21,11 +21,15 @@ const FullscreenPlayer = ({
   playNextStation,
   playPreviousStation,
   favorites,
+  favoriteIdsSet,
   toggleFavorite
 }) => {
   const [showStreamMonitor, setShowStreamMonitor] = useState(false);
   const { language } = useLanguage();
   const isRTL = language === 'ar';
+  const isFavorite = favoriteIdsSet
+    ? favoriteIdsSet.has(currentStation?.id)
+    : favorites?.some((fav) => fav.id === currentStation?.id);
   
   if (!currentStation) return null;
 
@@ -88,9 +92,9 @@ const FullscreenPlayer = ({
               onPress={() => toggleFavorite(currentStation)}
             >
               <Ionicons 
-                name={favorites?.some(fav => fav.id === currentStation.id) ? "heart" : "heart-outline"} 
+                name={isFavorite ? "heart" : "heart-outline"} 
                 size={24} 
-                color={favorites?.some(fav => fav.id === currentStation.id) ? "#ff4444" : "#fff"} 
+                color={isFavorite ? "#ff4444" : "#fff"} 
               />
             </TouchableOpacity>
           </View>

@@ -5,9 +5,23 @@ import StreamStatus from './StreamStatus';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getLocalizedString } from '../localization/strings';
 
-const BottomPlayer = ({ styles, currentStation, isPlaying, isLoading, connectionStatus, togglePlayPause, onPress, favorites, toggleFavorite }) => {
+const BottomPlayer = ({
+  styles,
+  currentStation,
+  isPlaying,
+  isLoading,
+  connectionStatus,
+  togglePlayPause,
+  onPress,
+  favorites,
+  favoriteIdsSet,
+  toggleFavorite,
+}) => {
   const { language } = useLanguage();
   const isRTL = language === 'ar';
+  const isFavorite = favoriteIdsSet
+    ? favoriteIdsSet.has(currentStation.id)
+    : favorites.some((fav) => fav.id === currentStation.id);
 
   const getStationName = (station) => {
     return isRTL ? (station.nameAr || station.name) : station.name;
@@ -76,9 +90,9 @@ const BottomPlayer = ({ styles, currentStation, isPlaying, isLoading, connection
         }}
       >
         <Ionicons 
-          name={favorites.some(fav => fav.id === currentStation.id) ? "heart" : "heart-outline"} 
+          name={isFavorite ? "heart" : "heart-outline"} 
           size={20} 
-          color={favorites.some(fav => fav.id === currentStation.id) ? "#ff4444" : "#fff"} 
+          color={isFavorite ? "#ff4444" : "#fff"} 
         />
       </TouchableOpacity>
       <TouchableOpacity

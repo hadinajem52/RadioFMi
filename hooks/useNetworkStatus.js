@@ -1,41 +1,42 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import NetInfo from '@react-native-community/netinfo';
 
 export const useNetworkStatus = () => {
   const [isConnected, setIsConnected] = useState(true);
   const [connectionType, setConnectionType] = useState('unknown');
-  const [isInternetReachable, setIsInternetReachable] = useState(true);
+  const [isInternetReachable, setIsInternetReachable] = useState(null);
 
   useEffect(() => {
-    // Subscribe to network state updates
-    const unsubscribe = NetInfo.addEventListener(state => {
-      setIsConnected(state.isConnected);
-      setConnectionType(state.type);
-      setIsInternetReachable(state.isInternetReachable);
-    });
+    const updateNetworkState = (state) => {
+      setIsConnected(Boolean(state.isConnected));
+      setConnectionType(state.type || 'unknown');
+      setIsInternetReachable(state.isInternetReachable ?? null);
+    };
 
-    // Get initial network state
-    NetInfo.fetch().then(state => {
-      setIsConnected(state.isConnected);
-      setConnectionType(state.type);
-      setIsInternetReachable(state.isInternetReachable);
-    });
+    const unsubscribe = NetInfo.addEventListener(updateNetworkState);
+    NetInfo.fetch().then(updateNetworkState);
 
-    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
 
-  // Helper function to check if we have a good internet connection
-  const hasGoodConnection = () => {
-    return isConnected && isInternetReachable && connectionType !== 'none';
-  };
+  const hasGoodConnection = useCallback(() => {
+    if (!isConnected || connectionType === 'none') {
+      return false;
+    }
 
-  // Helper function to get connection status message
-  const getConnectionStatusMessage = () => {
+    // Unknown reachability should not block playback upfront.
+    if (isInternetReachable === null || isInternetReachable === undefined) {
+      return true;
+    }
+
+    return Boolean(isInternetReachable);
+  }, [connectionType, isConnected, isInternetReachable]);
+
+  const getConnectionStatusMessage = useCallback(() => {
     if (!isConnected) {
       return 'No internet connection detected';
     }
-    if (!isInternetReachable) {
+    if (isInternetReachable === false) {
       return 'Connected to network but no internet access';
     }
     if (connectionType === 'cellular') {
@@ -45,13 +46,22 @@ export const useNetworkStatus = () => {
       return 'Connected via WiFi';
     }
     return 'Connection status unknown';
-  };
+  }, [connectionType, isConnected, isInternetReachable]);
 
-  return {
-    isConnected,
-    connectionType,
-    isInternetReachable,
-    hasGoodConnection,
-    getConnectionStatusMessage,
-  };
+  return useMemo(
+    () => ({
+      isConnected,
+      connectionType,
+      isInternetReachable,
+      hasGoodConnection,
+      getConnectionStatusMessage,
+    }),
+    [
+      connectionType,
+      getConnectionStatusMessage,
+      hasGoodConnection,
+      isConnected,
+      isInternetReachable,
+    ]
+  );
 };

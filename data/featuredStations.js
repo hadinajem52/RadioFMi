@@ -1,0 +1,2 @@
+export const FEATURED_STATION_IDS = [30, 5, 21, 4, 18];
+export const FEATURED_PRIMARY_STATION_ID = 30;
