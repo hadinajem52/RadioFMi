@@ -13,6 +13,7 @@ import {
 } from '../services/TrackPlayerService';
 import { useNetworkStatus } from './useNetworkStatus';
 import { openORBForStation } from '../utils/webViewFallback';
+import StreamUrlCache from '../services/StreamUrlCache';
 import { testInternetConnectivity, testRadioStreamConnectivity } from '../utils/networkUtils';
 import radioStations from '../data/radioStations';
 
@@ -24,6 +25,8 @@ export const usePlayer = () => {
   const [streamError, setStreamError] = useState(null);
   const [connectionStatus, setConnectionStatus] = useState('idle');
   
+  const isRetrying = React.useRef(false);
+
   const playbackState = usePlaybackState();
   const { hasGoodConnection, getConnectionStatusMessage, isConnected, isInternetReachable } = useNetworkStatus();
 
@@ -127,7 +130,24 @@ export const usePlayer = () => {
             }
             
             if (station) {
-              // Automatically open webview immediately without alert
+              // Invalidate stale cache entry
+              await StreamUrlCache.invalidate(station.id);
+              // Try to get a fresh URL from ORB before falling back to WebView
+              if (!isRetrying.current) {
+                isRetrying.current = true;
+                const freshUrl = await StreamUrlCache.refetch(station);
+                if (freshUrl) {
+                  setStreamError(null);
+                  console.log('StreamUrlCache: retrying with fresh URL for', station.name);
+                  setTimeout(async () => {
+                    await playStation({ ...station, url: freshUrl });
+                    isRetrying.current = false;
+                  }, 300);
+                  return;
+                }
+                isRetrying.current = false;
+              }
+              // Fresh URL unavailable or retry already attempted — open WebView
               setStreamError(null);
               console.log('Opening webview automatically for:', station.name || station.title);
               console.log('Final station has webViewFallbackUrl:', !!station.webViewFallbackUrl);
@@ -257,9 +277,13 @@ export const usePlayer = () => {
       
       // Stop current playback and clear queue
       await stopTrack();
-      
-      // Add the new station and play
-      await addTrack(station);
+
+      // Resolve current stream URL from cache (falls back to station.url if no cache)
+      const resolvedUrl = await StreamUrlCache.getUrl(station);
+      const trackToPlay = resolvedUrl ? { ...station, url: resolvedUrl } : station;
+
+      // Add the resolved station and play
+      await addTrack(trackToPlay);
       await playTrack();
       
       setIsLoading(false);
