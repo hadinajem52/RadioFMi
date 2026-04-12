@@ -42,6 +42,7 @@ import GenreRadioStations from './components/GenreRadioStations';
 import NetworkStatusIndicator from './components/NetworkStatusIndicator';
 import Settings from './components/Settings';
 import radioStations from './data/radioStations';
+import StreamUrlCache from './services/StreamUrlCache';
 import styles from './styles/styles';
 
 function App() {
@@ -114,6 +115,11 @@ function App() {
     };
 
     initializeApp();
+  }, []);
+
+  // Pre-fetch stream URLs from OnlineRadioBox in the background at launch
+  useEffect(() => {
+    StreamUrlCache.prefetchAll(radioStations);
   }, []);
 
   // Register a global opener for the fallback web view
