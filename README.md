@@ -83,9 +83,13 @@ npm run web
 
 ```
 RadioFMi/
+├── app/                  # App composition layer (providers + screen shell)
+│   ├── AppProviders.js
+│   ├── AppScreen.js
+│   └── index.js
 ├── android/              # Android native files
 ├── assets/               # Images, icons, and splash screens
-├── components/           # React components
+├── components/           # UI components
 │   ├── BackgroundWebViewService.js
 │   ├── BottomPlayer.js
 │   ├── Favorites.js
@@ -101,16 +105,20 @@ RadioFMi/
 │   ├── SortOptionsModal.js
 │   ├── StationWebViewModal.js
 │   ├── StreamMonitor.js
-│   └── StreamStatus.js
-├── contexts/             # React Context providers
+│   ├── StreamStatus.js
+│   └── index.js          # Components barrel exports
+├── contexts/             # React context providers
 ├── data/                 # Radio stations data
-├── hooks/                # Custom React hooks
+├── hooks/                # Custom hooks (+ barrel exports)
+│   └── index.js
 ├── localization/         # Language files (English/Arabic)
 ├── radioimg/             # Radio station logos
-├── services/             # Service layer (TrackPlayer, etc.)
+├── services/             # Service layer (+ barrel exports)
+│   └── index.js
 ├── styles/               # Styling files
-├── utils/                # Utility functions
-├── App.js                # Main application component
+├── utils/                # Utility helpers (+ barrel exports)
+│   └── index.js
+├── App.js                # Root app entry
 ├── app.json              # Expo configuration
 ├── index.js              # Entry point
 └── package.json          # Dependencies and scripts

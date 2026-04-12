@@ -2,7 +2,7 @@ import { registerRootComponent } from 'expo';
 import TrackPlayer from 'react-native-track-player';
 
 import App from './App';
-import { playbackService } from './services/TrackPlayerService';
+import { playbackService } from './services';
 
 // Register the playback service before the root component
 TrackPlayer.registerPlaybackService(() => playbackService);
