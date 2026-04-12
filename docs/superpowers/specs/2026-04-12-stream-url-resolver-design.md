@@ -181,7 +181,7 @@ User taps station
 
 Network offline: caught by existing `hasGoodConnection()` check before resolver is ever called.
 
-One retry maximum per failure — prevents infinite retry loops.
+One retry maximum per failure — prevents infinite retry loops. The retry always uses the freshly fetched ORB URL, not the original hardcoded URL.
 
 ## Files Changed
 
