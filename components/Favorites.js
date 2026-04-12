@@ -4,9 +4,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getLocalizedString } from '../localization/strings';
 
-const Favorites = ({ styles, favorites, currentStation, isPlaying, playStation, togglePlayPause, language }) => {
-  const { language: contextLanguage } = useLanguage();
-  const activeLanguage = language || contextLanguage;
+const Favorites = ({ styles, favorites, currentStation, isPlaying, playStation, togglePlayPause }) => {
+  const { language } = useLanguage();
+  const activeLanguage = language;
   const isRTL = activeLanguage === 'ar';
 
   // Pulsing Glow Component

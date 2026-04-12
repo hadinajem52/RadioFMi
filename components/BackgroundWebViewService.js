@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { View, AppState, Platform } from 'react-native';
+import { View, AppState } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake';
 
@@ -71,11 +71,11 @@ const BackgroundWebViewService = ({ url, isActive }) => {
       <WebView
         ref={webViewRef}
         source={{ uri: url }}
-        allowsInlineMediaPlayback={true}
+        allowsInlineMediaPlayback
         mediaPlaybackRequiresUserAction={false}
-        javaScriptEnabled={true}
-        domStorageEnabled={true}
-        cacheEnabled={true}
+        javaScriptEnabled
+        domStorageEnabled
+        cacheEnabled
         mixedContentMode="always"
         androidLayerType="hardware"
         androidHardwareAccelerationDisabled={false}

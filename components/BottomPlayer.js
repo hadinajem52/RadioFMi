@@ -48,8 +48,7 @@ const BottomPlayer = ({ styles, currentStation, isPlaying, isLoading, togglePlay
             isLoading={isLoading}
             size="small"
             showText={true}
-            textColor="#rgba(255,255,255,0.8)"
-            iconColor="#fff"
+            textColor="rgba(255,255,255,0.8)"
             style={{ 
               marginRight: isRTL ? 0 : 8,
               marginLeft: isRTL ? 8 : 0 

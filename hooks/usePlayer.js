@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Alert } from 'react-native';
 import TrackPlayer, { usePlaybackState, State } from 'react-native-track-player';
 import { 
@@ -25,7 +25,7 @@ export const usePlayer = () => {
   const [streamError, setStreamError] = useState(null);
   const [connectionStatus, setConnectionStatus] = useState('idle');
   
-  const isRetrying = React.useRef(false);
+  const isRetrying = useRef(false);
 
   const playbackState = usePlaybackState();
   const { hasGoodConnection, getConnectionStatusMessage, isConnected, isInternetReachable } = useNetworkStatus();
@@ -205,9 +205,6 @@ export const usePlayer = () => {
 
     initializePlayer();
 
-    return () => {
-
-    };
   }, []);
 
   // Update player volume when volume state changes

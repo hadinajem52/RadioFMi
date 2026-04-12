@@ -1,7 +1,6 @@
 import TrackPlayer, {
   AppKilledPlaybackBehavior,
   Capability,
-  RepeatMode,
   Event,
   State
 } from 'react-native-track-player';
@@ -187,16 +186,6 @@ export async function setVolume(volume) {
     }
     
     // Don't throw the error to prevent app crashes
-  }
-}
-
-// Safe volume setter that can be used as a utility
-export function setSafeVolume(volume, callback) {
-  if (typeof volume === 'number' && !isNaN(volume) && volume >= 0 && volume <= 1) {
-    setVolume(volume);
-    if (callback) callback(volume);
-  } else {
-    console.warn('Invalid volume value:', volume, 'volume not changed');
   }
 }
 

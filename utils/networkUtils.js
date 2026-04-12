@@ -50,36 +50,3 @@ export const testRadioStreamConnectivity = async (streamUrl, timeout = 10000) =>
   }
 };
 
-// Get network quality estimate based on connection speed test
-export const estimateNetworkQuality = async () => {
-  const startTime = Date.now();
-  
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000);
-
-    await fetch('https://www.google.com/generate_204', {
-      method: 'HEAD',
-      signal: controller.signal,
-      cache: 'no-cache'
-    });
-
-    clearTimeout(timeoutId);
-    const endTime = Date.now();
-    const responseTime = endTime - startTime;
-
-    // Categorize network quality based on response time
-    if (responseTime < 100) {
-      return { quality: 'excellent', responseTime };
-    } else if (responseTime < 300) {
-      return { quality: 'good', responseTime };
-    } else if (responseTime < 1000) {
-      return { quality: 'fair', responseTime };
-    } else {
-      return { quality: 'poor', responseTime };
-    }
-  } catch (error) {
-    console.log('Network quality test failed:', error.message);
-    return { quality: 'unknown', responseTime: null, error: error.message };
-  }
-};

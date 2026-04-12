@@ -1,11 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Modal, View, Text, TouchableOpacity, ActivityIndicator, Platform, SafeAreaView, AppState } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, ActivityIndicator, SafeAreaView, AppState } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { WebView } from 'react-native-webview';
 import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake';
 
 const StationWebViewModal = ({ visible, url, onClose, title = 'Web Player' }) => {
-  const webViewRef = useRef(null);
   const appState = useRef(AppState.currentState);
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
 
@@ -50,12 +49,6 @@ const StationWebViewModal = ({ visible, url, onClose, title = 'Web Player' }) =>
       subscription.remove();
     };
   }, [isAudioPlaying]);
-
-  const handleClose = () => {
-    setIsAudioPlaying(false);
-    deactivateKeepAwake('webview-audio');
-    onClose();
-  };
 
   if (!visible) return null;
 
@@ -104,7 +97,6 @@ const StationWebViewModal = ({ visible, url, onClose, title = 'Web Player' }) =>
 
         {/* WebView */}
         <WebView
-          ref={webViewRef}
           source={{ uri: url }}
           startInLoadingState
           renderLoading={() => (

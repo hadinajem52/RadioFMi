@@ -11,12 +11,9 @@ const StreamStatus = ({
   size = 'medium',
   showText = true,
   textColor = '#fff',
-  iconColor = '#fff',
   style = {}
 }) => {
   const [streamStatus, setStreamStatus] = useState('idle');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [isBuffering, setIsBuffering] = useState(false);
   const [connectionTimeout, setConnectionTimeout] = useState(false);
   
   const playbackState = usePlaybackState();
@@ -61,7 +58,6 @@ const StreamStatus = ({
   useEffect(() => {
     if (!currentStation) {
       setStreamStatus('idle');
-      setErrorMessage('');
       clearTimeouts();
       return;
     }
@@ -69,7 +65,6 @@ const StreamStatus = ({
     // Handle loading state
     if (isLoading) {
       setStreamStatus('connecting');
-      setErrorMessage('');
       setConnectionTimeout(false);
       
       // Set connection timeout - but don't set error status, just mark timeout
@@ -90,15 +85,11 @@ const StreamStatus = ({
     switch (playbackState?.state) {
       case State.Playing:
         setStreamStatus('live');
-        setErrorMessage('');
-        setIsBuffering(false);
         setConnectionTimeout(false);
         break;
         
       case State.Buffering:
         setStreamStatus('buffering');
-        setErrorMessage('');
-        setIsBuffering(true);
         setConnectionTimeout(false);
         
         // Set buffering timeout - but keep buffering status
@@ -123,23 +114,17 @@ const StreamStatus = ({
         
       case State.Paused:
         setStreamStatus('paused');
-        setErrorMessage('');
-        setIsBuffering(false);
         setConnectionTimeout(false);
         break;
         
       case State.Stopped:
         setStreamStatus('stopped');
-        setErrorMessage('');
-        setIsBuffering(false);
         setConnectionTimeout(false);
         break;
         
       case State.Error:
         // Don't set error status, fallback to stopped
         setStreamStatus('stopped');
-        setErrorMessage('');
-        setIsBuffering(false);
         setConnectionTimeout(false);
         break;
         
@@ -149,8 +134,6 @@ const StreamStatus = ({
         } else {
           setStreamStatus('ready');
         }
-        setErrorMessage('');
-        setIsBuffering(false);
         setConnectionTimeout(false);
         break;
         

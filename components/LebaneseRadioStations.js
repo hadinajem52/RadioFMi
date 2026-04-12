@@ -12,13 +12,12 @@ const LebaneseRadioStations = ({
   isPlaying, 
   playStation, 
   togglePlayPause, 
-  language,
   sortOption,
   onSortOptionChange,
   favorites = []
 }) => {
-  const { language: contextLanguage } = useLanguage();
-  const activeLanguage = language || contextLanguage;
+  const { language } = useLanguage();
+  const activeLanguage = language;
   const isRTL = activeLanguage === 'ar';
   const [showSortModal, setShowSortModal] = useState(false);
   

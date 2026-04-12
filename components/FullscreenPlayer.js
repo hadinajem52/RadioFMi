@@ -8,7 +8,7 @@ import StreamStatus from './StreamStatus';
 import StreamMonitor from './StreamMonitor';
 import { openORBForStation } from '../utils/webViewFallback';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const FullscreenPlayer = ({ 
   visible, 
@@ -19,8 +19,6 @@ const FullscreenPlayer = ({
   togglePlayPause,
   playNextStation,
   playPreviousStation,
-  volume,
-  setVolume,
   favorites,
   toggleFavorite
 }) => {
@@ -164,7 +162,6 @@ const FullscreenPlayer = ({
               size="large"
               showText={true}
               textColor="#fff"
-              iconColor="#fff"
               style={{
                 backgroundColor: 'rgba(255,255,255,0.15)',
                 paddingHorizontal: 16,

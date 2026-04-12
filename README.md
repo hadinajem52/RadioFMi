@@ -100,7 +100,6 @@ RadioFMi/
 │   ├── SideMenu.js
 │   ├── SortOptionsModal.js
 │   ├── StationWebViewModal.js
-│   ├── StreamHealthIndicator.js
 │   ├── StreamMonitor.js
 │   └── StreamStatus.js
 ├── contexts/             # React Context providers

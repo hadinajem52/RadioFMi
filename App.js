@@ -9,7 +9,7 @@ import {
   Image
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
+import { LanguageProvider } from './contexts/LanguageContext';
 import * as Font from 'expo-font';
 import {
   Poppins_100Thin,
@@ -22,7 +22,6 @@ import {
   Poppins_800ExtraBold,
   Poppins_900Black,
 } from '@expo-google-fonts/poppins';
-import TrackPlayer from 'react-native-track-player';
 import { usePlayer } from './hooks/usePlayer';
 import { useFavorites } from './hooks/useFavorites';
 import { useSorting } from './hooks/useSorting';
@@ -46,7 +45,6 @@ import StreamUrlCache from './services/StreamUrlCache';
 import styles from './styles/styles';
 
 function App() {
-  const { language } = useLanguage();
   const [isAppLoading, setIsAppLoading] = useState(true);
   const [fontsLoaded, setFontsLoaded] = useState(false);
   const [showFullscreenPlayer, setShowFullscreenPlayer] = useState(false);
@@ -63,16 +61,12 @@ function App() {
   const {
     isLoading,
     currentStation,
-    isPlayerReady,
     volume,
-    streamError,
     connectionStatus,
     isPlaying,
-    playbackState,
     isConnected,
     isInternetReachable,
     hasGoodConnection,
-    getConnectionStatusMessage,
     playStation,
     togglePlayPause,
     playNextStation,
@@ -138,22 +132,13 @@ function App() {
     });
   }, []);
 
-  const handleGenreSelect = (genreId) => {
-    setSelectedGenre(genreId);
-    setShowGenreModal(true);
-  };
-
-  const handleSettingsPress = () => {
-    setShowSettings(true);
-  };
-
   // Memoize the sorted list of radio stations to prevent re-sorting on every render
   const sortedStations = useMemo(() => {
     if (!isSortingLoaded) {
       return radioStations;
     }
     return sortStations(radioStations, favorites, currentStation);
-  }, [sortOption, radioStations, favorites, currentStation, isSortingLoaded, sortStations]);
+  }, [sortOption, favorites, currentStation, isSortingLoaded, sortStations]);
 
   // Auto-open fullscreen player on buffering failure to give user immediate controls/retry
   useEffect(() => {
@@ -207,7 +192,6 @@ function App() {
                   isPlaying={isPlaying}
                   playStation={playStation}
                   togglePlayPause={togglePlayPause}
-                  language={language}
                 />
 
                 {/* Favorites Section */}
@@ -218,7 +202,6 @@ function App() {
                   isPlaying={isPlaying}
                   playStation={playStation}
                   togglePlayPause={togglePlayPause}
-                  language={language}
                 />
 
                 {/* Lebanese Radio Stations Section */}
@@ -229,7 +212,6 @@ function App() {
                   isPlaying={isPlaying}
                   playStation={playStation}
                   togglePlayPause={togglePlayPause}
-                  language={language}
                   sortOption={sortOption}
                   onSortOptionChange={setSortPreference}
                   favorites={favorites}
@@ -263,7 +245,6 @@ function App() {
                 onPress={() => setShowFullscreenPlayer(true)}
                 favorites={favorites}
                 toggleFavorite={toggleFavorite}
-                language={language}
               />
             )}
 
@@ -278,11 +259,8 @@ function App() {
                 togglePlayPause={togglePlayPause}
                 playNextStation={playNextStation}
                 playPreviousStation={playPreviousStation}
-                volume={volume}
-                setVolume={setSafeVolume}
                 favorites={favorites}
                 toggleFavorite={toggleFavorite}
-                language={language}
               />
             )}
 
@@ -296,7 +274,6 @@ function App() {
                 playStation={playStation}
                 togglePlayPause={togglePlayPause}
                 styles={styles}
-                language={language}
               />
             )}
 
@@ -304,10 +281,12 @@ function App() {
               <SideMenu
                 visible={showSideMenu}
                 onClose={() => setShowSideMenu(false)}
-                onGenreSelect={handleGenreSelect}
-                onSettingsPress={handleSettingsPress}
+                onGenreSelect={(genreId) => {
+                  setSelectedGenre(genreId);
+                  setShowGenreModal(true);
+                }}
+                onSettingsPress={() => setShowSettings(true)}
                 styles={styles}
-                language={language}
               />
             )}
 
@@ -322,7 +301,6 @@ function App() {
                 playStation={playStation}
                 togglePlayPause={togglePlayPause}
                 styles={styles}
-                language={language}
               />
             )}
 
