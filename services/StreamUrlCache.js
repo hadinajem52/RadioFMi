@@ -80,9 +80,20 @@ async function fetchFromOrb(webViewFallbackUrl) {
       },
       signal: controller.signal,
     });
+    // [TEMP DIAG] log status for first few requests only
     if (!response.ok) return null;
-    const html = await response.text();
-    return parseStreamUrl(html);
+    const text = await response.text();
+    // ORB returns JSON-wrapped HTML: {"data":"<html>..."} — unwrap before parsing
+    let content = text;
+    try {
+      const json = JSON.parse(text);
+      if (json.data && typeof json.data === 'string') {
+        content = json.data;
+      }
+    } catch {
+      // not JSON, use raw text
+    }
+    return parseStreamUrl(content);
   } finally {
     clearTimeout(timeoutId);
   }
