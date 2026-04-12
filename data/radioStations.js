@@ -894,7 +894,7 @@ const radioStations = [
     id: 72,
     name: 'Al Jazeera',
     nameAr: 'الجزيرة',
-    url: 'https://ping.chartbeat.net/ping?h=aljazeera.net&p=%2Faudio%2Flive%2F&u=Dnt-g1BP3ZtiC-6mGq&d=aljazeera.net&g=3291&g0=No%20Section&g1=No%20Author&g4=Landing%20Page&n=0&f=f0001&c=0.25&x=156&m=156&y=5559&o=789&w=642&j=30&R=1&W=0&I=0&E=6&e=6&r=https%3A%2F%2Fwww.google.com%2F&PA=https%3A%2F%2Fwww.aljazeera.net%2Faudio%2Flive%2F&b=1062&t=CDaNJzHpqOaKGy41Cy_p-vCxGure&V=150&tz=-180&_acct=anon&sn=2&sv=CqtdjWDOUBw0CxbdS3HzTFdDQatXL&sr=https%3A%2F%2Fwww.google.com%2F&sd=2&im=067b2fff&_',
+    url: 'https://live-hls-audio-web-aja.getaj.net/VOICE-AJA/index.m3u8',
     description: 'News',
     descriptionAr: 'أخبار',
     color: ['#FF6F00', '#FF8F00'],
