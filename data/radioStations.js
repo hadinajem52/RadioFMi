@@ -69,7 +69,8 @@ const radioStations = [
     descriptionAr: 'أفضل 40، بوب، إلكتروني',
     color: ['#F39C12', '#E67E22'],
     image: require('../radioimg/nrj.png'),
-    genre: 'Music & Entertainment'
+    genre: 'Music & Entertainment',
+    webViewFallbackUrl: 'https://onlineradiobox.com/lb/nrjlebanon/?cs=lb.nrjlebanon&played=1'
   },
   {
     id: 7,
@@ -248,7 +249,8 @@ const radioStations = [
     descriptionAr: 'أغاني قديمة',
     color: ['#922B21', '#A93226'],
     image: require('../radioimg/nostalgie.png'),
-    genre: 'Music & Entertainment'
+    genre: 'Music & Entertainment',
+    webViewFallbackUrl: 'https://onlineradiobox.com/lb/nostalgie/?cs=lb.nostalgie&played=1'
   },
   
   // 📰 News & Talk
@@ -261,7 +263,8 @@ const radioStations = [
     descriptionAr: 'أخبار، برامج حوارية',
     color: ['#4ECDC4', '#44A08D'],
     image: require('../radioimg/voixduliban.png'),
-    genre: 'News & Talk'
+    genre: 'News & Talk',
+    webViewFallbackUrl: 'https://onlineradiobox.com/lb/voiceoflebanon/?cs=lb.voiceoflebanon&played=1'
   },
   {
     id: 23,
@@ -308,7 +311,8 @@ const radioStations = [
     descriptionAr: 'برامج حوارية، محتوى محلي',
     color: ['#28A745', '#20C997'],
     image: require('../radioimg/lbiradio.png'),
-    genre: 'News & Talk'
+    genre: 'News & Talk',
+    webViewFallbackUrl: 'https://onlineradiobox.com/lb/lbi/?cs=lb.lbi&played=1'
   },
   {
     id: 88,
@@ -319,7 +323,8 @@ const radioStations = [
     descriptionAr: 'أغاني قديمة',
     color: ['#28A745', '#20C997'],
     image: require('../radioimg/lbiradio.png'),
-    genre: 'Music & Entertainment'
+    genre: 'Music & Entertainment',
+    webViewFallbackUrl: 'https://onlineradiobox.com/lb/lbioldies/?cs=lb.lbioldies&played=1'
   },
   {
     id: 89,
@@ -330,7 +335,8 @@ const radioStations = [
     descriptionAr: 'موسيقى كلاسيكية',
     color: ['#28A745', '#20C997'],
     image: require('../radioimg/lbiradio.png'),
-    genre: 'Music & Entertainment'
+    genre: 'Music & Entertainment',
+    webViewFallbackUrl: 'https://onlineradiobox.com/lb/lbizaman/?cs=lb.lbizaman&played=1'
   },
   {
     id: 90,
@@ -340,6 +346,7 @@ const radioStations = [
     description: 'Hit Music',
     descriptionAr: 'أغاني شعبية',
     color: ['#28A745', '#20C997'],
+    webViewFallbackUrl: 'https://onlineradiobox.com/lb/lbihits/?cs=lb.lbihits&played=1',
     image: require('../radioimg/lbiradio.png'),
     genre: 'Music & Entertainment'
   },
@@ -366,7 +373,8 @@ const radioStations = [
     descriptionAr: 'محتوى إسلامي',
     color: ['#28A745', '#155724'],
     image: require('../radioimg/sawtelhoda.png'),
-    genre: 'Religious'
+    genre: 'Religious',
+    webViewFallbackUrl: 'https://onlineradiobox.com/lb/sawtalhoda/?cs=lb.sawtalhoda&played=1'
   },
   {
     id: 29,
@@ -389,7 +397,8 @@ const radioStations = [
     descriptionAr: 'إذاعة النور',
     color: ['#FF6B6B', '#FF8E8E'],
     image: require('../radioimg/alnour.png'),
-    genre: 'Religious'
+    genre: 'Religious',
+    webViewFallbackUrl: 'https://onlineradiobox.com/lb/alnour/?cs=lb.alnour&played=1'
   },
   {
     id: 31,
@@ -855,7 +864,8 @@ const radioStations = [
     descriptionAr: 'موسيقى',
     color: ['#9C27B0', '#BA68C8'],
     image: require('../radioimg/sawtelnojoum.png'),
-    genre: 'Music & Entertainment'
+    genre: 'Music & Entertainment',
+    webViewFallbackUrl: 'https://onlineradiobox.com/lb/sawtelnojoum/?cs=lb.sawtelnojoum&played=1'
   },
   {
     id: 70,
@@ -866,7 +876,8 @@ const radioStations = [
     descriptionAr: 'موسيقى',
     color: ['#FF9800', '#FFB74D'],
     image: require('../radioimg/rotana.png'),
-    genre: 'Music & Entertainment'
+    genre: 'Music & Entertainment',
+    webViewFallbackUrl: 'https://onlineradiobox.com/ae/rotanafm/?cs=ae.rotanafm&played=1'
   },
   {
     id: 71,
@@ -900,7 +911,8 @@ const radioStations = [
     descriptionAr: 'موسيقى',
     color: ['#3F51B5', '#5C6BC0'],
     image: require('../radioimg/nrjfrance.png'),
-    genre: 'Music & Entertainment'
+    genre: 'Music & Entertainment',
+    webViewFallbackUrl: 'https://onlineradiobox.com/fr/nrj/?cs=fr.nrj&played=1'
   },
   {
     id: 74,
@@ -933,13 +945,14 @@ const radioStations = [
     descriptionAr: 'موسيقى فرنسية',
     color: ['#EC4899', '#F472B6'],
     image: require('../radioimg/cherie.png'),
-    genre: 'Music & Entertainment'
+    genre: 'Music & Entertainment',
+    webViewFallbackUrl: 'https://onlineradiobox.com/fr/cheriefm/?cs=fr.cheriefm&played=1'
   },
   {
     id: 77,
     name: 'France Inter',
     nameAr: 'فرنس إنتر',
-    url: 'https://stream.radiofrance.fr/accs3/franceinter/prod1transcoder1/franceinter_aac_hifi_4_1253654_1753388839.ts?id=radiofrance',
+    url: 'https://icecast.radiofrance.fr/franceinter-midfi.mp3',
     description: 'News & Talk',
     descriptionAr: 'أخبار وبرامج حوارية',
     color: ['#DC2626', '#EF4444'],
@@ -1002,7 +1015,8 @@ const radioStations = [
     descriptionAr: 'إلكترونية ورقص',
     color: ['#7C3AED', '#8B5CF6'],
     image: require('../radioimg/beat.png'),
-    genre: 'Music & Entertainment'
+    genre: 'Music & Entertainment',
+    webViewFallbackUrl: 'https://onlineradiobox.com/lb/beatfm/?cs=lb.beatfm&played=1'
   },
   {
     id: 84,
