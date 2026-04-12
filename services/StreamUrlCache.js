@@ -60,6 +60,7 @@ export function extractOrbPath(webViewFallbackUrl) {
 
 /**
  * Fetches the current stream URL for a station from ORB.
+ * ORB's ajax endpoint returns JSON-wrapped HTML: {"data":"<html>..."}
  * Returns null if the fetch fails or the stream attribute is empty.
  */
 async function fetchFromOrb(webViewFallbackUrl) {
@@ -80,10 +81,9 @@ async function fetchFromOrb(webViewFallbackUrl) {
       },
       signal: controller.signal,
     });
-    // [TEMP DIAG] log status for first few requests only
     if (!response.ok) return null;
     const text = await response.text();
-    // ORB returns JSON-wrapped HTML: {"data":"<html>..."} — unwrap before parsing
+    // ORB wraps the HTML fragment in JSON: {"data":"<html>..."} — unwrap before parsing
     let content = text;
     try {
       const json = JSON.parse(text);
@@ -91,7 +91,7 @@ async function fetchFromOrb(webViewFallbackUrl) {
         content = json.data;
       }
     } catch {
-      // not JSON, use raw text
+      // not JSON, use raw text as-is
     }
     return parseStreamUrl(content);
   } finally {
@@ -107,19 +107,9 @@ async function getUrl(station) {
   if (!station?.webViewFallbackUrl) return null;
   try {
     const raw = await AsyncStorage.getItem(CACHE_KEY_PREFIX + station.id);
-    if (!raw) {
-      // [TEMP LOG]
-      console.log(`[StreamUrlCache] getUrl MISS (no entry): ${station.name} (id ${station.id})`);
-      return null;
-    }
+    if (!raw) return null;
     const entry = JSON.parse(raw);
-    if (Date.now() - entry.fetchedAt > getTTL(entry.url)) {
-      // [TEMP LOG]
-      console.log(`[StreamUrlCache] getUrl MISS (expired): ${station.name} (id ${station.id})`);
-      return null;
-    }
-    // [TEMP LOG]
-    console.log(`[StreamUrlCache] getUrl HIT: ${station.name} → ${entry.url}`);
+    if (Date.now() - entry.fetchedAt > getTTL(entry.url)) return null;
     return entry.url;
   } catch {
     return null;
@@ -154,18 +144,9 @@ async function refetch(station) {
   if (!station?.webViewFallbackUrl) return null;
   try {
     const url = await fetchFromOrb(station.webViewFallbackUrl);
-    if (url) {
-      await saveUrl(station.id, url);
-      // [TEMP LOG]
-      console.log(`[StreamUrlCache] refetch OK: ${station.name} → ${url}`);
-    } else {
-      // [TEMP LOG]
-      console.log(`[StreamUrlCache] refetch NULL: ${station.name} (ORB returned nothing)`);
-    }
+    if (url) await saveUrl(station.id, url);
     return url;
-  } catch (e) {
-    // [TEMP LOG]
-    console.log(`[StreamUrlCache] refetch ERROR: ${station.name}:`, e.message);
+  } catch {
     return null;
   }
 }
@@ -177,8 +158,6 @@ async function refetch(station) {
  */
 async function prefetchAll(stations) {
   const eligible = stations.filter((s) => s.webViewFallbackUrl);
-  // [TEMP LOG]
-  console.log(`[StreamUrlCache] prefetchAll: ${eligible.length} eligible stations`);
 
   for (let i = 0; i < eligible.length; i += BATCH_SIZE) {
     const batch = eligible.slice(i, i + BATCH_SIZE);
@@ -187,20 +166,9 @@ async function prefetchAll(stations) {
       batch.map(async (station) => {
         try {
           const cached = await getUrl(station);
-          if (cached) {
-            // [TEMP LOG]
-            console.log(`[StreamUrlCache] prefetch SKIP (cache fresh): ${station.name} → ${cached}`);
-            return;
-          }
+          if (cached) return; // still valid, skip network call
           const url = await fetchFromOrb(station.webViewFallbackUrl);
-          if (url) {
-            await saveUrl(station.id, url);
-            // [TEMP LOG]
-            console.log(`[StreamUrlCache] prefetch CACHED: ${station.name} → ${url}`);
-          } else {
-            // [TEMP LOG]
-            console.log(`[StreamUrlCache] prefetch NULL (ORB returned nothing): ${station.name}`);
-          }
+          if (url) await saveUrl(station.id, url);
         } catch (e) {
           console.log(`StreamUrlCache: prefetch failed for ${station.name}:`, e.message);
         }
@@ -211,8 +179,6 @@ async function prefetchAll(stations) {
       await new Promise((resolve) => setTimeout(resolve, BATCH_DELAY_MS));
     }
   }
-  // [TEMP LOG]
-  console.log('[StreamUrlCache] prefetchAll: done');
 }
 
 export default { getUrl, invalidate, refetch, prefetchAll };
