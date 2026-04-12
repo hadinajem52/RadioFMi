@@ -72,7 +72,12 @@ async function fetchFromOrb(webViewFallbackUrl) {
 
   try {
     const response = await fetch(apiUrl, {
-      headers: { Accept: 'text/html' },
+      headers: {
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
+        'Referer': 'https://onlineradiobox.com/',
+      },
       signal: controller.signal,
     });
     if (!response.ok) return null;
@@ -91,9 +96,19 @@ async function getUrl(station) {
   if (!station?.webViewFallbackUrl) return null;
   try {
     const raw = await AsyncStorage.getItem(CACHE_KEY_PREFIX + station.id);
-    if (!raw) return null;
+    if (!raw) {
+      // [TEMP LOG]
+      console.log(`[StreamUrlCache] getUrl MISS (no entry): ${station.name} (id ${station.id})`);
+      return null;
+    }
     const entry = JSON.parse(raw);
-    if (Date.now() - entry.fetchedAt > getTTL(entry.url)) return null;
+    if (Date.now() - entry.fetchedAt > getTTL(entry.url)) {
+      // [TEMP LOG]
+      console.log(`[StreamUrlCache] getUrl MISS (expired): ${station.name} (id ${station.id})`);
+      return null;
+    }
+    // [TEMP LOG]
+    console.log(`[StreamUrlCache] getUrl HIT: ${station.name} → ${entry.url}`);
     return entry.url;
   } catch {
     return null;
@@ -128,9 +143,18 @@ async function refetch(station) {
   if (!station?.webViewFallbackUrl) return null;
   try {
     const url = await fetchFromOrb(station.webViewFallbackUrl);
-    if (url) await saveUrl(station.id, url);
+    if (url) {
+      await saveUrl(station.id, url);
+      // [TEMP LOG]
+      console.log(`[StreamUrlCache] refetch OK: ${station.name} → ${url}`);
+    } else {
+      // [TEMP LOG]
+      console.log(`[StreamUrlCache] refetch NULL: ${station.name} (ORB returned nothing)`);
+    }
     return url;
-  } catch {
+  } catch (e) {
+    // [TEMP LOG]
+    console.log(`[StreamUrlCache] refetch ERROR: ${station.name}:`, e.message);
     return null;
   }
 }
@@ -142,6 +166,8 @@ async function refetch(station) {
  */
 async function prefetchAll(stations) {
   const eligible = stations.filter((s) => s.webViewFallbackUrl);
+  // [TEMP LOG]
+  console.log(`[StreamUrlCache] prefetchAll: ${eligible.length} eligible stations`);
 
   for (let i = 0; i < eligible.length; i += BATCH_SIZE) {
     const batch = eligible.slice(i, i + BATCH_SIZE);
@@ -150,9 +176,20 @@ async function prefetchAll(stations) {
       batch.map(async (station) => {
         try {
           const cached = await getUrl(station);
-          if (cached) return; // still valid, skip network call
+          if (cached) {
+            // [TEMP LOG]
+            console.log(`[StreamUrlCache] prefetch SKIP (cache fresh): ${station.name} → ${cached}`);
+            return;
+          }
           const url = await fetchFromOrb(station.webViewFallbackUrl);
-          if (url) await saveUrl(station.id, url);
+          if (url) {
+            await saveUrl(station.id, url);
+            // [TEMP LOG]
+            console.log(`[StreamUrlCache] prefetch CACHED: ${station.name} → ${url}`);
+          } else {
+            // [TEMP LOG]
+            console.log(`[StreamUrlCache] prefetch NULL (ORB returned nothing): ${station.name}`);
+          }
         } catch (e) {
           console.log(`StreamUrlCache: prefetch failed for ${station.name}:`, e.message);
         }
@@ -163,6 +200,8 @@ async function prefetchAll(stations) {
       await new Promise((resolve) => setTimeout(resolve, BATCH_DELAY_MS));
     }
   }
+  // [TEMP LOG]
+  console.log('[StreamUrlCache] prefetchAll: done');
 }
 
 export default { getUrl, invalidate, refetch, prefetchAll };
