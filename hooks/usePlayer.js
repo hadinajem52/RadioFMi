@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Alert } from 'react-native';
 import TrackPlayer, { usePlaybackState, State } from 'react-native-track-player';
 import { 
@@ -135,17 +135,20 @@ export const usePlayer = () => {
               // Try to get a fresh URL from ORB before falling back to WebView
               if (!isRetrying.current) {
                 isRetrying.current = true;
-                const freshUrl = await StreamUrlCache.refetch(station);
-                if (freshUrl) {
-                  setStreamError(null);
-                  console.log('StreamUrlCache: retrying with fresh URL for', station.name);
-                  setTimeout(async () => {
-                    await playStation({ ...station, url: freshUrl });
-                    isRetrying.current = false;
-                  }, 300);
-                  return;
+                try {
+                  const freshUrl = await StreamUrlCache.refetch(station);
+                  if (freshUrl) {
+                    setStreamError(null);
+                    console.log('StreamUrlCache: retrying with fresh URL for', station.name);
+                    setTimeout(async () => {
+                      await playStation({ ...station, url: freshUrl });
+                      isRetrying.current = false;
+                    }, 300);
+                    return;
+                  }
+                } finally {
+                  isRetrying.current = false;
                 }
-                isRetrying.current = false;
               }
               // Fresh URL unavailable or retry already attempted — open WebView
               setStreamError(null);
