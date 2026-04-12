@@ -135,9 +135,11 @@ export const usePlayer = () => {
               // Try to get a fresh URL from ORB before falling back to WebView
               if (!isRetrying.current) {
                 isRetrying.current = true;
+                let retryScheduled = false;
                 try {
                   const freshUrl = await StreamUrlCache.refetch(station);
                   if (freshUrl) {
+                    retryScheduled = true;
                     setStreamError(null);
                     console.log('StreamUrlCache: retrying with fresh URL for', station.name);
                     setTimeout(async () => {
@@ -147,7 +149,9 @@ export const usePlayer = () => {
                     return;
                   }
                 } finally {
-                  isRetrying.current = false;
+                  if (!retryScheduled) {
+                    isRetrying.current = false;
+                  }
                 }
               }
               // Fresh URL unavailable or retry already attempted — open WebView

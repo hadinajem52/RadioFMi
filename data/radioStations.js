@@ -172,7 +172,7 @@ const radioStations = [
     id: 15,
     name: 'IBM Online Radio',
     nameAr: 'راديو آي بي إم',
-    url: 'https://stream-171.zeno.fm/spcnwtyvyc9uv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJzcGNud3R5dnljOXV2IiwiaG9zdCI6InN0cmVhbS0xNzEuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6IlhiM1owdkZqU3RlUHI3QkdnUnFuUFEiLCJpYXQiOjE3NTYwNjE0ODUsImV4cCI6MTc1NjA2MTU0NX0.ZjlHRlus9CmweOQkAgBiwCL_lcVNvoL8evOqUsCXPV8&an-uid=6447012835167222949&dot-uid=0bdc220400e226d1daf339da&amb-uid=2502222035618165934&dbm-uid=CAESEMyeLjBbh7Ol-CmiB1sRnNQ&cto-uid=24126d87-95c9-4166-8ec7-f08df2bf6400-6809fa7e-4c42&bsw-uid=225b4769-20fe-4ee4-8446-08e4d042c4eb&dyn-uid=7938414566778940449&ttd-uid=3f39463e-6723-4202-9ba1-17ca8e997b9c',
+    url: 'https://stream.zeno.fm/fau8h70x5hhvv',
     description: 'Variety',
     descriptionAr: 'منوعات',
     color: ['#34495E', '#5D6D7E'],
