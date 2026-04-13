@@ -7,6 +7,33 @@
 			"problemMatcher": [],
 			"label": "npm: android",
 			"detail": "expo start --android"
+		},
+		{
+			"label": "gradle: build aab",
+			"detail": "Build Android App Bundle (AAB) for release",
+			"type": "shell",
+			"command": "${workspaceFolder}/android/gradlew.bat",
+			"args": ["bundleRelease"],
+			"windows": {
+				"command": "${workspaceFolder}\\android\\gradlew.bat"
+			},
+			"osx": {
+				"command": "${workspaceFolder}/android/gradlew"
+			},
+			"linux": {
+				"command": "${workspaceFolder}/android/gradlew"
+			},
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			},
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
 		}
 	]
 }

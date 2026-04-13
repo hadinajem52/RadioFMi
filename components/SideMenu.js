@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, Modal, StatusBar, Animated, Switch } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, StatusBar, Animated, Switch, InteractionManager } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getLocalizedString } from '../localization/strings';
@@ -8,6 +8,7 @@ const SideMenu = ({ visible, onClose, onGenreSelect, onSettingsPress, styles }) 
   const { language, changeLanguage } = useLanguage();
   const slideAnim = useRef(new Animated.Value(-280)).current; // Start off-screen to the left
   const opacityAnim = useRef(new Animated.Value(0)).current;
+  const afterCloseRef = useRef(null);
   const [modalVisible, setModalVisible] = React.useState(visible);
 
   useEffect(() => {
@@ -45,7 +46,20 @@ const SideMenu = ({ visible, onClose, onGenreSelect, onSettingsPress, styles }) 
     }
   }, [visible, slideAnim, opacityAnim, modalVisible]);
 
-  const handleClose = () => {
+  useEffect(() => {
+    if (modalVisible || !afterCloseRef.current) {
+      return undefined;
+    }
+
+    const afterClose = afterCloseRef.current;
+    afterCloseRef.current = null;
+    const task = InteractionManager.runAfterInteractions(afterClose);
+
+    return () => task.cancel?.();
+  }, [modalVisible]);
+
+  const handleClose = (afterClose) => {
+    afterCloseRef.current = typeof afterClose === 'function' ? afterClose : null;
     // Start the close animation by setting visible to false
     onClose();
   };
@@ -57,13 +71,11 @@ const SideMenu = ({ visible, onClose, onGenreSelect, onSettingsPress, styles }) 
   ];
 
   const handleGenrePress = (genreId) => {
-    onGenreSelect(genreId);
-    handleClose();
+    handleClose(() => onGenreSelect(genreId));
   };
 
   const handleSettingsPress = () => {
-    onSettingsPress();
-    handleClose();
+    handleClose(onSettingsPress);
   };
 
   const toggleLanguage = () => {
